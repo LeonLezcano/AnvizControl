@@ -13,12 +13,9 @@ if (!fs.existsSync(DATA_DIR)) {
 
 const EMPLOYEES_FILE = path.join(DATA_DIR, 'employees.json');
 const LOGS_FILE = path.join(DATA_DIR, 'attendance_logs.json');
-const INCIDENTS_FILE = path.join(DATA_DIR, 'incidents.json');
-const CONFIG_FILE = path.join(DATA_DIR, 'config.json');
+const DEVICES_FILE = path.join(DATA_DIR, 'devices.json');
+const TOMBSTONES_FILE = path.join(DATA_DIR, 'tombstones.json');
 
-/**
- * Helper de lectura y escritura JSON sincrónico y seguro
- */
 function readJson(file, defaultVal) {
   try {
     if (!fs.existsSync(file)) {
@@ -36,87 +33,144 @@ function writeJson(file, data) {
   fs.writeFileSync(file, JSON.stringify(data, null, 2), 'utf8');
 }
 
+/**
+ * Convierte cualquier timestamp ISO (UTC o con offset) a fecha y hora local Argentina (UTC-3)
+ * @param {string} isoStr
+ * @returns {{ localDate: string, localTime: string, localDateTime: string, epochMs: number }}
+ */
+export function toArgentinaLocal(isoStr) {
+  const d = new Date(isoStr);
+  if (isNaN(d.getTime())) {
+    return { localDate: '1970-01-01', localTime: '00:00:00', localDateTime: '1970-01-01T00:00:00-03:00', epochMs: 0 };
+  }
+  // Restar 3 horas (UTC-3) al tiempo UTC para obtener componentes locales exactos de Argentina
+  const arMs = d.getTime() - 3 * 3600 * 1000;
+  const arDate = new Date(arMs);
+  const yyyy = arDate.getUTCFullYear();
+  const mm = String(arDate.getUTCMonth() + 1).padStart(2, '0');
+  const dd = String(arDate.getUTCDate()).padStart(2, '0');
+  const hh = String(arDate.getUTCHours()).padStart(2, '0');
+  const min = String(arDate.getUTCMinutes()).padStart(2, '0');
+  const ss = String(arDate.getUTCSeconds()).padStart(2, '0');
+
+  const localDate = `${yyyy}-${mm}-${dd}`;
+  const localTime = `${hh}:${min}:${ss}`;
+  return {
+    localDate,
+    localTime,
+    localDateTime: `${localDate}T${localTime}-03:00`,
+    epochMs: d.getTime()
+  };
+}
+
 export class AttendanceEngine {
   /**
-   * Obtiene todos los empleados
+   * Obtiene los dispositivos Anviz VF30 Pro registrados
    */
-  static getEmployees() {
-    return readJson(EMPLOYEES_FILE, [
+  static getDevices() {
+    return readJson(DEVICES_FILE, [
       {
-        id: 'EMP-001',
-        name: 'Juan Pérez',
-        dni: '34567890',
-        clockIdBranch1: '1',
-        clockIdBranch2: '101',
-        scheduleType: 'CORRIDO', // 'CORRIDO' o 'CORTADO'
-        shiftStart1: '08:00',
-        shiftEnd1: '17:00',
-        shiftStart2: null,
-        shiftEnd2: null,
-        workDays: [1, 2, 3, 4, 5], // Lunes a Viernes
-        status: 'ACTIVE',
-        hourlyRate: 3500
+        id: '1930',
+        cloudId: 15861,
+        name: 'Neuquen 959',
+        model: 'VF30PRO',
+        serialNumber: '1630200022270042',
+        ip: '192.168.0.218',
+        port: 5010,
+        department: 'Regondi srl',
+        userCount: 24,
+        fpCount: 33,
+        pwdCount: 15,
+        status: 'ONLINE',
+        lastSync: '2026-10-30T13:36:00-03:00'
       },
       {
-        id: 'EMP-002',
-        name: 'María García',
-        dni: '38901234',
-        clockIdBranch1: '2',
-        clockIdBranch2: '102',
-        scheduleType: 'CORTADO',
-        shiftStart1: '08:00',
-        shiftEnd1: '12:00',
-        shiftStart2: '16:00',
-        shiftEnd2: '20:00',
-        workDays: [1, 2, 3, 4, 5, 6],
-        status: 'ACTIVE',
-        hourlyRate: 3800
-      },
-      {
-        id: 'EMP-003',
-        name: 'Carlos Rodríguez',
-        dni: '41234567',
-        clockIdBranch1: '3',
-        clockIdBranch2: '3',
-        scheduleType: 'CORRIDO',
-        shiftStart1: '09:00',
-        shiftEnd1: '18:00',
-        shiftStart2: null,
-        shiftEnd2: null,
-        workDays: [1, 2, 3, 4, 5],
-        status: 'ACTIVE',
-        hourlyRate: 3400
+        id: '1931',
+        cloudId: 15834,
+        name: 'Ballarini 1111',
+        model: 'VF30PRO',
+        serialNumber: '1630200022240136',
+        ip: 'Remoto (5 cuadras - Cloud Push)',
+        port: 5010,
+        department: 'Regondi srl',
+        userCount: 24,
+        fpCount: 33,
+        pwdCount: 15,
+        status: 'ONLINE',
+        validity: '21/05/2025 - 22/05/2027',
+        lastSync: '2026-10-30T13:38:00-03:00'
       }
     ]);
   }
 
+  static saveDevices(devices) {
+    writeJson(DEVICES_FILE, devices);
+    return devices;
+  }
+
   /**
-   * Guarda o actualiza un empleado
+   * Obtiene la lista de IDs eliminados (Tombstones - Directiva 6)
+   */
+  static getTombstones() {
+    return new Set(readJson(TOMBSTONES_FILE, []));
+  }
+
+  static addTombstone(id) {
+    const set = this.getTombstones();
+    set.add(String(id));
+    writeJson(TOMBSTONES_FILE, Array.from(set));
+  }
+
+  /**
+   * Obtiene todos los empleados
+   */
+  static getEmployees() {
+    return readJson(EMPLOYEES_FILE, []);
+  }
+
+  /**
+   * Guarda o actualiza un empleado (CRUD)
    */
   static saveEmployee(empData) {
+    if (!empData || typeof empData !== 'object') {
+      throw new Error('Datos de empleado inválidos');
+    }
     const employees = this.getEmployees();
-    const cleanId = String(empData.id || '').trim();
-    const index = employees.findIndex((e) => e.id === cleanId);
+    const workno = String(empData.workno || empData.clockIdBranch1 || empData.dni || '').trim();
+    const cleanId = String(empData.id || (workno ? `EMP-${workno}` : `EMP-${Date.now().toString().slice(-4)}`)).trim();
+
+    const index = employees.findIndex((e) => e.id === cleanId || (workno && String(e.workno) === workno));
+    const existing = index >= 0 ? employees[index] : {};
 
     const record = {
-      id: cleanId || `EMP-${Date.now().toString().slice(-4)}`,
-      name: String(empData.name || '').trim(),
-      dni: String(empData.dni || '').trim(),
-      clockIdBranch1: String(empData.clockIdBranch1 || '').trim(),
-      clockIdBranch2: String(empData.clockIdBranch2 || '').trim(),
-      scheduleType: empData.scheduleType === 'CORTADO' ? 'CORTADO' : 'CORRIDO',
-      shiftStart1: empData.shiftStart1 || '08:00',
-      shiftEnd1: empData.shiftEnd1 || '17:00',
-      shiftStart2: empData.shiftStart2 || null,
-      shiftEnd2: empData.shiftEnd2 || null,
-      workDays: Array.isArray(empData.workDays) ? empData.workDays : [1, 2, 3, 4, 5],
+      ...existing,
+      id: existing.id || cleanId,
+      cloudEmployeeId: empData.cloudEmployeeId ?? existing.cloudEmployeeId ?? null,
+      name: String(empData.name || existing.name || '').trim(),
+      dni: String(empData.dni || empData.workno || existing.dni || workno).trim(),
+      workno: String(workno || existing.workno || empData.clockIdBranch1 || '').trim(),
+      clockIdBranch1: String(empData.clockIdBranch1 || workno || existing.clockIdBranch1 || '').trim(),
+      clockIdBranch2: String(empData.clockIdBranch2 || workno || existing.clockIdBranch2 || '').trim(),
+      department: String(empData.department || existing.department || 'Regondi srl').trim(),
+      position: String(empData.position ?? existing.position ?? '').trim(),
+      tel: String(empData.tel ?? existing.tel ?? '').trim(),
+      email: String(empData.email ?? existing.email ?? '').trim(),
+      scheduleType: (empData.scheduleType || existing.scheduleType) === 'CORTADO' ? 'CORTADO' : 'CORRIDO',
+      shiftStart1: empData.shiftStart1 || existing.shiftStart1 || '08:00',
+      shiftEnd1: empData.shiftEnd1 || existing.shiftEnd1 || '17:00',
+      shiftStart2: empData.shiftStart2 ?? existing.shiftStart2 ?? null,
+      shiftEnd2: empData.shiftEnd2 ?? existing.shiftEnd2 ?? null,
+      workDays: Array.isArray(empData.workDays) ? empData.workDays : (existing.workDays || [1, 2, 3, 4, 5]),
+      hasFinger: Boolean(empData.hasFinger ?? existing.hasFinger ?? true),
+      hasPassd: Boolean(empData.hasPassd ?? existing.hasPassd ?? false),
+      hasCard: Boolean(empData.hasCard ?? existing.hasCard ?? false),
       status: empData.status === 'INACTIVE' ? 'INACTIVE' : 'ACTIVE',
-      hourlyRate: Number(empData.hourlyRate) || 0,
+      hourlyRate: Number(empData.hourlyRate ?? existing.hourlyRate) || 0,
       updatedAt: new Date().toISOString()
     };
 
     if (index >= 0) {
-      employees[index] = { ...employees[index], ...record };
+      employees[index] = record;
     } else {
       employees.push(record);
     }
@@ -129,8 +183,10 @@ export class AttendanceEngine {
    * Elimina un empleado por ID
    */
   static deleteEmployee(id) {
+    const cleanId = String(id || '').trim();
+    this.addTombstone(cleanId);
     let employees = this.getEmployees();
-    employees = employees.filter((e) => e.id !== id);
+    employees = employees.filter((e) => e.id !== cleanId);
     writeJson(EMPLOYEES_FILE, employees);
     return true;
   }
@@ -143,41 +199,144 @@ export class AttendanceEngine {
   }
 
   /**
-   * Agrega o sincroniza fichadas (con deduplicación por empleado+timestamp)
-   * @param {Array<{ id?: string, userCode: string, timestamp: string, branch: string, verifyDesc?: string, manual?: boolean, note?: string }>} newLogs
+   * Agrega o sincroniza fichadas con deduplicación indexada por Map y respeto de Tombstones (Directiva 6)
    */
   static appendLogs(newLogs) {
+    if (!Array.isArray(newLogs)) return { total: 0, added: 0 };
     const existing = this.getRawLogs();
-    const map = new Map();
+    const tombstones = this.getTombstones();
+    const mapById = new Map();
+    const mapByComposite = new Map();
 
     for (const log of existing) {
-      const key = `${log.userCode}_${log.timestamp}_${log.branch}`;
-      map.set(key, log);
+      if (tombstones.has(String(log.id))) continue;
+      mapById.set(log.id, log);
+      const compKey = `${log.userCode}_${log.timestamp.slice(0, 19)}_${log.branch}`;
+      mapByComposite.set(compKey, log);
     }
 
     let addedCount = 0;
     for (const log of newLogs) {
-      const key = `${log.userCode}_${log.timestamp}_${log.branch}`;
-      if (!map.has(key)) {
-        map.set(key, {
-          id: log.id || `LOG-${Date.now()}-${Math.floor(Math.random() * 10000)}`,
-          userCode: String(log.userCode),
-          timestamp: log.timestamp,
-          branch: log.branch || 'Sucursal 1',
-          verifyDesc: log.verifyDesc || 'Huella',
+      if (!log || !log.userCode || !log.timestamp) continue;
+      const logId = log.id || `LOG-${Date.now()}-${Math.floor(Math.random() * 100000)}`;
+      if (tombstones.has(String(logId))) continue;
+
+      const compKey = `${log.userCode}_${String(log.timestamp).slice(0, 19)}_${log.branch || 'Neuquen 959'}`;
+
+      // No sobrescribir si ya fue rectificada manualmente
+      const existingMatch = mapById.get(logId) || mapByComposite.get(compKey);
+      if (existingMatch && existingMatch.manual) {
+        continue;
+      }
+
+      if (!existingMatch) {
+        const entry = {
+          id: logId,
+          userCode: String(log.userCode).trim(),
+          employeeNameHint: log.employeeNameHint || '',
+          departmentHint: log.departmentHint || '',
+          timestamp: new Date(log.timestamp).toISOString(),
+          branch: log.branch || 'Neuquen 959',
+          verifyDesc: log.verifyDesc || 'Huella Dactilar',
+          checktype: Number(log.checktype) || 128,
           manual: Boolean(log.manual),
-          note: log.note || ''
-        });
+          note: String(log.note || '')
+        };
+        mapById.set(entry.id, entry);
+        mapByComposite.set(compKey, entry);
         addedCount++;
       }
     }
 
-    const updatedList = Array.from(map.values()).sort(
+    const updatedList = Array.from(mapById.values()).sort(
       (a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
     );
 
     writeJson(LOGS_FILE, updatedList);
     return { total: updatedList.length, added: addedCount };
+  }
+
+  /**
+   * Importa el lote completo desde CrossChex Cloud (Dispositivos, Empleados y Fichadas)
+   */
+  static importCrossChexCloudData({ devices = [], employees = [], records = [] }) {
+    const tombstones = this.getTombstones();
+
+    // 1. Dispositivos
+    if (Array.isArray(devices) && devices.length > 0) {
+      const mappedDevices = devices.map((d) => ({
+        id: d.name?.includes('Neuquen') ? '1930' : d.name?.includes('Ballarini') ? '1931' : String(d.id),
+        cloudId: d.id,
+        name: d.name || 'VF30PRO',
+        model: d.device_type || 'VF30PRO',
+        serialNumber: d.serial_number || '',
+        ip: d.name?.includes('Neuquen') ? '192.168.0.218' : 'Sucursal Remota (5 cuadras • Cloud Push)',
+        port: 5010,
+        department: d.department_name || 'Regondi srl',
+        userCount: Number(d.user_total ?? 24),
+        fpCount: Number(d.finger_total ?? 33),
+        pwdCount: Number(d.passd_total ?? 15),
+        status: 'ONLINE',
+        lastSync: new Date().toISOString()
+      }));
+      this.saveDevices(mappedDevices);
+    }
+
+    // 2. Empleados
+    let empAdded = 0;
+    for (const cEmp of employees) {
+      const workno = String(cEmp.workno || '').trim();
+      const empId = `EMP-${workno}`;
+      if (tombstones.has(empId)) continue;
+
+      const fullName = [cEmp.first_name, cEmp.last_name]
+        .map((s) => String(s || '').trim())
+        .filter(Boolean)
+        .join(' ')
+        .replace(/\s+/g, ' ');
+
+      this.saveEmployee({
+        id: empId,
+        cloudEmployeeId: cEmp.id,
+        name: fullName || `Empleado ${workno}`,
+        dni: workno,
+        workno,
+        clockIdBranch1: workno,
+        clockIdBranch2: workno,
+        department: cEmp.department_name || 'Regondi srl',
+        position: cEmp.position || '',
+        tel: cEmp.tel || '',
+        email: cEmp.email || '',
+        hasFinger: Boolean(cEmp.has_finger),
+        hasPassd: Boolean(cEmp.has_passd),
+        hasCard: Boolean(cEmp.has_card),
+        status: 'ACTIVE'
+      });
+      empAdded++;
+    }
+
+    // 3. Fichadas
+    const mappedLogs = records.map((r) => ({
+      id: r.id || `CC-${r.workno}-${r.checktime}`,
+      userCode: String(r.workno || '').trim(),
+      employeeNameHint: String(r.name || '').replace(/\s+/g, ' ').trim(),
+      departmentHint: r.department_name || 'Regondi srl',
+      timestamp: new Date(r.checktime).toISOString(),
+      branch: r.device_name || r.device || 'Neuquen 959',
+      verifyDesc: r.checktype === 130 ? 'PIN / Teclado' : 'Huella Dactilar',
+      checktype: r.checktype || 128,
+      manual: r.source === 1,
+      note: r.note || ''
+    }));
+
+    const logStats = this.appendLogs(mappedLogs);
+
+    return {
+      devicesCount: devices.length,
+      employeesSynced: empAdded,
+      recordsTotal: logStats.total,
+      recordsAdded: logStats.added
+    };
   }
 
   /**
@@ -200,9 +359,10 @@ export class AttendanceEngine {
   }
 
   /**
-   * Elimina una fichada errónea por ID
+   * Elimina una fichada errónea por ID y registra su Tombstone (Directiva 6)
    */
   static deleteLog(logId) {
+    this.addTombstone(logId);
     let logs = this.getRawLogs();
     logs = logs.filter((l) => l.id !== logId);
     writeJson(LOGS_FILE, logs);
@@ -210,27 +370,30 @@ export class AttendanceEngine {
   }
 
   /**
-   * Resuelve a qué empleado corresponde una fichada según su ID de reloj y sucursal
-   * @param {string} userCode
-   * @param {string} branch
-   * @param {Array<any>} employees
+   * Resuelve a qué empleado corresponde una fichada según su workno / ID de reloj y sucursal
    */
   static resolveEmployee(userCode, branch, employees) {
-    const code = String(userCode).trim();
-    return employees.find((emp) => {
-      if (branch.includes('2') || branch.toLowerCase().includes('sucursal 2')) {
-        return String(emp.clockIdBranch2).trim() === code;
-      }
-      return String(emp.clockIdBranch1).trim() === code;
-    }) || null;
+    const code = String(userCode || '').trim();
+    if (!code) return null;
+
+    const bStr = String(branch || '').toLowerCase();
+    const isBranch2 = bStr.includes('2') || bStr.includes('ballarini') || bStr.includes('ballerini');
+
+    return (
+      employees.find((emp) => {
+        if (String(emp.workno || '').trim() === code) return true;
+        if (isBranch2 && String(emp.clockIdBranch2 || '').trim() === code) return true;
+        if (!isBranch2 && String(emp.clockIdBranch1 || '').trim() === code) return true;
+        return String(emp.clockIdBranch1 || '').trim() === code || String(emp.clockIdBranch2 || '').trim() === code;
+      }) || null
+    );
   }
 
   /**
-   * Filtra rebotes en menos de 3 minutos (apoyó 2 veces seguidas el dedo por error)
-   * y agrupa fichadas ordenadas cronológicamente
+   * Filtra rebotes en menos de 3 minutos (apoyó 2 veces seguidas el dedo por duda)
    */
   static filterBounces(logs, windowMinutes = 3) {
-    if (!logs || logs.length === 0) return [];
+    if (!Array.isArray(logs) || logs.length === 0) return [];
     const sorted = [...logs].sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
     const filtered = [];
 
@@ -244,8 +407,7 @@ export class AttendanceEngine {
       const prev = filtered[filtered.length - 1];
       const diffMinutes = (new Date(current.timestamp).getTime() - new Date(prev.timestamp).getTime()) / (1000 * 60);
 
-      // Si fue a menos de 3 minutos en el mismo dispositivo o sucursal, es un rebote accidental
-      if (diffMinutes < windowMinutes) {
+      if (diffMinutes >= 0 && diffMinutes < windowMinutes) {
         continue;
       }
       filtered.push(current);
@@ -255,46 +417,54 @@ export class AttendanceEngine {
   }
 
   /**
-   * Procesa las jornadas diarias de un empleado unificando fichadas de ambas sucursales
-   * @param {string} employeeId
-   * @param {string} startDateStr - YYYY-MM-DD
-   * @param {string} endDateStr - YYYY-MM-DD
+   * Procesa las jornadas diarias de un empleado unificando fichadas de ambas sucursales (Neuquen 959 + Ballarini 1111)
+   * usando la hora local Argentina (UTC-3).
    */
   static calculateAttendance(employeeId, startDateStr, endDateStr) {
     const employees = this.getEmployees();
-    const emp = employees.find((e) => e.id === employeeId);
+    const emp = employees.find((e) => e.id === employeeId || String(e.workno) === String(employeeId));
     if (!emp) return null;
 
     const allLogs = this.getRawLogs();
 
-    // Extraer todas las fichadas que correspondan a este empleado (reloj 1 o reloj 2)
     const empLogs = allLogs.filter((log) => {
       const matched = this.resolveEmployee(log.userCode, log.branch, employees);
       return matched && matched.id === emp.id;
     });
 
-    // Agrupar por fecha local (YYYY-MM-DD)
+    // Agrupar por fecha local de Argentina (YYYY-MM-DD)
     const byDate = new Map();
     for (const log of empLogs) {
-      const dStr = log.timestamp.slice(0, 10);
-      if (!byDate.has(dStr)) byDate.set(dStr, []);
-      byDate.get(dStr).push(log);
+      const loc = toArgentinaLocal(log.timestamp);
+      if (!byDate.has(loc.localDate)) byDate.set(loc.localDate, []);
+      byDate.get(loc.localDate).push({
+        ...log,
+        localDate: loc.localDate,
+        localTime: loc.localTime.slice(0, 5),
+        localTimeFull: loc.localTime
+      });
     }
 
-    // Generar rango de días
-    const start = new Date(startDateStr);
-    const end = new Date(endDateStr);
+    const start = new Date(`${startDateStr}T00:00:00Z`);
+    const end = new Date(`${endDateStr}T00:00:00Z`);
     const daysReport = [];
 
-    for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
+    for (let d = new Date(start); d <= end; d.setUTCDate(d.getUTCDate() + 1)) {
       const curDateStr = d.toISOString().slice(0, 10);
-      const dayOfWeek = d.getUTCDay(); // 0 Dom, 1 Lun...
-      const isWorkDay = emp.workDays.includes(dayOfWeek);
+      const dayOfWeek = d.getUTCDay();
+      const isWorkDay = Array.isArray(emp.workDays) ? emp.workDays.includes(dayOfWeek) : dayOfWeek >= 1 && dayOfWeek <= 5;
 
       const rawPunches = byDate.get(curDateStr) || [];
-      const cleanPunches = this.filterBounces(rawPunches);
+      const cleanPunches = this.filterBounces(rawPunches).map((p) => {
+        const loc = toArgentinaLocal(p.timestamp);
+        return {
+          ...p,
+          localDate: loc.localDate,
+          localTime: loc.localTime.slice(0, 5),
+          localTimeFull: loc.localTime
+        };
+      });
 
-      // Deducción de pares Entrada/Salida
       const pairs = [];
       for (let i = 0; i < cleanPunches.length; i += 2) {
         const inPunch = cleanPunches[i];
@@ -302,9 +472,8 @@ export class AttendanceEngine {
         pairs.push({ in: inPunch, out: outPunch });
       }
 
-      // Cálculo de minutos trabajados
       let totalMinutesWorked = 0;
-      let hasOddPunch = cleanPunches.length % 2 !== 0;
+      const hasOddPunch = cleanPunches.length % 2 !== 0;
 
       for (const pair of pairs) {
         if (pair.in && pair.out) {
@@ -315,7 +484,6 @@ export class AttendanceEngine {
         }
       }
 
-      // Estado del día
       let status = 'NORMAL';
       let lateMinutes = 0;
       let earlyLeaveMinutes = 0;
@@ -323,22 +491,21 @@ export class AttendanceEngine {
       if (cleanPunches.length === 0) {
         status = isWorkDay ? 'AUSENTE' : 'FRANCO';
       } else if (hasOddPunch) {
-        status = 'FICHADA_INCOMPLETA'; // Olvidó fichar salida o entrada
+        status = 'FICHADA_INCOMPLETA';
       } else {
-        // Evaluar llegada tarde sobre la primera fichada
-        const firstTime = cleanPunches[0].timestamp.slice(11, 16);
+        const firstTime = cleanPunches[0].localTime;
         if (emp.shiftStart1 && firstTime > emp.shiftStart1) {
           const [sh, sm] = emp.shiftStart1.split(':').map(Number);
           const [ph, pm] = firstTime.split(':').map(Number);
-          lateMinutes = (ph * 60 + pm) - (sh * 60 + sm);
-          if (lateMinutes > 10) {
+          const diff = ph * 60 + pm - (sh * 60 + sm);
+          if (diff > 10) {
+            lateMinutes = diff;
             status = 'LLEGADA_TARDE';
           }
         }
       }
 
       const hoursWorked = +(totalMinutesWorked / 60).toFixed(2);
-      // Suponemos 8h estándar para cálculo de horas extras
       const normalHours = Math.min(hoursWorked, 8);
       const overtimeHours = Math.max(0, +(hoursWorked - 8).toFixed(2));
 
@@ -349,6 +516,8 @@ export class AttendanceEngine {
         status,
         punches: cleanPunches,
         pairs,
+        firstIn: cleanPunches.length > 0 ? cleanPunches[0].localTime : null,
+        lastOut: cleanPunches.length > 1 ? cleanPunches[cleanPunches.length - 1].localTime : null,
         hasOddPunch,
         lateMinutes,
         earlyLeaveMinutes,
@@ -370,45 +539,121 @@ export class AttendanceEngine {
         absentDays: daysReport.filter((d) => d.status === 'AUSENTE').length,
         oddPunchDays: daysReport.filter((d) => d.hasOddPunch).length,
         lateDays: daysReport.filter((d) => d.lateMinutes > 10).length,
-        totalHours: +(daysReport.reduce((acc, d) => acc + d.hoursWorked, 0)).toFixed(2),
-        totalNormalHours: +(daysReport.reduce((acc, d) => acc + d.normalHours, 0)).toFixed(2),
-        totalOvertimeHours: +(daysReport.reduce((acc, d) => acc + d.overtimeHours, 0)).toFixed(2)
+        totalHours: +daysReport.reduce((acc, d) => acc + d.hoursWorked, 0).toFixed(2),
+        totalNormalHours: +daysReport.reduce((acc, d) => acc + d.normalHours, 0).toFixed(2),
+        totalOvertimeHours: +daysReport.reduce((acc, d) => acc + d.overtimeHours, 0).toFixed(2)
       }
     };
   }
 
   /**
-   * Monitor en vivo: quién está trabajando ahora y en qué sucursal
+   * Monitor en vivo y Estadísticas de Dashboard (estilo CrossChex Cloud)
    */
-  static getLiveStatus() {
+  static getLiveStatus(referenceDateStr) {
     const employees = this.getEmployees();
-    const todayStr = new Date().toISOString().slice(0, 10);
+    const devices = this.getDevices();
     const allLogs = this.getRawLogs();
 
-    const result = employees.map((emp) => {
-      const todayLogs = allLogs.filter((log) => {
+    const nowLocal = toArgentinaLocal(new Date().toISOString());
+    const todayStr = referenceDateStr || nowLocal.localDate;
+
+    // Calcular fecha de ayer
+    const todayObj = new Date(`${todayStr}T12:00:00Z`);
+    const yesterdayObj = new Date(todayObj.getTime() - 24 * 3600 * 1000);
+    const yesterdayStr = yesterdayObj.toISOString().slice(0, 10);
+
+    let yesterdayLate = 0;
+    let yesterdayEarly = 0;
+    let yesterdayAbsent = 0;
+    let yesterdayOvertime = 0;
+    let yesterdayException = 0;
+
+    const liveList = employees.map((emp) => {
+      const empLogs = allLogs.filter((log) => {
         const matches = this.resolveEmployee(log.userCode, log.branch, employees);
-        return matches && matches.id === emp.id && log.timestamp.slice(0, 10) === todayStr;
+        return matches && matches.id === emp.id;
       });
 
-      const clean = this.filterBounces(todayLogs);
-      const lastPunch = clean.length > 0 ? clean[clean.length - 1] : null;
+      const todayLogs = empLogs.filter((l) => toArgentinaLocal(l.timestamp).localDate === todayStr);
+      const yesterdayLogs = empLogs.filter((l) => toArgentinaLocal(l.timestamp).localDate === yesterdayStr);
 
-      // Si la cantidad de fichadas es impar, la persona está adentro (trabajando)
-      const isInside = clean.length % 2 === 1;
+      const cleanToday = this.filterBounces(todayLogs).map((l) => ({
+        ...l,
+        localTime: toArgentinaLocal(l.timestamp).localTime.slice(0, 5),
+        localTimeFull: toArgentinaLocal(l.timestamp).localTime
+      }));
+
+      const cleanYesterday = this.filterBounces(yesterdayLogs);
+      if (cleanYesterday.length === 0) {
+        const yDow = yesterdayObj.getUTCDay();
+        if (yDow >= 1 && yDow <= 5 && emp.workno !== '1') yesterdayAbsent++;
+      } else {
+        if (cleanYesterday.length % 2 === 1) yesterdayException++;
+        const firstY = toArgentinaLocal(cleanYesterday[0].timestamp).localTime.slice(0, 5);
+        if (emp.shiftStart1 && firstY > emp.shiftStart1) {
+          const [sh, sm] = emp.shiftStart1.split(':').map(Number);
+          const [ph, pm] = firstY.split(':').map(Number);
+          if (ph * 60 + pm - (sh * 60 + sm) > 10) yesterdayLate++;
+        }
+        if (cleanYesterday.length >= 2) {
+          const diffH =
+            (new Date(cleanYesterday[cleanYesterday.length - 1].timestamp).getTime() -
+              new Date(cleanYesterday[0].timestamp).getTime()) /
+            (1000 * 3600);
+          if (diffH > 8.5) yesterdayOvertime++;
+        }
+      }
+
+      const lastPunch = cleanToday.length > 0 ? cleanToday[cleanToday.length - 1] : null;
+      const firstPunch = cleanToday.length > 0 ? cleanToday[0] : null;
+      const isInside = cleanToday.length % 2 === 1;
+      const branchesToday = Array.from(new Set(cleanToday.map((p) => p.branch)));
 
       return {
         id: emp.id,
+        workno: emp.workno || emp.clockIdBranch1 || emp.dni,
         name: emp.name,
         dni: emp.dni,
+        department: emp.department || 'Regondi srl',
+        position: emp.position || '',
         isInside,
+        hasPunchedToday: cleanToday.length > 0,
         status: !lastPunch ? 'SIN_FICHAR' : isInside ? 'PRESENTE' : 'RETIRADO',
+        firstPunchTime: firstPunch ? firstPunch.localTime : null,
         lastBranch: lastPunch ? lastPunch.branch : null,
-        lastPunchTime: lastPunch ? lastPunch.timestamp.slice(11, 19) : null,
-        todayPunchesCount: clean.length
+        lastPunchTime: lastPunch ? lastPunch.localTimeFull : null,
+        branchesToday,
+        todayPunchesCount: cleanToday.length,
+        todayPunches: cleanToday
       };
     });
 
-    return result;
+    const activeEmployees = employees.filter((e) => e.status !== 'INACTIVE');
+    const punchedTodayCount = liveList.filter((x) => x.hasPunchedToday).length;
+    const insideNowCount = liveList.filter((x) => x.isInside).length;
+    const absentTodayList = liveList.filter((x) => !x.hasPunchedToday && x.workno !== '1');
+
+    return {
+      live: liveList,
+      dashboard: {
+        todayDate: todayStr,
+        totalExpected: activeEmployees.length,
+        actualAttendance: punchedTodayCount,
+        insideNowCount,
+        absentTodayCount: absentTodayList.length,
+        absentTodayList: absentTodayList.slice(0, 12),
+        totalRecords: allLogs.length,
+        onlineDevices: devices.filter((d) => d.status === 'ONLINE').length,
+        totalDevices: devices.length,
+        yesterdayStats: {
+          date: yesterdayStr,
+          late: yesterdayLate,
+          early: yesterdayEarly,
+          absent: yesterdayAbsent,
+          overtime: yesterdayOvertime,
+          exception: yesterdayException
+        }
+      }
+    };
   }
 }

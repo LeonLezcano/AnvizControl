@@ -3,207 +3,593 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AnvizControl - Sistema de Asistencia Multi-Sucursal</title>
+  <title>CrossChex Control • Regondi srl</title>
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
   <style>
     :root {
-      --bg: #0f172a;
-      --card-bg: #1e293b;
-      --card-border: #334155;
-      --text: #f8fafc;
-      --text-muted: #94a3b8;
-      --primary: #38bdf8;
-      --primary-hover: #0284c7;
-      --success: #22c55e;
-      --warning: #f59e0b;
-      --danger: #ef4444;
-      --badge-bg: #334155;
+      /* Paleta oficial de CrossChex Cloud */
+      --cc-primary: #05aa8c;
+      --cc-primary-hover: #0ea58a;
+      --cc-primary-light: #e6f7f4;
+      --cc-accent-blue: #409eff;
+      --cc-warning: #f7b500;
+      --cc-danger: #e02020;
+      --cc-orange: #fa6400;
+      --cc-purple: #6236ff;
+      --cc-green: #75bc27;
+      --cc-bg: #f0f2f5;
+      --cc-card-bg: #ffffff;
+      --cc-border: #ebeef5;
+      --cc-text-primary: #303133;
+      --cc-text-regular: #606266;
+      --cc-text-secondary: #909399;
+      --cc-header-bg: #05aa8c;
+      --cc-font: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", Arial, sans-serif;
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
-    body { background-color: var(--bg); color: var(--text); padding-bottom: 60px; }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: var(--cc-font); }
+    body { background-color: var(--cc-bg); color: var(--cc-text-primary); min-height: 100vh; padding-bottom: 40px; }
 
+    /* Header superior exacto a CrossChex Cloud */
     header {
-      background-color: var(--card-bg);
-      border-bottom: 1px solid var(--card-border);
-      padding: 16px 24px;
+      background-color: var(--cc-header-bg);
+      color: #ffffff;
+      height: 56px;
+      padding: 0 24px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      flex-wrap: wrap;
-      gap: 16px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      position: sticky;
+      top: 0;
+      z-index: 100;
     }
 
-    .brand { display: flex; align-items: center; gap: 12px; }
-    .brand h1 { font-size: 1.3rem; font-weight: 700; color: #fff; }
-    .brand span { font-size: 0.8rem; background: #0369a1; padding: 3px 8px; border-radius: 999px; }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .brand-logo {
+      width: 28px;
+      height: 28px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+    }
+    .brand-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+    }
+    .brand-company {
+      font-size: 0.82rem;
+      background: rgba(0, 0, 0, 0.15);
+      padding: 3px 10px;
+      border-radius: 999px;
+      margin-left: 6px;
+    }
 
-    nav { display: flex; gap: 8px; flex-wrap: wrap; }
+    /* Navegación por pestañas */
+    nav {
+      display: flex;
+      gap: 4px;
+      height: 100%;
+      align-items: center;
+    }
     .nav-btn {
       background: transparent;
-      border: 1px solid var(--card-border);
-      color: var(--text);
-      padding: 8px 16px;
-      border-radius: 8px;
+      border: none;
+      color: rgba(255, 255, 255, 0.85);
+      padding: 0 16px;
+      height: 100%;
       cursor: pointer;
       font-size: 0.9rem;
-      transition: all 0.2s;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      border-bottom: 3px solid transparent;
+      transition: all 0.2s ease;
     }
-    .nav-btn:hover { background: #334155; }
-    .nav-btn.active { background: var(--primary); color: #0f172a; font-weight: 600; border-color: var(--primary); }
+    .nav-btn:hover {
+      color: #ffffff;
+      background: rgba(255, 255, 255, 0.08);
+    }
+    .nav-btn.active {
+      color: #ffffff;
+      font-weight: 700;
+      border-bottom-color: #ffffff;
+      background: rgba(255, 255, 255, 0.12);
+    }
 
-    main { max-width: 1280px; margin: 24px auto; padding: 0 16px; }
+    .header-user {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 0.85rem;
+    }
+    .user-pill {
+      background: rgba(255, 255, 255, 0.18);
+      padding: 4px 12px;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    main {
+      max-width: 1360px;
+      margin: 20px auto;
+      padding: 0 20px;
+    }
 
     .tab-content { display: none; }
     .tab-content.active { display: block; }
 
-    .grid-cards {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 16px;
-      margin-bottom: 24px;
-    }
-
+    /* Widgets y Tarjetas */
     .card {
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
-      border-radius: 12px;
+      background: var(--cc-card-bg);
+      border: 1px solid var(--cc-border);
+      border-radius: 8px;
       padding: 20px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+      margin-bottom: 20px;
     }
 
-    .card h3 { font-size: 1.05rem; margin-bottom: 12px; color: var(--primary); display: flex; justify-content: space-between; align-items: center; }
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--cc-border);
+    }
+    .card-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--cc-text-primary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
 
-    /* Tables */
-    .table-container {
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
+    /* Grid del Dashboard idéntico a CrossChex */
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 1.8fr;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+    @media (max-width: 992px) {
+      .dashboard-grid { grid-template-columns: 1fr; }
+    }
+
+    .kpi-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+    .kpi-card {
+      background: #ffffff;
+      border: 1px solid var(--cc-border);
+      border-radius: 8px;
+      padding: 18px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .kpi-icon {
+      width: 48px;
+      height: 48px;
       border-radius: 12px;
-      overflow-x: auto;
-      margin-top: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
     }
-    table { width: 100%; border-collapse: collapse; text-align: left; font-size: 0.9rem; }
-    th { background: #1a2234; padding: 12px 16px; border-bottom: 1px solid var(--card-border); color: var(--text-muted); font-weight: 600; }
-    td { padding: 12px 16px; border-bottom: 1px solid var(--card-border); }
-    tr:hover { background: rgba(255, 255, 255, 0.02); }
+    .kpi-title { font-size: 0.8rem; color: var(--cc-text-secondary); margin-bottom: 4px; }
+    .kpi-value { font-size: 1.6rem; font-weight: 700; color: var(--cc-text-primary); }
 
-    /* Status badges */
+    /* Barra de asistencia actual */
+    .attendance-circle-box {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      padding: 10px 0;
+    }
+    .attendance-big-num {
+      font-size: 2.8rem;
+      font-weight: 800;
+      color: var(--cc-primary);
+      line-height: 1;
+    }
+    .progress-bar-wrap {
+      flex: 1;
+    }
+    .progress-bar {
+      height: 12px;
+      background: #ebeef5;
+      border-radius: 6px;
+      overflow: hidden;
+      margin-top: 8px;
+    }
+    .progress-bar-fill {
+      height: 100%;
+      background: var(--cc-primary);
+      border-radius: 6px;
+      transition: width 0.4s ease;
+    }
+
+    /* Mini tarjetas de estadísticas de ayer */
+    .yesterday-stats {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 12px;
+      margin-top: 12px;
+    }
+    @media (max-width: 768px) {
+      .yesterday-stats { grid-template-columns: repeat(2, 1fr); }
+    }
+    .y-stat-item {
+      background: #fafafa;
+      border: 1px solid #ebeef5;
+      border-radius: 6px;
+      padding: 12px 8px;
+      text-align: center;
+    }
+    .y-stat-num { font-size: 1.3rem; font-weight: 700; margin: 4px 0; }
+    .y-stat-label { font-size: 0.75rem; color: var(--cc-text-secondary); }
+
+    /* Tarjetas de Relojes */
+    .device-cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+    .device-box {
+      border: 1px solid var(--cc-border);
+      border-radius: 8px;
+      padding: 18px;
+      background: #ffffff;
+      position: relative;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .device-box:hover {
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+    }
+    .device-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 12px;
+    }
+    .device-name { font-size: 1.05rem; font-weight: 700; color: var(--cc-text-primary); }
+    .device-model { font-size: 0.8rem; color: var(--cc-text-secondary); }
+    .device-metrics {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      background: #f8fafc;
+      padding: 10px;
+      border-radius: 6px;
+      margin-top: 14px;
+      text-align: center;
+      font-size: 0.75rem;
+    }
+    .device-metrics b { display: block; font-size: 1rem; color: var(--cc-primary); margin-top: 2px; }
+
+    /* Tablas estilo CrossChex */
+    .table-container {
+      background: #ffffff;
+      border: 1px solid var(--cc-border);
+      border-radius: 8px;
+      overflow-x: auto;
+    }
+    table { width: 100%; border-collapse: collapse; text-align: left; font-size: 0.88rem; }
+    th {
+      background: #fafafa;
+      padding: 12px 14px;
+      color: var(--cc-text-secondary);
+      font-weight: 600;
+      border-bottom: 1px solid var(--cc-border);
+      white-space: nowrap;
+    }
+    td {
+      padding: 12px 14px;
+      border-bottom: 1px solid #f2f4f8;
+      color: var(--cc-text-regular);
+    }
+    tr:hover td { background-color: #f7faf9; }
+
+    /* Badges */
     .badge {
       display: inline-block;
-      padding: 4px 10px;
-      border-radius: 999px;
+      padding: 3px 9px;
+      border-radius: 4px;
       font-size: 0.75rem;
       font-weight: 600;
+      white-space: nowrap;
     }
-    .badge-success { background: rgba(34, 197, 94, 0.15); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.3); }
-    .badge-danger { background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); }
-    .badge-warning { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); }
-    .badge-info { background: rgba(56, 189, 248, 0.15); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.3); }
+    .badge-primary { background: var(--cc-primary-light); color: var(--cc-primary); }
+    .badge-success { background: #f0f9eb; color: var(--cc-green); }
+    .badge-danger { background: #fef0f0; color: var(--cc-danger); }
+    .badge-warning { background: #fdf6ec; color: var(--cc-warning); }
+    .badge-info { background: #edf2fc; color: var(--cc-accent-blue); }
 
-    /* Buttons */
+    /* Botones CrossChex */
     .btn {
-      padding: 8px 14px;
-      border-radius: 6px;
-      border: none;
+      padding: 8px 16px;
+      border-radius: 4px;
       font-size: 0.85rem;
-      font-weight: 600;
+      font-weight: 500;
       cursor: pointer;
-      transition: background 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border: 1px solid transparent;
+      transition: all 0.2s;
     }
-    .btn-primary { background: var(--primary); color: #0f172a; }
-    .btn-primary:hover { background: var(--primary-hover); }
-    .btn-danger { background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid #ef4444; }
-    .btn-danger:hover { background: #ef4444; color: #fff; }
-    .btn-secondary { background: #334155; color: #fff; }
-    .btn-secondary:hover { background: #475569; }
+    .btn-primary { background: var(--cc-primary); color: #ffffff; }
+    .btn-primary:hover { background: var(--cc-primary-hover); }
+    .btn-outline { background: #ffffff; border-color: var(--cc-border); color: var(--cc-text-regular); }
+    .btn-outline:hover { border-color: var(--cc-primary); color: var(--cc-primary); background: var(--cc-primary-light); }
+    .btn-danger-outline { background: #ffffff; border-color: #fbc4c4; color: var(--cc-danger); }
+    .btn-danger-outline:hover { background: var(--cc-danger); color: #ffffff; }
+    .btn-sm { padding: 4px 10px; font-size: 0.78rem; }
 
-    /* Forms & Inputs */
-    .form-group { margin-bottom: 14px; }
-    .form-group label { display: block; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 6px; }
-    .form-control {
-      width: 100%;
-      padding: 9px 12px;
-      background: #0f172a;
-      border: 1px solid var(--card-border);
-      border-radius: 6px;
-      color: #fff;
-      font-size: 0.9rem;
+    /* Filtros y formularios */
+    .filter-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: flex-end;
+      margin-bottom: 16px;
     }
-    .form-control:focus { outline: none; border-color: var(--primary); }
-    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .form-group label {
+      font-size: 0.78rem;
+      color: var(--cc-text-secondary);
+      font-weight: 500;
+    }
+    .form-control {
+      padding: 8px 12px;
+      border: 1px solid #dcdfe6;
+      border-radius: 4px;
+      font-size: 0.85rem;
+      color: var(--cc-text-primary);
+      outline: none;
+      background: #ffffff;
+    }
+    .form-control:focus { border-color: var(--cc-primary); }
 
     /* Modal */
     .modal-overlay {
       display: none;
       position: fixed;
       top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(0, 0, 0, 0.7);
-      backdrop-filter: blur(4px);
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 1000;
       justify-content: center;
       align-items: center;
-      z-index: 1000;
     }
     .modal-overlay.open { display: flex; }
     .modal {
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
-      border-radius: 12px;
+      background: #ffffff;
+      border-radius: 8px;
       width: 90%;
-      max-width: 520px;
+      max-width: 540px;
       padding: 24px;
-      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
     }
-    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
-    .modal-header h3 { font-size: 1.1rem; color: #fff; }
-    .close-modal { background: transparent; border: none; font-size: 1.2rem; color: var(--text-muted); cursor: pointer; }
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 18px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--cc-border);
+    }
 
-    /* Print styles */
     @media print {
-      body { background: #fff !important; color: #000 !important; }
-      header, nav, .no-print, .btn { display: none !important; }
-      .card, .table-container { border: 1px solid #ccc !important; background: #fff !important; box-shadow: none !important; }
-      th, td { border: 1px solid #ddd !important; color: #000 !important; }
+      body { background: #fff !important; }
+      header, nav, .filter-bar, .no-print, .btn { display: none !important; }
+      .card { border: none !important; box-shadow: none !important; padding: 0 !important; }
+      table { border: 1px solid #ddd; }
+      th, td { border: 1px solid #ddd; padding: 6px 10px; }
     }
   </style>
 </head>
 <body>
 
+  <!-- HEADER -->
   <header>
     <div class="brand">
-      <span style="font-size: 1.2rem;">⏱️</span>
-      <div>
-        <h1>AnvizControl</h1>
-        <small style="color: var(--text-muted);">Sincronizador Multi-Sucursal • VF30 Pro</small>
-      </div>
-      <span id="versionTag">v1.0.00</span>
+      <div class="brand-logo">⏱️</div>
+      <div class="brand-title">CrossChex Control</div>
+      <span class="brand-company" id="topCompanyTag">Regondi srl</span>
     </div>
+
     <nav class="no-print">
-      <button class="nav-btn active" data-tab="tab-live">🔴 Monitor en Vivo</button>
-      <button class="nav-btn" data-tab="tab-reports">📊 Asistencia & Horas</button>
-      <button class="nav-btn" data-tab="tab-logs">📋 Fichadas & Rectificación</button>
-      <button class="nav-btn" data-tab="tab-employees">👥 Empleados (CRUD)</button>
-      <button class="nav-btn" data-tab="tab-anviz">📡 Conexión Relojes Anviz</button>
+      <button class="nav-btn active" data-tab="tab-dashboard">📊 Dashboard</button>
+      <button class="nav-btn" data-tab="tab-live">🔴 Monitor en Vivo</button>
+      <button class="nav-btn" data-tab="tab-reports">📋 Reporte T&A</button>
+      <button class="nav-btn" data-tab="tab-records">📑 Fichadas & Rectificación</button>
+      <button class="nav-btn" data-tab="tab-employees">👥 Empleados (24)</button>
+      <button class="nav-btn" data-tab="tab-devices">📡 Relojes VF30 Pro (2)</button>
     </nav>
+
+    <div class="header-user no-print">
+      <div class="user-pill">
+        <span>👤 Nelson Lezcano</span>
+      </div>
+      <button class="btn btn-outline btn-sm" id="btnSyncCloud" style="color: #fff; border-color: rgba(255,255,255,0.4); background: transparent;">
+        🔄 Sincronizar Cloud
+      </button>
+    </div>
   </header>
 
   <main>
-    <!-- 1. MONITOR EN VIVO -->
-    <section id="tab-live" class="tab-content active">
-      <div class="card" style="margin-bottom: 16px;">
-        <h3>
-          <span>Estado del Personal Hoy</span>
-          <button class="btn btn-secondary btn-sm" id="btnRefreshLive">🔄 Actualizar</button>
-        </h3>
-        <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 16px;">
-          Unifica en tiempo real quién se encuentra presente en la empresa, deduciendo entrada/salida por orden de fichada.
+    <!-- 1. DASHBOARD PRINCIPAL (ESTILO CROSSCHEX CLOUD) -->
+    <section id="tab-dashboard" class="tab-content active">
+      <!-- KPIs Superiores -->
+      <div class="kpi-row">
+        <div class="kpi-card">
+          <div class="kpi-icon" style="background: rgba(64,158,255,0.12); color: var(--cc-accent-blue);">👥</div>
+          <div>
+            <div class="kpi-title">Padrón Empleados</div>
+            <div class="kpi-value" id="kpiTotalExpected">24</div>
+          </div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-icon" style="background: rgba(5,170,140,0.12); color: var(--cc-primary);">✅</div>
+          <div>
+            <div class="kpi-title">Asistencia Real Hoy</div>
+            <div class="kpi-value" id="kpiActualAttendance">0</div>
+          </div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-icon" style="background: rgba(117,188,39,0.12); color: var(--cc-green);">🏢</div>
+          <div>
+            <div class="kpi-title">Presentes Adentro</div>
+            <div class="kpi-value" id="kpiInsideNow">0</div>
+          </div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-icon" style="background: rgba(98,54,255,0.12); color: var(--cc-purple);">📑</div>
+          <div>
+            <div class="kpi-title">Total Fichadas Mes</div>
+            <div class="kpi-value" id="kpiTotalRecords">992</div>
+          </div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-icon" style="background: rgba(14,165,138,0.12); color: var(--cc-primary);">📡</div>
+          <div>
+            <div class="kpi-title">Relojes en Línea</div>
+            <div class="kpi-value" id="kpiOnlineDevices">2 / 2</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Grid Principal -->
+      <div class="dashboard-grid">
+        <!-- Asistencia Actual -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">🟢 Estado de Asistencia Hoy</span>
+            <span class="badge badge-primary" id="dashTodayDate">30/10/2026</span>
+          </div>
+          <div class="attendance-circle-box">
+            <div class="attendance-big-num" id="dashActualAttendanceNum">0</div>
+            <div class="progress-bar-wrap">
+              <div style="display: flex; justify-content: space-between; font-size: 0.82rem; color: var(--cc-text-secondary);">
+                <span>Asistencia Efectiva</span>
+                <span id="dashAttendancePercent">0%</span>
+              </div>
+              <div class="progress-bar">
+                <div class="progress-bar-fill" id="dashProgressBar" style="width: 0%;"></div>
+              </div>
+              <div style="margin-top: 8px; font-size: 0.8rem; color: var(--cc-text-secondary);">
+                Total Esperado: <b id="dashTotalExpectedText" style="color: var(--cc-text-primary);">24</b>
+              </div>
+            </div>
+          </div>
+
+          <div style="margin-top: 16px;">
+            <div style="font-size: 0.85rem; font-weight: 600; color: var(--cc-text-secondary); margin-bottom: 8px;">
+              Ausentes Hoy (<span id="dashAbsentCount">0</span>):
+            </div>
+            <div id="dashAbsentTags" style="display: flex; flex-wrap: wrap; gap: 6px;"></div>
+          </div>
+        </div>
+
+        <!-- Estadísticas de Ayer -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">📅 Estadísticas de la Jornada Anterior</span>
+            <small style="color: var(--cc-text-secondary);" id="dashYesterdayDate">Ayer</small>
+          </div>
+          <p style="font-size: 0.82rem; color: var(--cc-text-secondary); margin-bottom: 12px;">
+            Resumen consolidado de puntualidad, horas extra e inconsistencias de ambas sucursales:
+          </p>
+          <div class="yesterday-stats">
+            <div class="y-stat-item">
+              <div style="color: var(--cc-orange); font-size: 1.2rem;">⏱️</div>
+              <div class="y-stat-num" id="yStatLate" style="color: var(--cc-orange);">0</div>
+              <div class="y-stat-label">Llegadas Tarde</div>
+            </div>
+            <div class="y-stat-item">
+              <div style="color: var(--cc-warning); font-size: 1.2rem;">🚪</div>
+              <div class="y-stat-num" id="yStatEarly" style="color: var(--cc-warning);">0</div>
+              <div class="y-stat-label">Salidas Anticip.</div>
+            </div>
+            <div class="y-stat-item">
+              <div style="color: var(--cc-danger); font-size: 1.2rem;">❌</div>
+              <div class="y-stat-num" id="yStatAbsent" style="color: var(--cc-danger);">0</div>
+              <div class="y-stat-label">Ausentes</div>
+            </div>
+            <div class="y-stat-item">
+              <div style="color: var(--cc-purple); font-size: 1.2rem;">⏳</div>
+              <div class="y-stat-num" id="yStatOvertime" style="color: var(--cc-purple);">0</div>
+              <div class="y-stat-label">Horas Extra</div>
+            </div>
+            <div class="y-stat-item">
+              <div style="color: var(--cc-primary); font-size: 1.2rem;">⚠️</div>
+              <div class="y-stat-num" id="yStatException" style="color: var(--cc-primary);">0</div>
+              <div class="y-stat-label">Fichadas Impares</div>
+            </div>
+          </div>
+
+          <div style="margin-top: 20px; display: flex; gap: 10px;">
+            <button class="btn btn-primary btn-sm" onclick="switchTab('tab-reports')">Ver Reporte T&A Detallado</button>
+            <button class="btn btn-outline btn-sm" onclick="switchTab('tab-live')">Ver Monitor en Vivo</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Relojes Anviz en el Dashboard -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">📡 Estado de Relojes Anviz VF30 Pro (Ambas Sucursales)</span>
+          <button class="btn btn-outline btn-sm" id="btnTestClockDirect">⚡ Probar Enlace Local</button>
+        </div>
+        <div class="device-cards-grid" id="dashDeviceCards"></div>
+      </div>
+    </section>
+
+    <!-- 2. MONITOR EN VIVO -->
+    <section id="tab-live" class="tab-content">
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">🔴 Monitor de Presencia en Tiempo Real</span>
+          <div style="display: flex; gap: 8px;">
+            <input type="date" id="liveDateFilter" class="form-control" style="height: 34px;">
+            <button class="btn btn-outline btn-sm" id="btnRefreshLive">🔄 Actualizar</button>
+          </div>
+        </div>
+        <p style="font-size: 0.82rem; color: var(--cc-text-secondary); margin-bottom: 14px;">
+          Unifica en tiempo real quién se encuentra físicamente en planta o local, deduciendo entrada/salida y sucursal.
         </p>
         <div class="table-container">
           <table id="tblLive">
             <thead>
               <tr>
-                <th>Empleado</th>
-                <th>DNI</th>
+                <th>Legajo</th>
+                <th>Nombre del Empleado</th>
+                <th>Departamento</th>
                 <th>Estado Actual</th>
+                <th>Primera Entrada</th>
+                <th>Última Fichada</th>
                 <th>Última Sucursal</th>
-                <th>Hora Última Fichada</th>
                 <th>Total Fichadas Hoy</th>
               </tr>
             </thead>
@@ -213,49 +599,58 @@
       </div>
     </section>
 
-    <!-- 2. ASISTENCIA & HORAS (REPORTES) -->
+    <!-- 3. REPORTE T&A (ASISTENCIA & HORAS) -->
     <section id="tab-reports" class="tab-content">
       <div class="card">
-        <h3>
-          <span>Reporte de Asistencia y Liquidación</span>
+        <div class="card-header">
+          <span class="card-title">📋 Reporte de Asistencia T&A (Timesheets)</span>
           <div class="no-print" style="display: flex; gap: 8px;">
-            <button class="btn btn-secondary" onclick="window.print()">🖨️ Imprimir Planilla</button>
-            <button class="btn btn-primary" id="btnExportCSV">📥 Exportar Excel (CSV)</button>
+            <button class="btn btn-outline" onclick="window.print()">🖨️ Imprimir Planilla</button>
+            <button class="btn btn-primary" id="btnExportCSV">📥 Exportar a Excel (CSV)</button>
           </div>
-        </h3>
-        <div class="no-print" style="display: flex; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; align-items: flex-end;">
-          <div class="form-group" style="margin: 0; min-width: 220px;">
-            <label>Seleccionar Empleado:</label>
-            <select id="repEmployeeSelect" class="form-control"></select>
-          </div>
-          <div class="form-group" style="margin: 0;">
-            <label>Desde:</label>
-            <input type="date" id="repStartDate" class="form-control">
-          </div>
-          <div class="form-group" style="margin: 0;">
-            <label>Hasta:</label>
-            <input type="date" id="repEndDate" class="form-control">
-          </div>
-          <button class="btn btn-primary" id="btnRunReport" style="height: 38px;">🔍 Calcular</button>
         </div>
 
-        <!-- Resumen métricas -->
-        <div class="grid-cards" id="reportSummaryCards" style="margin-top: 16px;">
-          <div class="card" style="background: #172554;">
-            <small style="color: #93c5fd;">Total Horas Trabajadas</small>
-            <h2 id="sumTotalHours" style="font-size: 1.8rem; margin-top: 4px;">0 h</h2>
+        <div class="filter-bar no-print">
+          <div class="form-group" style="min-width: 260px;">
+            <label>Empleado:</label>
+            <select id="repEmployeeSelect" class="form-control"></select>
           </div>
-          <div class="card" style="background: #064e3b;">
-            <small style="color: #6ee7b7;">Días Presente</small>
-            <h2 id="sumDaysWorked" style="font-size: 1.8rem; margin-top: 4px;">0</h2>
+          <div class="form-group">
+            <label>Desde:</label>
+            <input type="date" id="repStartDate" class="form-control" value="2026-10-01">
           </div>
-          <div class="card" style="background: #7f1d1d;">
-            <small style="color: #fca5a5;">Faltas / Ausencias</small>
-            <h2 id="sumAbsences" style="font-size: 1.8rem; margin-top: 4px;">0</h2>
+          <div class="form-group">
+            <label>Hasta:</label>
+            <input type="date" id="repEndDate" class="form-control" value="2026-10-30">
           </div>
-          <div class="card" style="background: #78350f;">
-            <small style="color: #fde68a;">Fichadas Incompletas</small>
-            <h2 id="sumOddPunches" style="font-size: 1.8rem; margin-top: 4px;">0</h2>
+          <button class="btn btn-primary" id="btnRunReport" style="height: 35px;">🔍 Calcular Asistencia</button>
+        </div>
+
+        <!-- Resumen del Empleado -->
+        <div class="kpi-row" id="reportSummaryCards">
+          <div class="kpi-card" style="border-left: 4px solid var(--cc-primary);">
+            <div>
+              <div class="kpi-title">Total Horas Trabajadas</div>
+              <div class="kpi-value" id="sumTotalHours" style="color: var(--cc-primary);">0 h</div>
+            </div>
+          </div>
+          <div class="kpi-card" style="border-left: 4px solid var(--cc-green);">
+            <div>
+              <div class="kpi-title">Días Trabajados</div>
+              <div class="kpi-value" id="sumDaysWorked" style="color: var(--cc-green);">0</div>
+            </div>
+          </div>
+          <div class="kpi-card" style="border-left: 4px solid var(--cc-danger);">
+            <div>
+              <div class="kpi-title">Ausencias</div>
+              <div class="kpi-value" id="sumAbsences" style="color: var(--cc-danger);">0</div>
+            </div>
+          </div>
+          <div class="kpi-card" style="border-left: 4px solid var(--cc-warning);">
+            <div>
+              <div class="kpi-title">Fichadas Impares (Sin salida)</div>
+              <div class="kpi-value" id="sumOddPunches" style="color: var(--cc-warning);">0</div>
+            </div>
           </div>
         </div>
 
@@ -268,10 +663,10 @@
                 <th>Estado</th>
                 <th>Pares Entrada ➔ Salida</th>
                 <th>Sucursales</th>
-                <th>Tardanza</th>
+                <th>Llegada Tarde</th>
                 <th>Hs Normales</th>
                 <th>Hs Extra</th>
-                <th>Total Hs</th>
+                <th>Total Horas</th>
               </tr>
             </thead>
             <tbody></tbody>
@@ -280,26 +675,28 @@
       </div>
     </section>
 
-    <!-- 3. FICHADAS & RECTIFICACIÓN -->
-    <section id="tab-logs" class="tab-content">
+    <!-- 4. FICHADAS & RECTIFICACIÓN -->
+    <section id="tab-records" class="tab-content">
       <div class="card">
-        <h3>
-          <span>Historial de Fichadas y Rectificación</span>
+        <div class="card-header">
+          <span class="card-title">📑 Registro de Fichadas y Rectificación Manual</span>
           <button class="btn btn-primary" id="btnOpenNewPunchModal">➕ Agregar Fichada Manual</button>
-        </h3>
-        <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 12px;">
-          Aquí podés corregir horarios faltantes, ajustar salidas omitidas o eliminar fichadas duplicadas por error.
+        </div>
+        <p style="font-size: 0.82rem; color: var(--cc-text-secondary); margin-bottom: 12px;">
+          Permite rectificar horarios olvidados, ajustar salidas omitidas y eliminar dobles fichadas accidentales con auditoría.
         </p>
         <div class="table-container">
           <table id="tblLogs">
             <thead>
               <tr>
-                <th>ID</th>
+                <th>Legajo</th>
                 <th>Empleado</th>
-                <th>Fecha y Hora</th>
-                <th>Sucursal de Origen</th>
+                <th>Departamento</th>
+                <th>Fecha</th>
+                <th>Hora</th>
+                <th>Dispositivo / Sucursal</th>
                 <th>Método</th>
-                <th>Tipo</th>
+                <th>Origen</th>
                 <th>Acciones</th>
               </tr>
             </thead>
@@ -309,27 +706,24 @@
       </div>
     </section>
 
-    <!-- 4. EMPLEADOS (CRUD) -->
+    <!-- 5. EMPLEADOS (CRUD) -->
     <section id="tab-employees" class="tab-content">
       <div class="card">
-        <h3>
-          <span>Padrón de Empleados y Mapeo de Relojes</span>
+        <div class="card-header">
+          <span class="card-title">👥 Padrón de Empleados de Regondi srl</span>
           <button class="btn btn-primary" id="btnOpenNewEmpModal">➕ Nuevo Empleado</button>
-        </h3>
-        <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 12px;">
-          Permite mapear el legajo único del empleado con su número de ID en el Reloj Sucursal 1 y Reloj Sucursal 2.
-        </p>
+        </div>
         <div class="table-container">
           <table id="tblEmployees">
             <thead>
               <tr>
                 <th>Legajo</th>
                 <th>Nombre y Apellido</th>
-                <th>DNI</th>
-                <th>ID Reloj Suc. 1</th>
-                <th>ID Reloj Suc. 2</th>
-                <th>Tipo Horario</th>
-                <th>Turno Habitual</th>
+                <th>Departamento</th>
+                <th>Puesto / Cargo</th>
+                <th>Teléfono</th>
+                <th>Huella</th>
+                <th>PIN</th>
                 <th>Estado</th>
                 <th>Acciones</th>
               </tr>
@@ -340,46 +734,31 @@
       </div>
     </section>
 
-    <!-- 5. CONEXIÓN RELOJES ANVIZ -->
-    <section id="tab-anviz" class="tab-content">
-      <div class="grid-cards">
-        <div class="card">
-          <h3>📡 Escáner de Red Local (Puerto 5010)</h3>
-          <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 12px;">
-            Rastrea dispositivos Anviz VF30 Pro en tu red local automáticamente.
-          </p>
-          <div class="form-row">
-            <div class="form-group">
-              <label>Subred Local:</label>
-              <input type="text" id="scanSubnet" class="form-control" value="192.168.0">
-            </div>
-            <div class="form-group">
-              <label>Rango de IPs:</label>
-              <div style="display: flex; gap: 4px; align-items: center;">
-                <input type="number" id="scanStart" class="form-control" value="1" min="1" max="254">
-                <span>a</span>
-                <input type="number" id="scanEnd" class="form-control" value="254" min="1" max="254">
-              </div>
-            </div>
-          </div>
-          <button class="btn btn-primary" id="btnStartScan" style="width: 100%;">🔍 Iniciar Escaneo de Red</button>
-          <div id="scanStatus" style="margin-top: 12px; font-size: 0.85rem; color: var(--text-muted);"></div>
-          <div id="scanResults" style="margin-top: 12px;"></div>
-        </div>
+    <!-- 6. RELOJES ANVIZ & ESCÁNER -->
+    <section id="tab-devices" class="tab-content">
+      <div class="device-cards-grid" id="devicesFullList"></div>
 
-        <div class="card">
-          <h3>🏢 Sucursal 2 (a 5 cuadras) - Agente Remoto</h3>
-          <p style="color: var(--text-muted); font-size: 0.85rem; line-height: 1.4; margin-bottom: 16px;">
-            Para la sucursal remota no hace falta abrir puertos en el router. En la carpeta <code>agent/</code> generamos el recolector automático que lee el reloj por red y sube las fichadas por Internet:
-          </p>
-          <div style="background: #0f172a; padding: 12px; border-radius: 8px; font-family: monospace; font-size: 0.8rem; margin-bottom: 16px; border: 1px solid var(--card-border);">
-            📁 <b>agent/</b><br>
-            ├── <b>agent.mjs</b> (Recolector silencioso Node.js)<br>
-            ├── <b>Iniciar_Agente.bat</b> (Doble clic para arrancar)<br>
-            └── <b>agent_offline_queue.json</b> (Cola anti-cortes de Internet)
-          </div>
-          <div class="badge badge-success">✅ Tolerancia a caídas de Internet (Buffer Offline)</div>
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">🔍 Escáner de Red Local Anviz (Puerto 5010)</span>
+          <button class="btn btn-primary" id="btnStartScan">🔍 Iniciar Escaneo de Subred</button>
         </div>
+        <div class="filter-bar">
+          <div class="form-group">
+            <label>Subred:</label>
+            <input type="text" id="scanSubnet" class="form-control" value="192.168.0">
+          </div>
+          <div class="form-group">
+            <label>Rango de IPs:</label>
+            <div style="display: flex; gap: 6px; align-items: center;">
+              <input type="number" id="scanStart" class="form-control" value="200" style="width: 80px;">
+              <span>a</span>
+              <input type="number" id="scanEnd" class="form-control" value="230" style="width: 80px;">
+            </div>
+          </div>
+        </div>
+        <div id="scanStatus" style="font-size: 0.85rem; color: var(--cc-text-secondary); margin-bottom: 8px;"></div>
+        <div id="scanResults"></div>
       </div>
     </section>
   </main>
@@ -388,84 +767,56 @@
   <div class="modal-overlay" id="modalEmployee">
     <div class="modal">
       <div class="modal-header">
-        <h3 id="modalEmpTitle">Nuevo Empleado</h3>
-        <button class="close-modal" onclick="closeModal('modalEmployee')">&times;</button>
+        <h3 id="modalEmpTitle" style="font-size: 1.05rem;">Nuevo Empleado</h3>
+        <button class="btn btn-outline btn-sm" onclick="closeModal('modalEmployee')">&times;</button>
       </div>
       <form id="formEmployee">
         <input type="hidden" id="empFieldId">
-        <div class="form-group">
+        <div class="form-group" style="margin-bottom: 12px;">
           <label>Nombre y Apellido:</label>
           <input type="text" id="empFieldName" class="form-control" required placeholder="Ej: Juan Pérez">
         </div>
-        <div class="form-group">
-          <label>DNI:</label>
-          <input type="text" id="empFieldDni" class="form-control" required placeholder="Ej: 34567890">
+        <div class="form-group" style="margin-bottom: 12px;">
+          <label>Legajo / ID Reloj:</label>
+          <input type="text" id="empFieldWorkno" class="form-control" required placeholder="Ej: 3004">
         </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label>ID en Reloj Suc. 1:</label>
-            <input type="text" id="empFieldClock1" class="form-control" placeholder="Ej: 1">
-          </div>
-          <div class="form-group">
-            <label>ID en Reloj Suc. 2:</label>
-            <input type="text" id="empFieldClock2" class="form-control" placeholder="Ej: 101">
-          </div>
+        <div class="form-group" style="margin-bottom: 12px;">
+          <label>Departamento:</label>
+          <input type="text" id="empFieldDept" class="form-control" value="Regondi srl">
         </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label>Tipo de Jornada:</label>
-            <select id="empFieldSchedType" class="form-control">
-              <option value="CORRIDO">Turno Corrido</option>
-              <option value="CORTADO">Turno Cortado</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label>Horario Entrada 1:</label>
-            <input type="time" id="empFieldStart1" class="form-control" value="08:00">
-          </div>
-        </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label>Horario Salida 1:</label>
-            <input type="time" id="empFieldEnd1" class="form-control" value="17:00">
-          </div>
-          <div class="form-group">
-            <label>Estado:</label>
-            <select id="empFieldStatus" class="form-control">
-              <option value="ACTIVE">Activo</option>
-              <option value="INACTIVE">Inactivo</option>
-            </select>
-          </div>
+        <div class="form-group" style="margin-bottom: 12px;">
+          <label>Puesto / Cargo:</label>
+          <input type="text" id="empFieldPosition" class="form-control" placeholder="Ej: Control de Calidad">
         </div>
         <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 16px;">
-          <button type="button" class="btn btn-secondary" onclick="closeModal('modalEmployee')">Cancelar</button>
-          <button type="submit" class="btn btn-primary">Guardar Empleado</button>
+          <button type="button" class="btn btn-outline" onclick="closeModal('modalEmployee')">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Guardar</button>
         </div>
       </form>
     </div>
   </div>
 
-  <!-- MODAL EDITAR / AGREGAR FICHADA -->
+  <!-- MODAL RECTIFICAR FICHADA -->
   <div class="modal-overlay" id="modalPunch">
     <div class="modal">
       <div class="modal-header">
-        <h3 id="modalPunchTitle">Fichada Manual / Rectificación</h3>
-        <button class="close-modal" onclick="closeModal('modalPunch')">&times;</button>
+        <h3 id="modalPunchTitle" style="font-size: 1.05rem;">Fichada Manual / Rectificación</h3>
+        <button class="btn btn-outline btn-sm" onclick="closeModal('modalPunch')">&times;</button>
       </div>
       <form id="formPunch">
         <input type="hidden" id="punchFieldId">
-        <div class="form-group">
+        <div class="form-group" style="margin-bottom: 12px;">
           <label>Empleado:</label>
           <select id="punchFieldEmp" class="form-control" required></select>
         </div>
-        <div class="form-group">
-          <label>Sucursal:</label>
+        <div class="form-group" style="margin-bottom: 12px;">
+          <label>Sucursal / Reloj:</label>
           <select id="punchFieldBranch" class="form-control">
-            <option value="Sucursal 1 (Local)">Sucursal 1 (Local)</option>
-            <option value="Sucursal 2 (5 cuadras)">Sucursal 2 (5 cuadras)</option>
+            <option value="Neuquen 959">Neuquen 959 (Local)</option>
+            <option value="Ballarini 1111">Ballarini 1111 (5 cuadras)</option>
           </select>
         </div>
-        <div class="form-row">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
           <div class="form-group">
             <label>Fecha:</label>
             <input type="date" id="punchFieldDate" class="form-control" required>
@@ -475,12 +826,12 @@
             <input type="time" id="punchFieldTime" step="1" class="form-control" required>
           </div>
         </div>
-        <div class="form-group">
+        <div class="form-group" style="margin-bottom: 12px;">
           <label>Motivo o Nota de Auditoría:</label>
           <input type="text" id="punchFieldNote" class="form-control" placeholder="Ej: Se olvidó de fichar al salir">
         </div>
         <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 16px;">
-          <button type="button" class="btn btn-secondary" onclick="closeModal('modalPunch')">Cancelar</button>
+          <button type="button" class="btn btn-outline" onclick="closeModal('modalPunch')">Cancelar</button>
           <button type="submit" class="btn btn-primary">Guardar Fichada</button>
         </div>
       </form>

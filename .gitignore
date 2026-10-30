@@ -1,4 +1,8 @@
 node_modules
 .DS_Store
 *.log
+.env
+data/cloud_session.json
+data/crosschex_cloud_dump.json
 agent/agent_offline_queue.json
+

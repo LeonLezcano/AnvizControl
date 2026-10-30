@@ -1,0 +1,32 @@
+[
+  {
+    "id": "1930",
+    "cloudId": 15861,
+    "name": "Neuquen 959",
+    "model": "VF30PRO",
+    "serialNumber": "1630200022270042",
+    "ip": "192.168.0.218",
+    "port": 5010,
+    "department": "Regondi srl",
+    "userCount": 24,
+    "fpCount": 33,
+    "pwdCount": 15,
+    "status": "ONLINE",
+    "lastSync": "2026-10-30T17:11:27.868Z"
+  },
+  {
+    "id": "1931",
+    "cloudId": 15834,
+    "name": "Ballarini 1111",
+    "model": "VF30PRO",
+    "serialNumber": "1630200022240136",
+    "ip": "Sucursal Remota (5 cuadras • Cloud Push)",
+    "port": 5010,
+    "department": "Regondi srl",
+    "userCount": 24,
+    "fpCount": 33,
+    "pwdCount": 15,
+    "status": "ONLINE",
+    "lastSync": "2026-10-30T17:11:27.868Z"
+  }
+]

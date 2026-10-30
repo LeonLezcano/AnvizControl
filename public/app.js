@@ -1,12 +1,12 @@
 // @ts-check
 /**
- * Frontend de AnvizControl
+ * Frontend de CrossChex Control (Regondi srl)
+ * Paleta oficial de CrossChex Cloud: #05aa8c (Primario), #f0f2f5 (Fondo), fuentes de sistema limpias.
  */
 
-// Utilidades de Sanitización para prevenir XSS
 const Sanitizer = {
   escapeHTML(str) {
-    if (!str) return '';
+    if (str === null || str === undefined) return '';
     return String(str)
       .replace(/&/g, '&amp;')
       .replace(/</g, '&lt;')
@@ -18,80 +18,374 @@ const Sanitizer = {
 
 let currentEmployees = [];
 let currentLogs = [];
+let currentDevices = [];
+let lastReport = null;
 
-// Manejo de pestañas
+// Manejo de Tabs
+function switchTab(tabId) {
+  document.querySelectorAll('.nav-btn').forEach((b) => b.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach((tc) => tc.classList.remove('active'));
+
+  const btn = document.querySelector(`.nav-btn[data-tab="${tabId}"]`);
+  if (btn) btn.classList.add('active');
+
+  const content = document.getElementById(tabId);
+  if (content) content.classList.add('active');
+
+  if (tabId === 'tab-dashboard') loadDashboard();
+  if (tabId === 'tab-live') loadLiveStatus();
+  if (tabId === 'tab-reports') setupReportsTab();
+  if (tabId === 'tab-records') loadLogs();
+  if (tabId === 'tab-employees') loadEmployees();
+  if (tabId === 'tab-devices') loadDevices();
+}
+
+window.switchTab = switchTab;
+
 document.querySelectorAll('.nav-btn').forEach((btn) => {
   btn.addEventListener('click', () => {
-    document.querySelectorAll('.nav-btn').forEach((b) => b.classList.remove('active'));
-    document.querySelectorAll('.tab-content').forEach((tc) => tc.classList.remove('active'));
-
-    btn.classList.add('active');
     const tabId = btn.getAttribute('data-tab');
-    if (tabId) {
-      document.getElementById(tabId)?.classList.add('active');
-    }
-
-    if (tabId === 'tab-live') loadLiveStatus();
-    if (tabId === 'tab-logs') loadLogs();
-    if (tabId === 'tab-employees') loadEmployees();
-    if (tabId === 'tab-reports') setupReportsTab();
+    if (tabId) switchTab(tabId);
   });
 });
 
 function openModal(id) {
-  const el = document.getElementById(id);
-  if (el) el.classList.add('open');
+  document.getElementById(id)?.classList.add('open');
 }
 
 function closeModal(id) {
-  const el = document.getElementById(id);
-  if (el) el.classList.remove('open');
+  document.getElementById(id)?.classList.remove('open');
 }
 
+window.openModal = openModal;
 window.closeModal = closeModal;
 
-// 1. MONITOR EN VIVO
-async function loadLiveStatus() {
-  const tbody = document.querySelector('#tblLive tbody');
-  if (!tbody) return;
-  tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--text-muted);">Cargando estado en tiempo real...</td></tr>';
-
+// 1. CARGA DEL DASHBOARD
+async function loadDashboard() {
   try {
     const res = await fetch('/api/live');
     const data = await res.json();
     if (!data.success) throw new Error(data.error);
 
-    tbody.innerHTML = '';
-    if (data.live.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="6" style="text-align: center;">No hay empleados registrados.</td></tr>';
-      return;
+    const d = data.dashboard;
+    document.getElementById('kpiTotalExpected').textContent = String(d.totalExpected);
+    document.getElementById('kpiActualAttendance').textContent = String(d.actualAttendance);
+    document.getElementById('kpiInsideNow').textContent = String(d.insideNowCount);
+    document.getElementById('kpiTotalRecords').textContent = String(d.totalRecords);
+    document.getElementById('kpiOnlineDevices').textContent = `${d.onlineDevices} / ${d.totalDevices}`;
+
+    document.getElementById('dashTodayDate').textContent = d.todayDate;
+    document.getElementById('dashActualAttendanceNum').textContent = String(d.actualAttendance);
+    document.getElementById('dashTotalExpectedText').textContent = String(d.totalExpected);
+
+    const pct = d.totalExpected > 0 ? Math.round((d.actualAttendance / d.totalExpected) * 100) : 0;
+    document.getElementById('dashAttendancePercent').textContent = `${pct}%`;
+    const bar = document.getElementById('dashProgressBar');
+    if (bar) bar.style.width = `${pct}%`;
+
+    // Ausentes hoy
+    document.getElementById('dashAbsentCount').textContent = String(d.absentTodayCount);
+    const tagsBox = document.getElementById('dashAbsentTags');
+    if (tagsBox) {
+      if (d.absentTodayList && d.absentTodayList.length > 0) {
+        tagsBox.innerHTML = d.absentTodayList
+          .map((a) => `<span class="badge badge-danger">${Sanitizer.escapeHTML(a.name)} (${Sanitizer.escapeHTML(a.workno)})</span>`)
+          .join('');
+      } else {
+        tagsBox.innerHTML = '<span style="font-size: 0.8rem; color: var(--cc-green);">¡Asistencia completa hoy!</span>';
+      }
     }
 
-    data.live.forEach((item) => {
+    // Ayer
+    const y = d.yesterdayStats;
+    document.getElementById('dashYesterdayDate').textContent = `Jornada del ${y.date}`;
+    document.getElementById('yStatLate').textContent = String(y.late);
+    document.getElementById('yStatEarly').textContent = String(y.early);
+    document.getElementById('yStatAbsent').textContent = String(y.absent);
+    document.getElementById('yStatOvertime').textContent = String(y.overtime);
+    document.getElementById('yStatException').textContent = String(y.exception);
+
+    // Cargar tarjetas de dispositivos
+    await loadDevices(true);
+  } catch (err) {
+    console.error('Error cargando dashboard:', err);
+  }
+}
+
+// 2. DISPOSITIVOS ANVIZ
+async function loadDevices(mini = false) {
+  try {
+    const res = await fetch('/api/devices');
+    const data = await res.json();
+    if (!data.success) throw new Error(data.error);
+
+    currentDevices = data.devices;
+    const containers = mini ? [document.getElementById('dashDeviceCards')] : [document.getElementById('devicesFullList'), document.getElementById('dashDeviceCards')];
+
+    containers.forEach((box) => {
+      if (!box) return;
+      box.innerHTML = currentDevices.map((dev) => `
+        <div class="device-box">
+          <div class="device-header">
+            <div>
+              <div class="device-name">${Sanitizer.escapeHTML(dev.name)}</div>
+              <div class="device-model">${Sanitizer.escapeHTML(dev.model)} • S/N: <code>${Sanitizer.escapeHTML(dev.serialNumber)}</code></div>
+            </div>
+            <span class="badge ${dev.status === 'ONLINE' ? 'badge-success' : 'badge-danger'}">
+              ${dev.status === 'ONLINE' ? '🟢 En Línea' : '🔴 Desconectado'}
+            </span>
+          </div>
+          <div style="font-size: 0.8rem; color: var(--cc-text-regular); line-height: 1.5;">
+            <div>🏢 <b>Ubicación:</b> ${Sanitizer.escapeHTML(dev.department)}</div>
+            <div>🌐 <b>Conexión:</b> ${Sanitizer.escapeHTML(dev.ip)} (Puerto ${dev.port})</div>
+          </div>
+          <div class="device-metrics">
+            <div>Usuarios<b>${dev.userCount}</b></div>
+            <div>Huellas<b>${dev.fpCount}</b></div>
+            <div>PIN/Pass<b>${dev.pwdCount}</b></div>
+            <div>Device ID<b>${Sanitizer.escapeHTML(dev.id)}</b></div>
+          </div>
+        </div>
+      `).join('');
+    });
+  } catch (err) {
+    console.error('Error cargando dispositivos:', err);
+  }
+}
+
+// 3. MONITOR EN VIVO
+async function loadLiveStatus() {
+  const tbody = document.querySelector('#tblLive tbody');
+  if (!tbody) return;
+  tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; color: var(--cc-text-secondary);">Consultando presencia en tiempo real...</td></tr>';
+
+  try {
+    const dateInput = document.getElementById('liveDateFilter');
+    const dateQuery = dateInput && dateInput.value ? `?date=${dateInput.value}` : '';
+    const res = await fetch(`/api/live${dateQuery}`);
+    const data = await res.json();
+    if (!data.success) throw new Error(data.error);
+
+    tbody.innerHTML = '';
+    data.live.forEach((emp) => {
       const tr = document.createElement('tr');
-      const badgeClass = item.status === 'PRESENTE' ? 'badge-success' : item.status === 'RETIRADO' ? 'badge-warning' : 'badge-info';
-      const statusLabel = item.status === 'PRESENTE' ? '🟢 Presente' : item.status === 'RETIRADO' ? '🟡 Retirado' : '⚪ Sin fichar hoy';
+      const badge = emp.status === 'PRESENTE' ? '<span class="badge badge-success">🟢 Adentro</span>' : emp.status === 'RETIRADO' ? '<span class="badge badge-warning">🟡 Retirado</span>' : '<span class="badge badge-info">⚪ Sin Fichar</span>';
 
       tr.innerHTML = `
-        <td><strong>${Sanitizer.escapeHTML(item.name)}</strong></td>
-        <td>${Sanitizer.escapeHTML(item.dni)}</td>
-        <td><span class="badge ${badgeClass}">${statusLabel}</span></td>
-        <td>${Sanitizer.escapeHTML(item.lastBranch || '-')}</td>
-        <td>${Sanitizer.escapeHTML(item.lastPunchTime || '-')}</td>
-        <td><span class="badge badge-info">${item.todayPunchesCount} fichadas</span></td>
+        <td><b>${Sanitizer.escapeHTML(emp.workno)}</b></td>
+        <td><strong>${Sanitizer.escapeHTML(emp.name)}</strong></td>
+        <td><small>${Sanitizer.escapeHTML(emp.department)}</small></td>
+        <td>${badge}</td>
+        <td>${Sanitizer.escapeHTML(emp.firstPunchTime || '-')}</td>
+        <td>${Sanitizer.escapeHTML(emp.lastPunchTime ? emp.lastPunchTime.slice(0, 5) : '-')}</td>
+        <td><span class="badge badge-primary">${Sanitizer.escapeHTML(emp.lastBranch || '-')}</span></td>
+        <td><b>${emp.todayPunchesCount}</b> fichadas</td>
       `;
       tbody.appendChild(tr);
     });
   } catch (err) {
-    tbody.innerHTML = `<tr><td colspan="6" style="color: var(--danger);">Error cargando monitor: ${Sanitizer.escapeHTML(err.message)}</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="8" style="color: var(--cc-danger);">Error: ${Sanitizer.escapeHTML(err.message)}</td></tr>`;
   }
 }
 
-// 2. EMPLEADOS CRUD
+// 4. REPORTES T&A
+function setupReportsTab() {
+  const select = document.getElementById('repEmployeeSelect');
+  if (!select) return;
+
+  select.innerHTML = currentEmployees.map((e) => `
+    <option value="${e.id}">${Sanitizer.escapeHTML(e.name)} (Legajo: ${Sanitizer.escapeHTML(e.workno)})</option>
+  `).join('');
+
+  if (currentEmployees.length > 0) {
+    runReport();
+  }
+}
+
+async function runReport() {
+  const empId = document.getElementById('repEmployeeSelect')?.value;
+  const start = document.getElementById('repStartDate')?.value;
+  const end = document.getElementById('repEndDate')?.value;
+  const tbody = document.querySelector('#tblReportDetails tbody');
+  if (!tbody || !empId) return;
+
+  tbody.innerHTML = '<tr><td colspan="9" style="text-align: center;">Calculando asistencia de ambas sucursales...</td></tr>';
+
+  try {
+    const res = await fetch(`/api/reports/attendance?employeeId=${empId}&startDate=${start}&endDate=${end}`);
+    const data = await res.json();
+    if (!data.success) throw new Error(data.error);
+
+    lastReport = data.report;
+    const r = data.report;
+
+    document.getElementById('sumTotalHours').textContent = `${r.summary.totalHours} h`;
+    document.getElementById('sumDaysWorked').textContent = String(r.summary.daysWorked);
+    document.getElementById('sumAbsences').textContent = String(r.summary.absentDays);
+    document.getElementById('sumOddPunches').textContent = String(r.summary.oddPunchDays);
+
+    tbody.innerHTML = '';
+    const dayNames = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
+
+    r.days.forEach((d) => {
+      const tr = document.createElement('tr');
+      const dObj = new Date(d.date + 'T12:00:00Z');
+      const dName = dayNames[dObj.getUTCDay()];
+
+      let badge = '<span class="badge badge-success">OK</span>';
+      if (d.status === 'AUSENTE') badge = '<span class="badge badge-danger">Ausente</span>';
+      if (d.status === 'FRANCO') badge = '<span class="badge badge-info">Franco</span>';
+      if (d.status === 'FICHADA_INCOMPLETA') badge = '<span class="badge badge-warning">⚠️ Fichada Impar</span>';
+      if (d.status === 'LLEGADA_TARDE') badge = `<span class="badge badge-warning">Tarde (+${d.lateMinutes}m)</span>`;
+
+      let pairsHtml = '-';
+      if (d.pairs && d.pairs.length > 0) {
+        pairsHtml = d.pairs.map((p) => {
+          const inT = p.in ? p.in.localTime : '?';
+          const outT = p.out ? p.out.localTime : '<span style="color:var(--cc-danger); font-weight:600;">Sin Salida</span>';
+          return `<b>${inT}</b> ➔ <b>${outT}</b>`;
+        }).join('<br>');
+      }
+
+      tr.innerHTML = `
+        <td><b>${Sanitizer.escapeHTML(d.date)}</b></td>
+        <td>${dName}</td>
+        <td>${badge}</td>
+        <td>${pairsHtml}</td>
+        <td><small>${Sanitizer.escapeHTML(d.branchesVisited.join(', ') || '-')}</small></td>
+        <td>${d.lateMinutes > 0 ? `+${d.lateMinutes}m` : '-'}</td>
+        <td>${d.normalHours} h</td>
+        <td>${d.overtimeHours > 0 ? `<b style="color:var(--cc-purple)">+${d.overtimeHours} h</b>` : '-'}</td>
+        <td><b>${d.hoursWorked} h</b></td>
+      `;
+      tbody.appendChild(tr);
+    });
+  } catch (err) {
+    tbody.innerHTML = `<tr><td colspan="9" style="color: var(--cc-danger);">Error: ${Sanitizer.escapeHTML(err.message)}</td></tr>`;
+  }
+}
+
+// 5. REGISTROS & FICHADAS (RECTIFICACIÓN)
+async function loadLogs() {
+  const tbody = document.querySelector('#tblLogs tbody');
+  if (!tbody) return;
+  tbody.innerHTML = '<tr><td colspan="9" style="text-align: center;">Cargando fichadas...</td></tr>';
+
+  try {
+    const res = await fetch('/api/logs');
+    const data = await res.json();
+    if (!data.success) throw new Error(data.error);
+
+    currentLogs = data.logs;
+    tbody.innerHTML = '';
+    const sorted = [...currentLogs].reverse().slice(0, 300);
+
+    sorted.forEach((l) => {
+      const tr = document.createElement('tr');
+      const originBadge = l.manual ? '<span class="badge badge-warning">✏️ Manual / Editada</span>' : '<span class="badge badge-success">🤖 Anviz Reloj</span>';
+
+      tr.innerHTML = `
+        <td><b>${Sanitizer.escapeHTML(l.workno || l.userCode)}</b></td>
+        <td><strong>${Sanitizer.escapeHTML(l.employeeName)}</strong></td>
+        <td><small>${Sanitizer.escapeHTML(l.department || 'Regondi srl')}</small></td>
+        <td>${Sanitizer.escapeHTML(l.localDate)}</td>
+        <td><b>${Sanitizer.escapeHTML(l.localTime)}</b></td>
+        <td><span class="badge badge-primary">${Sanitizer.escapeHTML(l.branch)}</span></td>
+        <td>${Sanitizer.escapeHTML(l.verifyDesc)}</td>
+        <td>${originBadge}</td>
+        <td>
+          <button class="btn btn-outline btn-sm" onclick="editPunch('${l.id}')">✏️</button>
+          <button class="btn btn-danger-outline btn-sm" onclick="deletePunch('${l.id}')">🗑️</button>
+        </td>
+      `;
+      tbody.appendChild(tr);
+    });
+  } catch (err) {
+    tbody.innerHTML = `<tr><td colspan="9" style="color: var(--cc-danger);">Error: ${Sanitizer.escapeHTML(err.message)}</td></tr>`;
+  }
+}
+
+window.editPunch = function(id) {
+  const p = currentLogs.find((l) => l.id === id);
+  if (!p) return;
+
+  document.getElementById('modalPunchTitle').textContent = 'Rectificar Fichada';
+  document.getElementById('punchFieldId').value = p.id;
+  document.getElementById('punchFieldBranch').value = p.branch;
+  document.getElementById('punchFieldDate').value = p.localDate;
+  document.getElementById('punchFieldTime').value = p.localTime;
+  document.getElementById('punchFieldNote').value = p.note || '';
+
+  const select = document.getElementById('punchFieldEmp');
+  if (select) {
+    select.innerHTML = currentEmployees.map((e) => `
+      <option value="${e.id}" ${e.id === p.employeeId || e.workno === p.userCode ? 'selected' : ''}>
+        ${Sanitizer.escapeHTML(e.name)} (${Sanitizer.escapeHTML(e.workno)})
+      </option>
+    `).join('');
+  }
+
+  openModal('modalPunch');
+};
+
+window.deletePunch = async function(id) {
+  if (!confirm('¿Seguro que deseas eliminar esta fichada?')) return;
+  try {
+    const res = await fetch(`/api/logs/${id}`, { method: 'DELETE' });
+    const data = await res.json();
+    if (!data.success) throw new Error(data.error);
+    loadLogs();
+  } catch (err) {
+    alert('Error al borrar: ' + err.message);
+  }
+};
+
+document.getElementById('formPunch')?.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const id = document.getElementById('punchFieldId').value;
+  const empId = document.getElementById('punchFieldEmp').value;
+  const emp = currentEmployees.find((x) => x.id === empId);
+
+  const branch = document.getElementById('punchFieldBranch').value;
+  const dateVal = document.getElementById('punchFieldDate').value;
+  const timeVal = document.getElementById('punchFieldTime').value;
+  const note = document.getElementById('punchFieldNote').value;
+
+  const fullTimestamp = new Date(`${dateVal}T${timeVal}-03:00`).toISOString();
+
+  try {
+    if (id) {
+      await fetch(`/api/logs/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ timestamp: fullTimestamp, branch, note })
+      });
+    } else {
+      await fetch('/api/logs', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userCode: emp ? emp.workno : '1',
+          branch,
+          timestamp: fullTimestamp,
+          verifyDesc: 'Manual',
+          manual: true,
+          note
+        })
+      });
+    }
+    closeModal('modalPunch');
+    loadLogs();
+  } catch (err) {
+    alert('Error: ' + err.message);
+  }
+});
+
+// 6. EMPLEADOS (CRUD)
 async function loadEmployees() {
   const tbody = document.querySelector('#tblEmployees tbody');
   if (!tbody) return;
-  tbody.innerHTML = '<tr><td colspan="9" style="text-align: center;">Cargando empleados...</td></tr>';
+  tbody.innerHTML = '<tr><td colspan="9" style="text-align: center;">Cargando personal...</td></tr>';
 
   try {
     const res = await fetch('/api/employees');
@@ -103,40 +397,24 @@ async function loadEmployees() {
 
     currentEmployees.forEach((emp) => {
       const tr = document.createElement('tr');
-      const statusBadge = emp.status === 'ACTIVE' ? '<span class="badge badge-success">Activo</span>' : '<span class="badge badge-danger">Inactivo</span>';
-
       tr.innerHTML = `
-        <td><code>${Sanitizer.escapeHTML(emp.id)}</code></td>
+        <td><b>${Sanitizer.escapeHTML(emp.workno)}</b></td>
         <td><strong>${Sanitizer.escapeHTML(emp.name)}</strong></td>
-        <td>${Sanitizer.escapeHTML(emp.dni)}</td>
-        <td><span class="badge badge-info">ID: ${Sanitizer.escapeHTML(emp.clockIdBranch1 || 'N/A')}</span></td>
-        <td><span class="badge badge-info">ID: ${Sanitizer.escapeHTML(emp.clockIdBranch2 || 'N/A')}</span></td>
-        <td>${emp.scheduleType === 'CORTADO' ? 'Cortado (2 tramos)' : 'Corrido (1 tramo)'}</td>
-        <td>${Sanitizer.escapeHTML(emp.shiftStart1)} - ${Sanitizer.escapeHTML(emp.shiftEnd1)}</td>
-        <td>${statusBadge}</td>
+        <td>${Sanitizer.escapeHTML(emp.department || 'Regondi srl')}</td>
+        <td>${Sanitizer.escapeHTML(emp.position || '-')}</td>
+        <td>${Sanitizer.escapeHTML(emp.tel || '-')}</td>
+        <td>${emp.hasFinger ? '✅' : '❌'}</td>
+        <td>${emp.hasPassd ? '✅' : '❌'}</td>
+        <td><span class="badge badge-success">Activo</span></td>
         <td>
-          <button class="btn btn-secondary btn-sm" onclick="editEmployee('${emp.id}')">✏️</button>
-          <button class="btn btn-danger btn-sm" onclick="deleteEmployee('${emp.id}')">🗑️</button>
+          <button class="btn btn-outline btn-sm" onclick="editEmployee('${emp.id}')">✏️</button>
+          <button class="btn btn-danger-outline btn-sm" onclick="deleteEmployee('${emp.id}')">🗑️</button>
         </td>
       `;
       tbody.appendChild(tr);
     });
-
-    populateEmployeeDropdowns();
   } catch (err) {
-    tbody.innerHTML = `<tr><td colspan="9" style="color: var(--danger);">Error: ${Sanitizer.escapeHTML(err.message)}</td></tr>`;
-  }
-}
-
-function populateEmployeeDropdowns() {
-  const repSelect = document.getElementById('repEmployeeSelect');
-  const punchSelect = document.getElementById('punchFieldEmp');
-
-  if (repSelect) {
-    repSelect.innerHTML = currentEmployees.map((e) => `<option value="${e.id}">${Sanitizer.escapeHTML(e.name)} (DNI: ${Sanitizer.escapeHTML(e.dni)})</option>`).join('');
-  }
-  if (punchSelect) {
-    punchSelect.innerHTML = currentEmployees.map((e) => `<option value="${e.id}">${Sanitizer.escapeHTML(e.name)}</option>`).join('');
+    tbody.innerHTML = `<tr><td colspan="9" style="color: var(--cc-danger);">Error: ${Sanitizer.escapeHTML(err.message)}</td></tr>`;
   }
 }
 
@@ -147,19 +425,15 @@ window.editEmployee = function(id) {
   document.getElementById('modalEmpTitle').textContent = 'Editar Empleado';
   document.getElementById('empFieldId').value = emp.id;
   document.getElementById('empFieldName').value = emp.name;
-  document.getElementById('empFieldDni').value = emp.dni;
-  document.getElementById('empFieldClock1').value = emp.clockIdBranch1 || '';
-  document.getElementById('empFieldClock2').value = emp.clockIdBranch2 || '';
-  document.getElementById('empFieldSchedType').value = emp.scheduleType || 'CORRIDO';
-  document.getElementById('empFieldStart1').value = emp.shiftStart1 || '08:00';
-  document.getElementById('empFieldEnd1').value = emp.shiftEnd1 || '17:00';
-  document.getElementById('empFieldStatus').value = emp.status || 'ACTIVE';
+  document.getElementById('empFieldWorkno').value = emp.workno;
+  document.getElementById('empFieldDept').value = emp.department || 'Regondi srl';
+  document.getElementById('empFieldPosition').value = emp.position || '';
 
   openModal('modalEmployee');
 };
 
 window.deleteEmployee = async function(id) {
-  if (!confirm('¿Estás seguro de eliminar este empleado?')) return;
+  if (!confirm('¿Seguro que deseas dar de baja este empleado?')) return;
   try {
     const res = await fetch(`/api/employees/${id}`, { method: 'DELETE' });
     const data = await res.json();
@@ -170,25 +444,14 @@ window.deleteEmployee = async function(id) {
   }
 };
 
-document.getElementById('btnOpenNewEmpModal')?.addEventListener('click', () => {
-  document.getElementById('modalEmpTitle').textContent = 'Nuevo Empleado';
-  document.getElementById('formEmployee').reset();
-  document.getElementById('empFieldId').value = '';
-  openModal('modalEmployee');
-});
-
 document.getElementById('formEmployee')?.addEventListener('submit', async (e) => {
   e.preventDefault();
   const empData = {
     id: document.getElementById('empFieldId').value || undefined,
     name: document.getElementById('empFieldName').value,
-    dni: document.getElementById('empFieldDni').value,
-    clockIdBranch1: document.getElementById('empFieldClock1').value,
-    clockIdBranch2: document.getElementById('empFieldClock2').value,
-    scheduleType: document.getElementById('empFieldSchedType').value,
-    shiftStart1: document.getElementById('empFieldStart1').value,
-    shiftEnd1: document.getElementById('empFieldEnd1').value,
-    status: document.getElementById('empFieldStatus').value
+    workno: document.getElementById('empFieldWorkno').value,
+    department: document.getElementById('empFieldDept').value,
+    position: document.getElementById('empFieldPosition').value
   };
 
   try {
@@ -202,252 +465,70 @@ document.getElementById('formEmployee')?.addEventListener('submit', async (e) =>
     closeModal('modalEmployee');
     loadEmployees();
   } catch (err) {
-    alert('Error al guardar empleado: ' + err.message);
+    alert('Error: ' + err.message);
   }
 });
 
-// 3. FICHADAS & RECTIFICACIÓN
-async function loadLogs() {
-  const tbody = document.querySelector('#tblLogs tbody');
-  if (!tbody) return;
-  tbody.innerHTML = '<tr><td colspan="7" style="text-align: center;">Cargando fichadas...</td></tr>';
-
+// Botón Probar Enlace Local con Reloj Anviz Neuquen 959
+document.getElementById('btnTestClockDirect')?.addEventListener('click', async () => {
+  alert('Probando comunicación TCP directa con Anviz Neuquen 959 (192.168.0.218:5010)...');
   try {
-    const res = await fetch('/api/logs');
-    const data = await res.json();
-    if (!data.success) throw new Error(data.error);
-
-    currentLogs = data.logs;
-    tbody.innerHTML = '';
-
-    if (currentLogs.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="7" style="text-align: center;">No hay fichadas registradas.</td></tr>';
-      return;
-    }
-
-    // Mostrar de más recientes a más antiguas
-    const sorted = [...currentLogs].reverse();
-
-    sorted.forEach((l) => {
-      const tr = document.createElement('tr');
-      const dateFormatted = new Date(l.timestamp).toLocaleString('es-AR');
-      const originBadge = l.manual ? '<span class="badge badge-warning">✏️ Manual / Rectificada</span>' : '<span class="badge badge-success">🤖 Anviz Reloj</span>';
-
-      tr.innerHTML = `
-        <td><small><code>${Sanitizer.escapeHTML(l.id)}</code></small></td>
-        <td><strong>${Sanitizer.escapeHTML(l.employeeName)}</strong></td>
-        <td>${Sanitizer.escapeHTML(dateFormatted)}</td>
-        <td>${Sanitizer.escapeHTML(l.branch)}</td>
-        <td>${Sanitizer.escapeHTML(l.verifyDesc || 'Huella')}</td>
-        <td>${originBadge}</td>
-        <td>
-          <button class="btn btn-secondary btn-sm" onclick="editPunch('${l.id}')">✏️ Rectificar</button>
-          <button class="btn btn-danger btn-sm" onclick="deletePunch('${l.id}')">🗑️</button>
-        </td>
-      `;
-      tbody.appendChild(tr);
+    const res = await fetch('/api/scanner/test-host', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ip: '192.168.0.218', port: 5010 })
     });
-  } catch (err) {
-    tbody.innerHTML = `<tr><td colspan="7" style="color: var(--danger);">Error: ${Sanitizer.escapeHTML(err.message)}</td></tr>`;
-  }
-}
-
-window.editPunch = function(id) {
-  const punch = currentLogs.find((l) => l.id === id);
-  if (!punch) return;
-
-  const dt = new Date(punch.timestamp);
-  const dateStr = dt.toISOString().slice(0, 10);
-  const timeStr = dt.toTimeString().slice(0, 8);
-
-  document.getElementById('modalPunchTitle').textContent = 'Rectificar Fichada';
-  document.getElementById('punchFieldId').value = punch.id;
-  document.getElementById('punchFieldBranch').value = punch.branch || 'Sucursal 1 (Local)';
-  document.getElementById('punchFieldDate').value = dateStr;
-  document.getElementById('punchFieldTime').value = timeStr;
-  document.getElementById('punchFieldNote').value = punch.note || '';
-
-  if (punch.employeeId) {
-    document.getElementById('punchFieldEmp').value = punch.employeeId;
-  }
-
-  openModal('modalPunch');
-};
-
-window.deletePunch = async function(id) {
-  if (!confirm('¿Estás seguro de eliminar esta fichada?')) return;
-  try {
-    const res = await fetch(`/api/logs/${id}`, { method: 'DELETE' });
     const data = await res.json();
-    if (!data.success) throw new Error(data.error);
-    loadLogs();
-  } catch (err) {
-    alert('Error al borrar fichada: ' + err.message);
-  }
-};
-
-document.getElementById('btnOpenNewPunchModal')?.addEventListener('click', () => {
-  document.getElementById('modalPunchTitle').textContent = 'Nueva Fichada Manual';
-  document.getElementById('formPunch').reset();
-  document.getElementById('punchFieldId').value = '';
-  const now = new Date();
-  document.getElementById('punchFieldDate').value = now.toISOString().slice(0, 10);
-  document.getElementById('punchFieldTime').value = now.toTimeString().slice(0, 8);
-  openModal('modalPunch');
-});
-
-document.getElementById('formPunch')?.addEventListener('submit', async (e) => {
-  e.preventDefault();
-  const punchId = document.getElementById('punchFieldId').value;
-  const empId = document.getElementById('punchFieldEmp').value;
-  const emp = currentEmployees.find((x) => x.id === empId);
-
-  const branch = document.getElementById('punchFieldBranch').value;
-  const dateVal = document.getElementById('punchFieldDate').value;
-  const timeVal = document.getElementById('punchFieldTime').value;
-  const note = document.getElementById('punchFieldNote').value;
-
-  const fullTimestamp = new Date(`${dateVal}T${timeVal}`).toISOString();
-  // Obtener el ID que este empleado tiene en esa sucursal
-  const userCode = branch.includes('2') ? (emp?.clockIdBranch2 || '1') : (emp?.clockIdBranch1 || '1');
-
-  try {
-    if (punchId) {
-      // Edición / Rectificación
-      const res = await fetch(`/api/logs/${punchId}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ timestamp: fullTimestamp, branch, note })
-      });
-      const data = await res.json();
-      if (!data.success) throw new Error(data.error);
+    if (data.result && data.result.found) {
+      alert(`¡Éxito de Conexión!\n${data.result.info}\nDevice ID: ${data.result.devId}`);
     } else {
-      // Alta manual
-      const res = await fetch('/api/logs', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          userCode,
-          branch,
-          timestamp: fullTimestamp,
-          verifyDesc: 'Manual',
-          manual: true,
-          note
-        })
-      });
-      const data = await res.json();
-      if (!data.success) throw new Error(data.error);
+      alert('No se pudo establecer el enlace con el reloj.');
     }
-    closeModal('modalPunch');
-    loadLogs();
-  } catch (err) {
-    alert('Error al guardar fichada: ' + err.message);
+  } catch (e) {
+    alert('Error: ' + e.message);
   }
 });
 
-// 4. REPORTES & HORAS
-let lastCalculatedReport = null;
-
-function setupReportsTab() {
-  const now = new Date();
-  const firstDay = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().slice(0, 10);
-  const todayStr = now.toISOString().slice(0, 10);
-
-  const startInp = document.getElementById('repStartDate');
-  const endInp = document.getElementById('repEndDate');
-  if (startInp && !startInp.value) startInp.value = firstDay;
-  if (endInp && !endInp.value) endInp.value = todayStr;
-
-  populateEmployeeDropdowns();
-}
-
-async function runReport() {
-  const empId = document.getElementById('repEmployeeSelect').value;
-  const start = document.getElementById('repStartDate').value;
-  const end = document.getElementById('repEndDate').value;
-  const tbody = document.querySelector('#tblReportDetails tbody');
-  if (!tbody || !empId) return;
-
-  tbody.innerHTML = '<tr><td colspan="9" style="text-align: center;">Calculando asistencia de ambas sucursales...</td></tr>';
-
+// Sincronizar con CrossChex Cloud
+document.getElementById('btnSyncCloud')?.addEventListener('click', async () => {
+  const btn = document.getElementById('btnSyncCloud');
+  if (btn) btn.textContent = '⏳ Sincronizando...';
   try {
-    const res = await fetch(`/api/reports/attendance?employeeId=${empId}&startDate=${start}&endDate=${end}`);
+    const res = await fetch('/api/cloud/sync', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ startDate: '2026-10-01T00:00:00-03:00', endDate: '2026-10-30T23:59:59-03:00' })
+    });
     const data = await res.json();
     if (!data.success) throw new Error(data.error);
-
-    lastCalculatedReport = data.report;
-    const rep = data.report;
-
-    // Actualizar métricas
-    document.getElementById('sumTotalHours').textContent = `${rep.summary.totalHours} h`;
-    document.getElementById('sumDaysWorked').textContent = String(rep.summary.daysWorked);
-    document.getElementById('sumAbsences').textContent = String(rep.summary.absentDays);
-    document.getElementById('sumOddPunches').textContent = String(rep.summary.oddPunchDays);
-
-    tbody.innerHTML = '';
-    const dayNames = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
-
-    rep.days.forEach((d) => {
-      const tr = document.createElement('tr');
-      const dObj = new Date(d.date + 'T00:00:00');
-      const dayName = dayNames[dObj.getDay()];
-
-      let statusBadge = '<span class="badge badge-success">OK</span>';
-      if (d.status === 'AUSENTE') statusBadge = '<span class="badge badge-danger">Ausente</span>';
-      if (d.status === 'FRANCO') statusBadge = '<span class="badge badge-info">Franco</span>';
-      if (d.status === 'FICHADA_INCOMPLETA') statusBadge = '<span class="badge badge-warning">⚠️ Fichada Impar</span>';
-      if (d.status === 'LLEGADA_TARDE') statusBadge = `<span class="badge badge-warning">Tarde (+${d.lateMinutes}m)</span>`;
-
-      // Pares
-      let pairsHtml = '-';
-      if (d.pairs && d.pairs.length > 0) {
-        pairsHtml = d.pairs.map((p) => {
-          const inT = p.in ? p.in.timestamp.slice(11, 16) : '?';
-          const outT = p.out ? p.out.timestamp.slice(11, 16) : '<span style="color:var(--danger)">Falta Salida</span>';
-          return `<b>${inT}</b> ➔ <b>${outT}</b>`;
-        }).join('<br>');
-      }
-
-      const branches = d.branchesVisited.length > 0 ? d.branchesVisited.join(', ') : '-';
-
-      tr.innerHTML = `
-        <td><strong>${Sanitizer.escapeHTML(d.date)}</strong></td>
-        <td>${dayName}</td>
-        <td>${statusBadge}</td>
-        <td>${pairsHtml}</td>
-        <td><small>${Sanitizer.escapeHTML(branches)}</small></td>
-        <td>${d.lateMinutes > 0 ? `+${d.lateMinutes} min` : '-'}</td>
-        <td>${d.normalHours} h</td>
-        <td>${d.overtimeHours > 0 ? `<b style="color:var(--warning)">+${d.overtimeHours} h</b>` : '-'}</td>
-        <td><strong>${d.hoursWorked} h</strong></td>
-      `;
-      tbody.appendChild(tr);
-    });
-  } catch (err) {
-    tbody.innerHTML = `<tr><td colspan="9" style="color: var(--danger);">Error: ${Sanitizer.escapeHTML(err.message)}</td></tr>`;
+    alert(`¡Sincronización Cloud Exitosa!\n• Dispositivos: ${data.result.devicesCount}\n• Empleados: ${data.result.employeesSynced}\n• Fichadas Totales: ${data.result.recordsTotal}`);
+    loadDashboard();
+  } catch (e) {
+    alert('Aviso de sincronización: ' + e.message);
+  } finally {
+    if (btn) btn.textContent = '🔄 Sincronizar Cloud';
   }
-}
+});
 
-document.getElementById('btnRunReport')?.addEventListener('click', runReport);
-
-// Exportar CSV nativo con BOM UTF-8 (Compatible directo con Excel)
+// Exportar CSV nativo con BOM UTF-8
 document.getElementById('btnExportCSV')?.addEventListener('click', () => {
-  if (!lastCalculatedReport) {
-    alert('Primero calculá un reporte para exportar');
+  if (!lastReport) {
+    alert('Primero calcula un reporte');
     return;
   }
-
-  const rep = lastCalculatedReport;
-  const headers = ['Fecha', 'Dia', 'Estado', 'Horas Normales', 'Horas Extra', 'Total Horas', 'Sucursales'];
+  const r = lastReport;
+  const headers = ['Fecha', 'Dia', 'Estado', 'Entrada', 'Salida', 'Hs Normales', 'Hs Extra', 'Total Hs', 'Sucursales'];
   const rows = [headers];
-
   const dayNames = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
-  rep.days.forEach((d) => {
-    const dObj = new Date(d.date + 'T00:00:00');
+
+  r.days.forEach((d) => {
+    const dObj = new Date(d.date + 'T12:00:00Z');
     rows.push([
       d.date,
-      dayNames[dObj.getDay()],
+      dayNames[dObj.getUTCDay()],
       d.status,
+      d.firstIn || '-',
+      d.lastOut || '-',
       String(d.normalHours),
       String(d.overtimeHours),
       String(d.hoursWorked),
@@ -460,51 +541,13 @@ document.getElementById('btnExportCSV')?.addEventListener('click', () => {
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
-  a.download = `Reporte_${rep.employee.name.replace(/\s+/g, '_')}_${rep.range.startDate}_${rep.range.endDate}.csv`;
+  a.download = `Reporte_${r.employee.name.replace(/\s+/g, '_')}_${r.range.startDate}_${r.range.endDate}.csv`;
   a.click();
   URL.revokeObjectURL(url);
 });
 
-// 5. ESCÁNER ANVIZ
-document.getElementById('btnStartScan')?.addEventListener('click', async () => {
-  const subnet = document.getElementById('scanSubnet').value;
-  const start = document.getElementById('scanStart').value;
-  const end = document.getElementById('scanEnd').value;
-  const statusDiv = document.getElementById('scanStatus');
-  const resDiv = document.getElementById('scanResults');
-
-  statusDiv.textContent = `Escaneando subred ${subnet}.${start} a ${subnet}.${end} en puerto 5010...`;
-  resDiv.innerHTML = '';
-
-  try {
-    const res = await fetch('/api/scanner/run', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ subnet, start, end })
-    });
-    const data = await res.json();
-    if (!data.success) throw new Error(data.error);
-
-    statusDiv.textContent = `Escaneo finalizado. Se encontraron ${data.found.length} dispositivo(s).`;
-    if (data.found.length === 0) {
-      resDiv.innerHTML = '<div style="color: var(--text-muted); font-size: 0.85rem;">No se detectaron dispositivos Anviz respondiendo en este rango. Si conocés la IP exacta, podés configurarla en el archivo de configuración.</div>';
-    } else {
-      resDiv.innerHTML = data.found.map((f) => `
-        <div style="background: rgba(34,197,94,0.1); border: 1px solid var(--success); padding: 12px; border-radius: 8px; margin-top: 8px;">
-          🟢 <b>Anviz Detectado en ${Sanitizer.escapeHTML(f.ip)}:${f.port}</b><br>
-          <small>Device ID: ${f.devId || 1} • Info: ${Sanitizer.escapeHTML(f.info || 'Anviz Biometric')}</small>
-        </div>
-      `).join('');
-    }
-  } catch (err) {
-    statusDiv.textContent = 'Error en escaneo: ' + err.message;
-  }
-});
-
-document.getElementById('btnRefreshLive')?.addEventListener('click', loadLiveStatus);
-
-// Carga inicial
+// Inicialización
 (async function init() {
   await loadEmployees();
-  await loadLiveStatus();
+  await loadDashboard();
 })();

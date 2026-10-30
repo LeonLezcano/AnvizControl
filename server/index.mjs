@@ -5,16 +5,12 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { AnvizProtocolEngine } from '../engine/AnvizProtocolEngine.mjs';
 import { AnvizNetworkScanner } from '../engine/AnvizNetworkScanner.mjs';
-import { AttendanceEngine } from '../engine/AttendanceEngine.mjs';
-import { seedDemoDataIfEmpty } from '../engine/SeedData.mjs';
+import { AttendanceEngine, toArgentinaLocal } from '../engine/AttendanceEngine.mjs';
+import { CrossChexCloudEngine } from '../engine/CrossChexCloudEngine.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const PUBLIC_DIR = path.resolve(__dirname, '../public');
-
-// Inicializar demo
-seedDemoDataIfEmpty();
-
 const PORT = process.env.PORT || 3000;
 
 function sendJson(res, statusCode, data) {
@@ -22,7 +18,7 @@ function sendJson(res, statusCode, data) {
     'Content-Type': 'application/json; charset=utf-8',
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type, Authorization'
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization, x-token'
   });
   res.end(JSON.stringify(data));
 }
@@ -33,7 +29,6 @@ function parseBody(req) {
     req.on('data', (chunk) => {
       body += chunk;
       if (body.length > 5 * 1024 * 1024) {
-        // Protección contra desbordamiento de memoria
         req.destroy();
         reject(new Error('Payload demasiado grande'));
       }
@@ -56,16 +51,16 @@ const MIME_TYPES = {
   '.mjs': 'application/javascript; charset=utf-8',
   '.json': 'application/json; charset=utf-8',
   '.png': 'image/png',
-  '.svg': 'image/svg+xml'
+  '.svg': 'image/svg+xml',
+  '.ico': 'image/x-icon'
 };
 
 const server = http.createServer(async (req, res) => {
-  // Manejo de CORS pre-flight
   if (req.method === 'OPTIONS') {
     res.writeHead(204, {
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type, Authorization'
+      'Access-Control-Allow-Headers': 'Content-Type, Authorization, x-token'
     });
     res.end();
     return;
@@ -76,6 +71,23 @@ const server = http.createServer(async (req, res) => {
 
   try {
     // ==========================================
+    // API: DASHBOARD & MONITOR EN VIVO
+    // ==========================================
+    if (pathname === '/api/live' && req.method === 'GET') {
+      const date = parsedUrl.searchParams.get('date') || undefined;
+      const statusData = AttendanceEngine.getLiveStatus(date);
+      return sendJson(res, 200, { success: true, ...statusData });
+    }
+
+    // ==========================================
+    // API: DISPOSITIVOS (RELOJES ANVIZ)
+    // ==========================================
+    if (pathname === '/api/devices' && req.method === 'GET') {
+      const devices = AttendanceEngine.getDevices();
+      return sendJson(res, 200, { success: true, devices });
+    }
+
+    // ==========================================
     // API: EMPLEADOS (CRUD)
     // ==========================================
     if (pathname === '/api/employees' && req.method === 'GET') {
@@ -85,8 +97,8 @@ const server = http.createServer(async (req, res) => {
 
     if (pathname === '/api/employees' && req.method === 'POST') {
       const body = await parseBody(req);
-      if (!body.name || !body.dni) {
-        return sendJson(res, 400, { success: false, error: 'El nombre y DNI son obligatorios' });
+      if (!body.name) {
+        return sendJson(res, 400, { success: false, error: 'El nombre es obligatorio' });
       }
       const saved = AttendanceEngine.saveEmployee(body);
       return sendJson(res, 201, { success: true, employee: saved });
@@ -104,13 +116,17 @@ const server = http.createServer(async (req, res) => {
     if (pathname === '/api/logs' && req.method === 'GET') {
       const logs = AttendanceEngine.getRawLogs();
       const employees = AttendanceEngine.getEmployees();
-      // Asociar nombre de empleado para facilidad de visualización
       const enriched = logs.map((l) => {
         const emp = AttendanceEngine.resolveEmployee(l.userCode, l.branch, employees);
+        const loc = toArgentinaLocal(l.timestamp);
         return {
           ...l,
-          employeeName: emp ? emp.name : `Desconocido (ID ${l.userCode})`,
-          employeeId: emp ? emp.id : null
+          localDate: loc.localDate,
+          localTime: loc.localTime,
+          employeeName: emp ? emp.name : (l.employeeNameHint || `ID ${l.userCode}`),
+          employeeId: emp ? emp.id : null,
+          workno: emp ? emp.workno : l.userCode,
+          department: emp ? emp.department : (l.departmentHint || 'Regondi srl')
         };
       });
       return sendJson(res, 200, { success: true, logs: enriched });
@@ -142,12 +158,12 @@ const server = http.createServer(async (req, res) => {
     }
 
     // ==========================================
-    // API: ASISTENCIA Y REPORTES
+    // API: REPORTES Y ASISTENCIA
     // ==========================================
     if (pathname === '/api/reports/attendance' && req.method === 'GET') {
       const empId = parsedUrl.searchParams.get('employeeId');
-      const start = parsedUrl.searchParams.get('startDate') || new Date(Date.now() - 30 * 86400000).toISOString().slice(0, 10);
-      const end = parsedUrl.searchParams.get('endDate') || new Date().toISOString().slice(0, 10);
+      const start = parsedUrl.searchParams.get('startDate') || '2026-10-01';
+      const end = parsedUrl.searchParams.get('endDate') || '2026-10-30';
 
       if (!empId) {
         return sendJson(res, 400, { success: false, error: 'Debe especificar el employeeId' });
@@ -158,15 +174,7 @@ const server = http.createServer(async (req, res) => {
     }
 
     // ==========================================
-    // API: MONITOR EN VIVO
-    // ==========================================
-    if (pathname === '/api/live' && req.method === 'GET') {
-      const live = AttendanceEngine.getLiveStatus();
-      return sendJson(res, 200, { success: true, live, timestamp: new Date().toISOString() });
-    }
-
-    // ==========================================
-    // API: ESCÁNER Y DIAGNÓSTICO DE RED ANVIZ
+    // API: ESCÁNER DE RED LOCAL ANVIZ (PUERTO 5010)
     // ==========================================
     if (pathname === '/api/scanner/run' && req.method === 'POST') {
       const body = await parseBody(req);
@@ -180,10 +188,35 @@ const server = http.createServer(async (req, res) => {
 
     if (pathname === '/api/scanner/test-host' && req.method === 'POST') {
       const body = await parseBody(req);
-      const ip = body.ip || '192.168.0.1';
+      const ip = body.ip || '192.168.0.218';
       const port = Number(body.port) || 5010;
       const result = await AnvizNetworkScanner.testAnvizHost(ip, port, 1500);
       return sendJson(res, 200, { success: true, result });
+    }
+
+    // ==========================================
+    // API: SINCRONIZACIÓN CROSSCHEX CLOUD
+    // ==========================================
+    if (pathname === '/api/cloud/sync' && req.method === 'POST') {
+      const body = await parseBody(req);
+      const result = await CrossChexCloudEngine.syncFromCloud({
+        email: body.email,
+        password: body.password,
+        startDate: body.startDate,
+        endDate: body.endDate
+      });
+      return sendJson(res, 200, { success: true, result });
+    }
+
+    if (pathname === '/api/cloud/session' && req.method === 'GET') {
+      const session = CrossChexCloudEngine.getSavedSession();
+      return sendJson(res, 200, {
+        success: true,
+        hasSession: Boolean(session?.token),
+        companyName: session?.companyName || 'Regondi srl',
+        email: session?.email || '',
+        updatedAt: session?.updatedAt || null
+      });
     }
 
     // ==========================================
@@ -191,7 +224,6 @@ const server = http.createServer(async (req, res) => {
     // ==========================================
     let filePath = path.join(PUBLIC_DIR, pathname === '/' ? 'index.html' : pathname);
 
-    // Evitar Directory Traversal
     if (!filePath.startsWith(PUBLIC_DIR)) {
       res.writeHead(403);
       return res.end('Acceso denegado');
@@ -209,7 +241,6 @@ const server = http.createServer(async (req, res) => {
       return;
     }
 
-    // Fallback a 404
     sendJson(res, 404, { success: false, error: 'Ruta no encontrada' });
   } catch (err) {
     console.error('Error en servidor:', err);
