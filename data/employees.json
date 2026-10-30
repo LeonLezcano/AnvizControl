@@ -1,0 +1,66 @@
+[
+  {
+    "id": "EMP-001",
+    "name": "Juan Pérez",
+    "dni": "34567890",
+    "clockIdBranch1": "1",
+    "clockIdBranch2": "101",
+    "scheduleType": "CORRIDO",
+    "shiftStart1": "08:00",
+    "shiftEnd1": "17:00",
+    "shiftStart2": null,
+    "shiftEnd2": null,
+    "workDays": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "status": "ACTIVE",
+    "hourlyRate": 3500
+  },
+  {
+    "id": "EMP-002",
+    "name": "María García",
+    "dni": "38901234",
+    "clockIdBranch1": "2",
+    "clockIdBranch2": "102",
+    "scheduleType": "CORTADO",
+    "shiftStart1": "08:00",
+    "shiftEnd1": "12:00",
+    "shiftStart2": "16:00",
+    "shiftEnd2": "20:00",
+    "workDays": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6
+    ],
+    "status": "ACTIVE",
+    "hourlyRate": 3800
+  },
+  {
+    "id": "EMP-003",
+    "name": "Carlos Rodríguez",
+    "dni": "41234567",
+    "clockIdBranch1": "3",
+    "clockIdBranch2": "3",
+    "scheduleType": "CORRIDO",
+    "shiftStart1": "09:00",
+    "shiftEnd1": "18:00",
+    "shiftStart2": null,
+    "shiftEnd2": null,
+    "workDays": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "status": "ACTIVE",
+    "hourlyRate": 3400
+  }
+]

@@ -1,0 +1,4 @@
+node_modules
+.DS_Store
+*.log
+agent/agent_offline_queue.json

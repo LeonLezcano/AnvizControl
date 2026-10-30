@@ -1,0 +1,22 @@
+{
+  "name": "anviz-control",
+  "version": "1.0.01",
+  "description": "Sistema Multi-Sucursal de Asistencia e Ingenieria Inversa de Relojes Anviz VF30 Pro",
+  "type": "module",
+  "main": "server/index.mjs",
+  "scripts": {
+    "start": "node server/index.mjs",
+    "dev": "node server/index.mjs",
+    "agent": "node agent/agent.mjs",
+    "test": "node --test tests/*.test.mjs",
+    "version:bump": "node scripts/bump-version.mjs"
+  },
+  "keywords": [
+    "anviz",
+    "vf30pro",
+    "attendance",
+    "biometrics"
+  ],
+  "author": "Regondi Calidad",
+  "license": "ISC"
+}
