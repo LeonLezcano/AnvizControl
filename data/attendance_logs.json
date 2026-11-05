@@ -12252,6 +12252,18 @@
     "note": ""
   },
   {
+    "id": "LOG-1793903228767-20387",
+    "userCode": "3004",
+    "employeeNameHint": "",
+    "departmentHint": "",
+    "timestamp": "2026-11-09T09:35:57.900Z",
+    "branch": "Neuquen 959",
+    "verifyDesc": "Huella Dactilar",
+    "checktype": 128,
+    "manual": false,
+    "note": ""
+  },
+  {
     "id": "LOG-1793900180194-5561",
     "userCode": "3004",
     "employeeNameHint": "",
@@ -12269,6 +12281,18 @@
     "employeeNameHint": "",
     "departmentHint": "",
     "timestamp": "2026-11-12T03:57:02.457Z",
+    "branch": "Neuquen 959",
+    "verifyDesc": "Huella Dactilar",
+    "checktype": 128,
+    "manual": false,
+    "note": ""
+  },
+  {
+    "id": "LOG-1793903006243-89086",
+    "userCode": "3004",
+    "employeeNameHint": "",
+    "departmentHint": "",
+    "timestamp": "2026-11-12T23:51:41.090Z",
     "branch": "Neuquen 959",
     "verifyDesc": "Huella Dactilar",
     "checktype": 128,

@@ -1448,7 +1448,7 @@
       "label": "loadEmployees()",
       "file_type": "code",
       "source_file": "public/app.js",
-      "source_location": "L576",
+      "source_location": "L619",
       "_origin": "ast",
       "community": 4,
       "norm_label": "loademployees()",
@@ -3711,7 +3711,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "public/app.js",
-      "source_location": "L576",
+      "source_location": "L619",
       "weight": 1.0,
       "_origin": "ast",
       "confidence_score": 1.0,
@@ -3859,7 +3859,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "public/app.js",
-      "source_location": "L579",
+      "source_location": "L622",
       "weight": 1.0,
       "_origin": "ast",
       "source": "public_app_loademployees",
@@ -4047,5 +4047,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "434e451f061d0575b3a277331366162c44ec5271"
+  "built_at_commit": "7400049f335a728edeef4401772c954a3cda31be"
 }

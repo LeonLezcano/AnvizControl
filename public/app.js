@@ -427,8 +427,8 @@ function renderLogsTable(logsToRender) {
       <td><small>${Sanitizer.escapeHTML(l.verifyDesc)}</small></td>
       <td>${originBadge}</td>
       <td style="white-space: nowrap;">
-        <button class="btn btn-outline btn-sm" onclick="editPunch('${Sanitizer.escapeHTML(l.id)}')" title="Rectificar">✏️</button>
-        <button class="btn btn-danger-outline btn-sm" onclick="deletePunch('${Sanitizer.escapeHTML(l.id)}')" title="Eliminar">🗑️</button>
+        <button class="btn btn-outline btn-sm" data-action="edit-punch" data-id="${Sanitizer.escapeHTML(l.id)}" title="Rectificar">✏️</button>
+        <button class="btn btn-danger-outline btn-sm" data-action="delete-punch" data-id="${Sanitizer.escapeHTML(l.id)}" title="Eliminar">🗑️</button>
       </td>
     `
     );
@@ -572,6 +572,49 @@ document.getElementById('formPunch')?.addEventListener('submit', async (e) => {
   }
 });
 
+// Delegación de eventos para acciones en tabla de fichadas (✏️ y 🗑️)
+document.getElementById('tblLogs')?.addEventListener('click', (e) => {
+  const btn = e.target.closest('button[data-action]');
+  if (!btn) return;
+  const action = btn.getAttribute('data-action');
+  const id = btn.getAttribute('data-id');
+  if (action === 'edit-punch' && id) window.editPunch(id);
+  if (action === 'delete-punch' && id) window.deletePunch(id);
+});
+
+// Apertura de modal para nueva fichada manual
+document.getElementById('btnOpenNewPunchModal')?.addEventListener('click', () => {
+  document.getElementById('formPunch')?.reset();
+  document.getElementById('punchFieldId').value = '';
+  document.getElementById('modalPunchTitle').textContent = 'Fichada Manual / Rectificación';
+
+  const select = document.getElementById('punchFieldEmp');
+  if (select && currentEmployees.length > 0) {
+    Sanitizer.safeSetInnerHTML(
+      select,
+      currentEmployees
+        .map(
+          (e) => `
+      <option value="${e.id}">
+        ${Sanitizer.escapeHTML(e.name)} (${Sanitizer.escapeHTML(e.workno)})
+      </option>
+    `
+        )
+        .join('')
+    );
+  }
+
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, '0');
+  const day = String(now.getDate()).padStart(2, '0');
+  const hours = String(now.getHours()).padStart(2, '0');
+  const minutes = String(now.getMinutes()).padStart(2, '0');
+  document.getElementById('punchFieldDate').value = `${year}-${month}-${day}`;
+  document.getElementById('punchFieldTime').value = `${hours}:${minutes}`;
+  openModal('modalPunch');
+});
+
 // 6. EMPLEADOS (CRUD)
 async function loadEmployees() {
   const tbody = document.querySelector('#tblEmployees tbody');
@@ -600,8 +643,8 @@ async function loadEmployees() {
         <td>${emp.hasPassd ? '✅' : '❌'}</td>
         <td><span class="badge badge-success">Activo</span></td>
         <td>
-          <button class="btn btn-outline btn-sm" onclick="editEmployee('${Sanitizer.escapeHTML(emp.id)}')">✏️</button>
-          <button class="btn btn-danger-outline btn-sm" onclick="deleteEmployee('${Sanitizer.escapeHTML(emp.id)}')">🗑️</button>
+          <button class="btn btn-outline btn-sm" data-action="edit-employee" data-id="${Sanitizer.escapeHTML(emp.id)}" title="Editar Empleado">✏️</button>
+          <button class="btn btn-danger-outline btn-sm" data-action="delete-employee" data-id="${Sanitizer.escapeHTML(emp.id)}" title="Eliminar Empleado">🗑️</button>
         </td>
       `
       );
@@ -661,6 +704,34 @@ document.getElementById('formEmployee')?.addEventListener('submit', async (e) =>
   } catch (err) {
     alert('Error: ' + err.message);
   }
+});
+
+// Delegación de eventos para acciones en tabla de empleados (✏️ y 🗑️)
+document.getElementById('tblEmployees')?.addEventListener('click', (e) => {
+  const btn = e.target.closest('button[data-action]');
+  if (!btn) return;
+  const action = btn.getAttribute('data-action');
+  const id = btn.getAttribute('data-id');
+  if (action === 'edit-employee' && id) window.editEmployee(id);
+  if (action === 'delete-employee' && id) window.deleteEmployee(id);
+});
+
+// Apertura de modal para nuevo empleado
+document.getElementById('btnOpenNewEmpModal')?.addEventListener('click', () => {
+  document.getElementById('formEmployee')?.reset();
+  document.getElementById('empFieldId').value = '';
+  document.getElementById('modalEmpTitle').textContent = 'Nuevo Empleado';
+  document.getElementById('empFieldDept').value = 'Regondi srl';
+  openModal('modalEmployee');
+});
+
+// Cierre táctil o por click en backdrop de modales
+document.querySelectorAll('.modal-overlay').forEach((overlay) => {
+  overlay.addEventListener('click', (e) => {
+    if (e.target === overlay) {
+      overlay.classList.remove('open');
+    }
+  });
 });
 
 // Botón Probar Enlace Local con Reloj Anviz Neuquen 959
