@@ -1,0 +1,243 @@
+{
+  "communities": {
+    "0": [
+      "engine_attendanceengine",
+      "engine_attendanceengine_data_dir",
+      "engine_attendanceengine_devices_file",
+      "engine_attendanceengine_dirname",
+      "engine_attendanceengine_employees_file",
+      "engine_attendanceengine_filename",
+      "engine_attendanceengine_logs_file",
+      "engine_attendanceengine_toargentinalocal",
+      "engine_attendanceengine_tombstones_file",
+      "engine_crosschexcloudengine",
+      "engine_crosschexcloudengine_data_dir",
+      "engine_crosschexcloudengine_dirname",
+      "engine_crosschexcloudengine_filename",
+      "engine_crosschexcloudengine_session_file",
+      "server_index",
+      "server_index_dirname",
+      "server_index_filename",
+      "server_index_mime_types",
+      "server_index_parsebody",
+      "server_index_public_dir",
+      "server_index_sendjson",
+      "server_index_server",
+      "tests_anviz_test"
+    ],
+    "1": [
+      "engine_attendanceengine_attendanceengine",
+      "engine_attendanceengine_attendanceengine_addtombstone",
+      "engine_attendanceengine_attendanceengine_appendlogs",
+      "engine_attendanceengine_attendanceengine_calculateattendance",
+      "engine_attendanceengine_attendanceengine_computedailyattendance",
+      "engine_attendanceengine_attendanceengine_deduplicatelogs",
+      "engine_attendanceengine_attendanceengine_deleteemployee",
+      "engine_attendanceengine_attendanceengine_deletelog",
+      "engine_attendanceengine_attendanceengine_filterbounces",
+      "engine_attendanceengine_attendanceengine_getdevices",
+      "engine_attendanceengine_attendanceengine_getemployees",
+      "engine_attendanceengine_attendanceengine_getlivestatus",
+      "engine_attendanceengine_attendanceengine_getrawlogs",
+      "engine_attendanceengine_attendanceengine_gettombstones",
+      "engine_attendanceengine_attendanceengine_importcrosschexclouddata",
+      "engine_attendanceengine_attendanceengine_resolveemployee",
+      "engine_attendanceengine_attendanceengine_savedevices",
+      "engine_attendanceengine_attendanceengine_saveemployee",
+      "engine_attendanceengine_attendanceengine_updatelog",
+      "engine_attendanceengine_readjson",
+      "engine_attendanceengine_writejson",
+      "engine_seeddata",
+      "engine_seeddata_seeddemodataifempty"
+    ],
+    "2": [
+      "engine_anviznetworkscanner",
+      "engine_anviznetworkscanner_anviznetworkscanner",
+      "engine_anviznetworkscanner_anviznetworkscanner_scansubnet",
+      "engine_anviznetworkscanner_anviznetworkscanner_testanvizhost",
+      "engine_anvizprotocolengine",
+      "engine_anvizprotocolengine_anvizprotocolengine",
+      "engine_anvizprotocolengine_anvizprotocolengine_buildpacket",
+      "engine_anvizprotocolengine_anvizprotocolengine_buildrequest",
+      "engine_anvizprotocolengine_anvizprotocolengine_buildresponsepacket",
+      "engine_anvizprotocolengine_anvizprotocolengine_calccrc16",
+      "engine_anvizprotocolengine_anvizprotocolengine_decodeanviztimestamp",
+      "engine_anvizprotocolengine_anvizprotocolengine_encodedatetime",
+      "engine_anvizprotocolengine_anvizprotocolengine_parseattendancerecords",
+      "engine_anvizprotocolengine_anvizprotocolengine_parsedatetime",
+      "engine_anvizprotocolengine_anvizprotocolengine_parsenetinfo",
+      "engine_anvizprotocolengine_anvizprotocolengine_parserecordinfo",
+      "engine_anvizprotocolengine_anvizprotocolengine_parseresponse",
+      "scripts_sync_live_clock_time",
+      "scripts_sync_live_clock_time_socket",
+      "scripts_test_live_clock",
+      "scripts_test_live_clock_socket"
+    ],
+    "3": [
+      "package",
+      "package_author",
+      "package_description",
+      "package_keywords",
+      "package_license",
+      "package_main",
+      "package_name",
+      "package_scripts",
+      "package_scripts_agent",
+      "package_scripts_dev",
+      "package_scripts_start",
+      "package_scripts_test",
+      "package_scripts_version_bump",
+      "package_type",
+      "package_version",
+      "ref_anviz",
+      "ref_attendance",
+      "ref_biometrics",
+      "ref_vf30pro"
+    ],
+    "4": [
+      "public_app",
+      "public_app_closemodal",
+      "public_app_currentdevices",
+      "public_app_currentemployees",
+      "public_app_currentlogs",
+      "public_app_loaddashboard",
+      "public_app_loaddevices",
+      "public_app_loademployees",
+      "public_app_loadlivestatus",
+      "public_app_loadlogs",
+      "public_app_openmodal",
+      "public_app_runreport",
+      "public_app_sanitizer",
+      "public_app_setupreportstab",
+      "public_app_switchtab"
+    ],
+    "5": [
+      "scripts_bump_version",
+      "scripts_bump_version_dirname",
+      "scripts_bump_version_filename",
+      "scripts_bump_version_major",
+      "scripts_bump_version_minor",
+      "scripts_bump_version_parts",
+      "scripts_bump_version_patch",
+      "scripts_bump_version_pkg",
+      "scripts_bump_version_pkgpath",
+      "scripts_bump_version_verpath",
+      "scripts_bump_version_versiondata"
+    ],
+    "6": [
+      "agent_agent",
+      "agent_agent_cache_file",
+      "agent_agent_config",
+      "agent_agent_dirname",
+      "agent_agent_fetchrecordsfromclock",
+      "agent_agent_filename",
+      "agent_agent_loadofflinequeue",
+      "agent_agent_pollcycle",
+      "agent_agent_saveofflinequeue",
+      "agent_agent_uploadtoserver"
+    ],
+    "7": [
+      "engine_crosschexcloudengine_crosschexcloudengine",
+      "engine_crosschexcloudengine_crosschexcloudengine_apipost",
+      "engine_crosschexcloudengine_crosschexcloudengine_getsavedsession",
+      "engine_crosschexcloudengine_crosschexcloudengine_login",
+      "engine_crosschexcloudengine_crosschexcloudengine_savesession",
+      "engine_crosschexcloudengine_crosschexcloudengine_syncfromcloud"
+    ]
+  },
+  "cohesion": {
+    "0": 0.09881422924901186,
+    "1": 0.22529644268774704,
+    "2": 0.1523809523809524,
+    "3": 0.10526315789473684,
+    "4": 0.2761904761904762,
+    "5": 0.18181818181818182,
+    "6": 0.28888888888888886,
+    "7": 0.6666666666666666
+  },
+  "gods": [
+    {
+      "id": "engine_attendanceengine_attendanceengine",
+      "label": "AttendanceEngine",
+      "degree": 23
+    },
+    {
+      "id": "engine_anvizprotocolengine_anvizprotocolengine",
+      "label": "AnvizProtocolEngine",
+      "degree": 18
+    },
+    {
+      "id": "engine_attendanceengine_writejson",
+      "label": "writeJson()",
+      "degree": 8
+    },
+    {
+      "id": "public_app_sanitizer",
+      "label": "Sanitizer",
+      "degree": 8
+    },
+    {
+      "id": "engine_crosschexcloudengine_crosschexcloudengine",
+      "label": "CrossChexCloudEngine",
+      "degree": 7
+    },
+    {
+      "id": "public_app_switchtab",
+      "label": "switchTab()",
+      "degree": 7
+    },
+    {
+      "id": "engine_attendanceengine_toargentinalocal",
+      "label": "toArgentinaLocal()",
+      "degree": 6
+    },
+    {
+      "id": "package_scripts",
+      "label": "scripts",
+      "degree": 6
+    },
+    {
+      "id": "agent_agent_fetchrecordsfromclock",
+      "label": "fetchRecordsFromClock()",
+      "degree": 5
+    },
+    {
+      "id": "engine_attendanceengine_readjson",
+      "label": "readJson()",
+      "degree": 5
+    }
+  ],
+  "surprises": [],
+  "questions": [
+    {
+      "type": "bridge_node",
+      "question": "Why does `AnvizProtocolEngine` connect `Community 2` to `Community 0`, `Community 6`?",
+      "why": "High betweenness centrality (0.153) - this node is a cross-community bridge."
+    },
+    {
+      "type": "bridge_node",
+      "question": "Why does `AttendanceEngine` connect `Community 1` to `Community 0`?",
+      "why": "High betweenness centrality (0.140) - this node is a cross-community bridge."
+    },
+    {
+      "type": "bridge_node",
+      "question": "Why does `CrossChexCloudEngine` connect `Community 7` to `Community 0`?",
+      "why": "High betweenness centrality (0.041) - this node is a cross-community bridge."
+    },
+    {
+      "type": "isolated_nodes",
+      "question": "What connects `__filename`, `__dirname`, `CACHE_FILE` to the rest of the system?",
+      "why": "51 weakly-connected nodes found - possible documentation gaps or missing edges."
+    },
+    {
+      "type": "low_cohesion",
+      "question": "Should `Community 0` be split into smaller, more focused modules?",
+      "why": "Cohesion score 0.09881422924901186 - nodes in this community are weakly interconnected."
+    },
+    {
+      "type": "low_cohesion",
+      "question": "Should `Community 3` be split into smaller, more focused modules?",
+      "why": "Cohesion score 0.10526315789473684 - nodes in this community are weakly interconnected."
+    }
+  ]
+}

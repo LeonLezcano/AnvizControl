@@ -1,0 +1,97 @@
+{
+  "agent/agent.mjs": {
+    "mtime": 1793378081.9583006,
+    "ast_hash": "d0ffa9f1143e2ab9a4ed2c78123d678d",
+    "semantic_hash": "d0ffa9f1143e2ab9a4ed2c78123d678d"
+  },
+  "data/attendance_logs.json": {
+    "mtime": 1793899763.858312,
+    "ast_hash": "4701f06b9785bc7ece14fbf3e5a16ace",
+    "semantic_hash": "4701f06b9785bc7ece14fbf3e5a16ace"
+  },
+  "data/devices.json": {
+    "mtime": 1793899550.289013,
+    "ast_hash": "5f91331d806916cf3bf314789390d9e2",
+    "semantic_hash": "5f91331d806916cf3bf314789390d9e2"
+  },
+  "data/employees.json": {
+    "mtime": 1793899763.9073124,
+    "ast_hash": "c170b8cc08a8eee9199399c00843c9d4",
+    "semantic_hash": "c170b8cc08a8eee9199399c00843c9d4"
+  },
+  "data/tombstones.json": {
+    "mtime": 1793899763.9063148,
+    "ast_hash": "79a94881ee66bd8be41995a1df11c93b",
+    "semantic_hash": "79a94881ee66bd8be41995a1df11c93b"
+  },
+  "engine/AnvizNetworkScanner.mjs": {
+    "mtime": 1793380142.258634,
+    "ast_hash": "ab894daf4f9082b0b664ccd311b01703",
+    "semantic_hash": "ab894daf4f9082b0b664ccd311b01703"
+  },
+  "engine/AnvizProtocolEngine.mjs": {
+    "mtime": 1793899721.8150434,
+    "ast_hash": "a6bd0ef243b8ac3a470a55d574b47b73",
+    "semantic_hash": "a6bd0ef243b8ac3a470a55d574b47b73"
+  },
+  "engine/AttendanceEngine.mjs": {
+    "mtime": 1793899396.991141,
+    "ast_hash": "69c6d348e1239649f95f853b26a0fb04",
+    "semantic_hash": "69c6d348e1239649f95f853b26a0fb04"
+  },
+  "engine/CrossChexCloudEngine.mjs": {
+    "mtime": 1793380169.9366043,
+    "ast_hash": "a7d6c7a50064c6dc2fb9c7e51c8e3a41",
+    "semantic_hash": "a7d6c7a50064c6dc2fb9c7e51c8e3a41"
+  },
+  "engine/SeedData.mjs": {
+    "mtime": 1793380356.4397156,
+    "ast_hash": "c3ced4a32c274df99063da075cd0b7ff",
+    "semantic_hash": "c3ced4a32c274df99063da075cd0b7ff"
+  },
+  "firebase.json": {
+    "mtime": 1793899401.5479414,
+    "ast_hash": "03d95a35bb79d0ce5b6523ee24fa8659",
+    "semantic_hash": "03d95a35bb79d0ce5b6523ee24fa8659"
+  },
+  "package.json": {
+    "mtime": 1793380700.0568554,
+    "ast_hash": "80f6df3607a5a65692dbc021e7020103",
+    "semantic_hash": "80f6df3607a5a65692dbc021e7020103"
+  },
+  "public/app.js": {
+    "mtime": 1793899942.8980138,
+    "ast_hash": "5d3e0689f7040e3d26f93af69aedf766",
+    "semantic_hash": "5d3e0689f7040e3d26f93af69aedf766"
+  },
+  "scripts/bump-version.mjs": {
+    "mtime": 1793377926.081092,
+    "ast_hash": "81d6bdd4c261df378085bd72140db0cc",
+    "semantic_hash": "81d6bdd4c261df378085bd72140db0cc"
+  },
+  "scripts/sync-live-clock-time.mjs": {
+    "mtime": 1793899116.8647964,
+    "ast_hash": "5e0eb5350a156740da1c47e4ba6445ca",
+    "semantic_hash": "5e0eb5350a156740da1c47e4ba6445ca"
+  },
+  "scripts/test-live-clock.mjs": {
+    "mtime": 1793899094.4781137,
+    "ast_hash": "84bf5e1109e2095c4284e296797795fd",
+    "semantic_hash": "84bf5e1109e2095c4284e296797795fd"
+  },
+  "server/index.mjs": {
+    "mtime": 1793380468.64615,
+    "ast_hash": "16a74bcd4845552e0790e91a6578ff9a",
+    "semantic_hash": "16a74bcd4845552e0790e91a6578ff9a"
+  },
+  "tests/anviz.test.mjs": {
+    "mtime": 1793899756.0423326,
+    "ast_hash": "e95cd5cba644befb3ebd610caafd3b4b",
+    "semantic_hash": "e95cd5cba644befb3ebd610caafd3b4b"
+  },
+  "version.json": {
+    "mtime": 1793380700.057853,
+    "ast_hash": "f154d478bd410000549a5aa9094ab3ed",
+    "semantic_hash": "f154d478bd410000549a5aa9094ab3ed"
+  }
+}

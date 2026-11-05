@@ -13,6 +13,44 @@ const Sanitizer = {
       .replace(/>/g, '&gt;')
       .replace(/"/g, '&quot;')
       .replace(/'/g, '&#39;');
+  },
+
+  safeSetInnerHTML(element, rawHTML) {
+    if (!element) return;
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(rawHTML, 'text/html');
+
+    // Remover elementos potencialmente peligrosos
+    const scripts = doc.querySelectorAll('script, iframe, object, embed');
+    scripts.forEach((s) => s.remove());
+
+    // Sanitizar atributos inline peligrosos
+    const all = doc.querySelectorAll('*');
+    all.forEach((el) => {
+      Array.from(el.attributes).forEach((attr) => {
+        if (attr.name.startsWith('on')) {
+          el.removeAttribute(attr.name);
+        }
+        if (['href', 'src', 'action'].includes(attr.name)) {
+          const val = attr.value.trim().toLowerCase();
+          if (val.startsWith('javascript:') || val.startsWith('data:') || val.startsWith('vbscript:')) {
+            el.removeAttribute(attr.name);
+          }
+        }
+      });
+    });
+
+    element.replaceChildren(...Array.from(doc.body.childNodes));
+  },
+
+  sanitizeURL(url) {
+    if (!url) return '';
+    const clean = String(url).trim();
+    const lower = clean.toLowerCase();
+    if (lower.startsWith('javascript:') || lower.startsWith('vbscript:') || lower.startsWith('data:text/html')) {
+      return '#';
+    }
+    return clean;
   }
 };
 
@@ -88,11 +126,14 @@ async function loadDashboard() {
     const tagsBox = document.getElementById('dashAbsentTags');
     if (tagsBox) {
       if (d.absentTodayList && d.absentTodayList.length > 0) {
-        tagsBox.innerHTML = d.absentTodayList
-          .map((a) => `<span class="badge badge-danger">${Sanitizer.escapeHTML(a.name)} (${Sanitizer.escapeHTML(a.workno)})</span>`)
-          .join('');
+        Sanitizer.safeSetInnerHTML(
+          tagsBox,
+          d.absentTodayList
+            .map((a) => `<span class="badge badge-danger">${Sanitizer.escapeHTML(a.name)} (${Sanitizer.escapeHTML(a.workno)})</span>`)
+            .join('')
+        );
       } else {
-        tagsBox.innerHTML = '<span style="font-size: 0.8rem; color: var(--cc-green);">¡Asistencia completa hoy!</span>';
+        Sanitizer.safeSetInnerHTML(tagsBox, '<span style="font-size: 0.8rem; color: var(--cc-green);">¡Asistencia completa hoy!</span>');
       }
     }
 
@@ -124,7 +165,9 @@ async function loadDevices(mini = false) {
 
     containers.forEach((box) => {
       if (!box) return;
-      box.innerHTML = currentDevices.map((dev) => `
+      Sanitizer.safeSetInnerHTML(
+        box,
+        currentDevices.map((dev) => `
         <div class="device-box">
           <div class="device-header">
             <div>
@@ -146,7 +189,8 @@ async function loadDevices(mini = false) {
             <div>Device ID<b>${Sanitizer.escapeHTML(dev.id)}</b></div>
           </div>
         </div>
-      `).join('');
+      `).join('')
+      );
     });
   } catch (err) {
     console.error('Error cargando dispositivos:', err);
@@ -157,7 +201,7 @@ async function loadDevices(mini = false) {
 async function loadLiveStatus() {
   const tbody = document.querySelector('#tblLive tbody');
   if (!tbody) return;
-  tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; color: var(--cc-text-secondary);">Consultando presencia en tiempo real...</td></tr>';
+  Sanitizer.safeSetInnerHTML(tbody, '<tr><td colspan="8" style="text-align: center; color: var(--cc-text-secondary);">Consultando presencia en tiempo real...</td></tr>');
 
   try {
     const dateInput = document.getElementById('liveDateFilter');
@@ -166,12 +210,14 @@ async function loadLiveStatus() {
     const data = await res.json();
     if (!data.success) throw new Error(data.error);
 
-    tbody.innerHTML = '';
+    tbody.replaceChildren();
     data.live.forEach((emp) => {
       const tr = document.createElement('tr');
       const badge = emp.status === 'PRESENTE' ? '<span class="badge badge-success">🟢 Adentro</span>' : emp.status === 'RETIRADO' ? '<span class="badge badge-warning">🟡 Retirado</span>' : '<span class="badge badge-info">⚪ Sin Fichar</span>';
 
-      tr.innerHTML = `
+      Sanitizer.safeSetInnerHTML(
+        tr,
+        `
         <td><b>${Sanitizer.escapeHTML(emp.workno)}</b></td>
         <td><strong>${Sanitizer.escapeHTML(emp.name)}</strong></td>
         <td><small>${Sanitizer.escapeHTML(emp.department)}</small></td>
@@ -180,11 +226,12 @@ async function loadLiveStatus() {
         <td>${Sanitizer.escapeHTML(emp.lastPunchTime ? emp.lastPunchTime.slice(0, 5) : '-')}</td>
         <td><span class="badge badge-primary">${Sanitizer.escapeHTML(emp.lastBranch || '-')}</span></td>
         <td><b>${emp.todayPunchesCount}</b> fichadas</td>
-      `;
+      `
+      );
       tbody.appendChild(tr);
     });
   } catch (err) {
-    tbody.innerHTML = `<tr><td colspan="8" style="color: var(--cc-danger);">Error: ${Sanitizer.escapeHTML(err.message)}</td></tr>`;
+    Sanitizer.safeSetInnerHTML(tbody, `<tr><td colspan="8" style="color: var(--cc-danger);">Error: ${Sanitizer.escapeHTML(err.message)}</td></tr>`);
   }
 }
 
@@ -193,9 +240,16 @@ function setupReportsTab() {
   const select = document.getElementById('repEmployeeSelect');
   if (!select) return;
 
-  select.innerHTML = currentEmployees.map((e) => `
+  Sanitizer.safeSetInnerHTML(
+    select,
+    currentEmployees
+      .map(
+        (e) => `
     <option value="${e.id}">${Sanitizer.escapeHTML(e.name)} (Legajo: ${Sanitizer.escapeHTML(e.workno)})</option>
-  `).join('');
+  `
+      )
+      .join('')
+  );
 
   if (currentEmployees.length > 0) {
     runReport();
@@ -209,7 +263,7 @@ async function runReport() {
   const tbody = document.querySelector('#tblReportDetails tbody');
   if (!tbody || !empId) return;
 
-  tbody.innerHTML = '<tr><td colspan="9" style="text-align: center;">Calculando asistencia de ambas sucursales...</td></tr>';
+  Sanitizer.safeSetInnerHTML(tbody, '<tr><td colspan="9" style="text-align: center;">Calculando asistencia de ambas sucursales...</td></tr>');
 
   try {
     const res = await fetch(`/api/reports/attendance?employeeId=${empId}&startDate=${start}&endDate=${end}`);
@@ -224,7 +278,7 @@ async function runReport() {
     document.getElementById('sumAbsences').textContent = String(r.summary.absentDays);
     document.getElementById('sumOddPunches').textContent = String(r.summary.oddPunchDays);
 
-    tbody.innerHTML = '';
+    tbody.replaceChildren();
     const dayNames = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
 
     r.days.forEach((d) => {
@@ -247,7 +301,9 @@ async function runReport() {
         }).join('<br>');
       }
 
-      tr.innerHTML = `
+      Sanitizer.safeSetInnerHTML(
+        tr,
+        `
         <td><b>${Sanitizer.escapeHTML(d.date)}</b></td>
         <td>${dName}</td>
         <td>${badge}</td>
@@ -257,11 +313,12 @@ async function runReport() {
         <td>${d.normalHours} h</td>
         <td>${d.overtimeHours > 0 ? `<b style="color:var(--cc-purple)">+${d.overtimeHours} h</b>` : '-'}</td>
         <td><b>${d.hoursWorked} h</b></td>
-      `;
+      `
+      );
       tbody.appendChild(tr);
     });
   } catch (err) {
-    tbody.innerHTML = `<tr><td colspan="9" style="color: var(--cc-danger);">Error: ${Sanitizer.escapeHTML(err.message)}</td></tr>`;
+    Sanitizer.safeSetInnerHTML(tbody, `<tr><td colspan="9" style="color: var(--cc-danger);">Error: ${Sanitizer.escapeHTML(err.message)}</td></tr>`);
   }
 }
 
@@ -269,7 +326,7 @@ async function runReport() {
 async function loadLogs() {
   const tbody = document.querySelector('#tblLogs tbody');
   if (!tbody) return;
-  tbody.innerHTML = '<tr><td colspan="9" style="text-align: center;">Cargando fichadas...</td></tr>';
+  Sanitizer.safeSetInnerHTML(tbody, '<tr><td colspan="9" style="text-align: center;">Cargando fichadas...</td></tr>');
 
   try {
     const res = await fetch('/api/logs');
@@ -277,14 +334,16 @@ async function loadLogs() {
     if (!data.success) throw new Error(data.error);
 
     currentLogs = data.logs;
-    tbody.innerHTML = '';
+    tbody.replaceChildren();
     const sorted = [...currentLogs].reverse().slice(0, 300);
 
     sorted.forEach((l) => {
       const tr = document.createElement('tr');
       const originBadge = l.manual ? '<span class="badge badge-warning">✏️ Manual / Editada</span>' : '<span class="badge badge-success">🤖 Anviz Reloj</span>';
 
-      tr.innerHTML = `
+      Sanitizer.safeSetInnerHTML(
+        tr,
+        `
         <td><b>${Sanitizer.escapeHTML(l.workno || l.userCode)}</b></td>
         <td><strong>${Sanitizer.escapeHTML(l.employeeName)}</strong></td>
         <td><small>${Sanitizer.escapeHTML(l.department || 'Regondi srl')}</small></td>
@@ -294,14 +353,15 @@ async function loadLogs() {
         <td>${Sanitizer.escapeHTML(l.verifyDesc)}</td>
         <td>${originBadge}</td>
         <td>
-          <button class="btn btn-outline btn-sm" onclick="editPunch('${l.id}')">✏️</button>
-          <button class="btn btn-danger-outline btn-sm" onclick="deletePunch('${l.id}')">🗑️</button>
+          <button class="btn btn-outline btn-sm" onclick="editPunch('${Sanitizer.escapeHTML(l.id)}')">✏️</button>
+          <button class="btn btn-danger-outline btn-sm" onclick="deletePunch('${Sanitizer.escapeHTML(l.id)}')">🗑️</button>
         </td>
-      `;
+      `
+      );
       tbody.appendChild(tr);
     });
   } catch (err) {
-    tbody.innerHTML = `<tr><td colspan="9" style="color: var(--cc-danger);">Error: ${Sanitizer.escapeHTML(err.message)}</td></tr>`;
+    Sanitizer.safeSetInnerHTML(tbody, `<tr><td colspan="9" style="color: var(--cc-danger);">Error: ${Sanitizer.escapeHTML(err.message)}</td></tr>`);
   }
 }
 
@@ -318,11 +378,18 @@ window.editPunch = function(id) {
 
   const select = document.getElementById('punchFieldEmp');
   if (select) {
-    select.innerHTML = currentEmployees.map((e) => `
+    Sanitizer.safeSetInnerHTML(
+      select,
+      currentEmployees
+        .map(
+          (e) => `
       <option value="${e.id}" ${e.id === p.employeeId || e.workno === p.userCode ? 'selected' : ''}>
         ${Sanitizer.escapeHTML(e.name)} (${Sanitizer.escapeHTML(e.workno)})
       </option>
-    `).join('');
+    `
+        )
+        .join('')
+    );
   }
 
   openModal('modalPunch');
@@ -385,7 +452,7 @@ document.getElementById('formPunch')?.addEventListener('submit', async (e) => {
 async function loadEmployees() {
   const tbody = document.querySelector('#tblEmployees tbody');
   if (!tbody) return;
-  tbody.innerHTML = '<tr><td colspan="9" style="text-align: center;">Cargando personal...</td></tr>';
+  Sanitizer.safeSetInnerHTML(tbody, '<tr><td colspan="9" style="text-align: center;">Cargando personal...</td></tr>');
 
   try {
     const res = await fetch('/api/employees');
@@ -393,11 +460,13 @@ async function loadEmployees() {
     if (!data.success) throw new Error(data.error);
 
     currentEmployees = data.employees;
-    tbody.innerHTML = '';
+    tbody.replaceChildren();
 
     currentEmployees.forEach((emp) => {
       const tr = document.createElement('tr');
-      tr.innerHTML = `
+      Sanitizer.safeSetInnerHTML(
+        tr,
+        `
         <td><b>${Sanitizer.escapeHTML(emp.workno)}</b></td>
         <td><strong>${Sanitizer.escapeHTML(emp.name)}</strong></td>
         <td>${Sanitizer.escapeHTML(emp.department || 'Regondi srl')}</td>
@@ -407,14 +476,15 @@ async function loadEmployees() {
         <td>${emp.hasPassd ? '✅' : '❌'}</td>
         <td><span class="badge badge-success">Activo</span></td>
         <td>
-          <button class="btn btn-outline btn-sm" onclick="editEmployee('${emp.id}')">✏️</button>
-          <button class="btn btn-danger-outline btn-sm" onclick="deleteEmployee('${emp.id}')">🗑️</button>
+          <button class="btn btn-outline btn-sm" onclick="editEmployee('${Sanitizer.escapeHTML(emp.id)}')">✏️</button>
+          <button class="btn btn-danger-outline btn-sm" onclick="deleteEmployee('${Sanitizer.escapeHTML(emp.id)}')">🗑️</button>
         </td>
-      `;
+      `
+      );
       tbody.appendChild(tr);
     });
   } catch (err) {
-    tbody.innerHTML = `<tr><td colspan="9" style="color: var(--cc-danger);">Error: ${Sanitizer.escapeHTML(err.message)}</td></tr>`;
+    Sanitizer.safeSetInnerHTML(tbody, `<tr><td colspan="9" style="color: var(--cc-danger);">Error: ${Sanitizer.escapeHTML(err.message)}</td></tr>`);
   }
 }
 

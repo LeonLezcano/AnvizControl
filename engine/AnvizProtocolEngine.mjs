@@ -96,6 +96,13 @@ export class AnvizProtocolEngine {
   }
 
   /**
+   * Alias de conveniencia para solicitudes
+   */
+  static buildRequest(cmd, devId = 0, data = Buffer.alloc(0)) {
+    return this.buildPacket(cmd, devId, data);
+  }
+
+  /**
    * Construye un paquete binario de respuesta Anviz TC_B
    * Formato: [STX(1B)][DevId(4B BE)][RET_CMD(1B)][STATUS(1B)][LEN(2B BE)][DATA(NB)][CRC(2B LE)]
    */
@@ -119,6 +126,13 @@ export class AnvizProtocolEngine {
     packet.writeUInt16LE(crc, packetLen - 2);
 
     return packet;
+  }
+
+  /**
+   * Alias de conveniencia para solicitudes
+   */
+  static buildRequest(cmd, devId = 0, data = Buffer.alloc(0)) {
+    return this.buildPacket(cmd, devId, data);
   }
 
   /**
@@ -273,4 +287,39 @@ export class AnvizProtocolEngine {
 
     return records;
   }
+
+  /**
+   * Codifica una fecha en 6 bytes para SET_DATETIME (Comando 0x39)
+   * Formato Anviz: [Year-2000(1B)][Month(1B)][Day(1B)][Hour(1B)][Min(1B)][Sec(1B)]
+   * @param {Date} [date=new Date()]
+   * @returns {Buffer}
+   */
+  static encodeDateTime(date = new Date()) {
+    const d = date instanceof Date && !isNaN(date.getTime()) ? date : new Date();
+    const buf = Buffer.alloc(6);
+    buf.writeUInt8(Math.max(0, d.getFullYear() - 2000) & 0xff, 0);
+    buf.writeUInt8((d.getMonth() + 1) & 0xff, 1);
+    buf.writeUInt8(d.getDate() & 0xff, 2);
+    buf.writeUInt8(d.getHours() & 0xff, 3);
+    buf.writeUInt8(d.getMinutes() & 0xff, 4);
+    buf.writeUInt8(d.getSeconds() & 0xff, 5);
+    return buf;
+  }
+
+  /**
+   * Decodifica la respuesta 0xB8 de GET_DATETIME (6 bytes)
+   * @param {Buffer} dataBuf
+   */
+  static parseDateTime(dataBuf) {
+    if (!Buffer.isBuffer(dataBuf) || dataBuf.length < 6) return null;
+    const year = 2000 + dataBuf.readUInt8(0);
+    const month = dataBuf.readUInt8(1);
+    const day = dataBuf.readUInt8(2);
+    const hour = dataBuf.readUInt8(3);
+    const min = dataBuf.readUInt8(4);
+    const sec = dataBuf.readUInt8(5);
+    const iso = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}T${String(hour).padStart(2, '0')}:${String(min).padStart(2, '0')}:${String(sec).padStart(2, '0')}`;
+    return { year, month, day, hour, min, sec, formatted: `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')} ${String(hour).padStart(2, '0')}:${String(min).padStart(2, '0')}:${String(sec).padStart(2, '0')}`, iso };
+  }
 }
+

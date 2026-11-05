@@ -39,9 +39,12 @@ function writeJson(file, data) {
  * @returns {{ localDate: string, localTime: string, localDateTime: string, epochMs: number }}
  */
 export function toArgentinaLocal(isoStr) {
+  if (!isoStr) {
+    return { localDate: '-', localTime: '-', localTimeFull: '-', localDateTime: '-', epochMs: 0 };
+  }
   const d = new Date(isoStr);
   if (isNaN(d.getTime())) {
-    return { localDate: '1970-01-01', localTime: '00:00:00', localDateTime: '1970-01-01T00:00:00-03:00', epochMs: 0 };
+    return { localDate: '-', localTime: '-', localTimeFull: '-', localDateTime: '-', epochMs: 0 };
   }
   // Restar 3 horas (UTC-3) al tiempo UTC para obtener componentes locales exactos de Argentina
   const arMs = d.getTime() - 3 * 3600 * 1000;
@@ -54,11 +57,13 @@ export function toArgentinaLocal(isoStr) {
   const ss = String(arDate.getUTCSeconds()).padStart(2, '0');
 
   const localDate = `${yyyy}-${mm}-${dd}`;
-  const localTime = `${hh}:${min}:${ss}`;
+  const localTime = `${hh}:${min}`;
+  const localTimeFull = `${hh}:${min}:${ss}`;
   return {
     localDate,
     localTime,
-    localDateTime: `${localDate}T${localTime}-03:00`,
+    localTimeFull,
+    localDateTime: `${localDate}T${localTimeFull}-03:00`,
     epochMs: d.getTime()
   };
 }
@@ -112,13 +117,23 @@ export class AttendanceEngine {
    * Obtiene la lista de IDs eliminados (Tombstones - Directiva 6)
    */
   static getTombstones() {
-    return new Set(readJson(TOMBSTONES_FILE, []));
+    const list = readJson(TOMBSTONES_FILE, []);
+    const set = new Set(list.map(String));
+    // Array compatible con .includes(x) y con interfaz de Set (.has(x), .add(x))
+    list.has = (id) => set.has(String(id));
+    list.add = (id) => {
+      if (!set.has(String(id))) {
+        set.add(String(id));
+        list.push(String(id));
+      }
+    };
+    return list;
   }
 
   static addTombstone(id) {
-    const set = this.getTombstones();
-    set.add(String(id));
-    writeJson(TOMBSTONES_FILE, Array.from(set));
+    const list = this.getTombstones();
+    list.add(String(id));
+    writeJson(TOMBSTONES_FILE, Array.from(new Set(list)));
   }
 
   /**
@@ -417,6 +432,74 @@ export class AttendanceEngine {
   }
 
   /**
+   * Alias de deduplicación para compatibilidad de arnés de pruebas
+   */
+  static deduplicateLogs(logs, windowMinutes = 3) {
+    return this.filterBounces(logs, windowMinutes);
+  }
+
+  /**
+   * Computa la asistencia diaria para un empleado y fecha específica
+   */
+  static computeDailyAttendance(emp, dateStr, logs) {
+    const shift = emp.shifts || {
+      startTime: emp.shiftStart1 || '08:00',
+      endTime: emp.shiftEnd1 || '17:00',
+      toleranceMinutes: 10,
+      days: emp.workDays || [1, 2, 3, 4, 5]
+    };
+
+    const targetDate = new Date(`${dateStr}T12:00:00Z`);
+    const dayOfWeek = targetDate.getUTCDay();
+    const isWorkDay = Array.isArray(shift.days) ? shift.days.includes(dayOfWeek) : dayOfWeek >= 1 && dayOfWeek <= 5;
+
+    const dayLogs = (logs || []).filter((l) => {
+      const loc = toArgentinaLocal(l.timestamp);
+      return loc.localDate === dateStr;
+    });
+
+    const clean = this.filterBounces(dayLogs);
+    const hasOddPunch = clean.length % 2 !== 0;
+
+    let workedMinutes = 0;
+    for (let i = 0; i < clean.length; i += 2) {
+      if (clean[i] && clean[i + 1]) {
+        const diff = new Date(clean[i + 1].timestamp).getTime() - new Date(clean[i].timestamp).getTime();
+        if (diff > 0) workedMinutes += Math.floor(diff / 60000);
+      }
+    }
+
+    let status = 'NORMAL';
+    let lateMinutes = 0;
+    const tolerance = shift.toleranceMinutes ?? 10;
+
+    if (clean.length === 0) {
+      status = isWorkDay ? 'AUSENTE' : 'FRANCO';
+    } else {
+      const firstTime = toArgentinaLocal(clean[0].timestamp).localTime;
+      const [sh, sm] = (shift.startTime || '08:00').split(':').map(Number);
+      const [ph, pm] = firstTime.split(':').map(Number);
+      const diff = ph * 60 + pm - (sh * 60 + sm);
+      if (diff > tolerance) {
+        lateMinutes = diff;
+        status = 'LLEGADA_TARDE';
+      }
+    }
+
+    return {
+      date: dateStr,
+      employeeId: emp.id,
+      name: emp.name,
+      status,
+      workedHours: +(workedMinutes / 60).toFixed(2),
+      workedMinutes,
+      lateMinutes,
+      isOddPunch: hasOddPunch,
+      punches: clean
+    };
+  }
+
+  /**
    * Procesa las jornadas diarias de un empleado unificando fichadas de ambas sucursales (Neuquen 959 + Ballarini 1111)
    * usando la hora local Argentina (UTC-3).
    */
@@ -529,7 +612,10 @@ export class AttendanceEngine {
       });
     }
 
+    const totalHrs = +daysReport.reduce((acc, d) => acc + d.hoursWorked, 0).toFixed(2);
     return {
+      employeeId: emp.id,
+      name: emp.name,
       employee: emp,
       range: { startDate: startDateStr, endDate: endDateStr },
       days: daysReport,
@@ -539,7 +625,8 @@ export class AttendanceEngine {
         absentDays: daysReport.filter((d) => d.status === 'AUSENTE').length,
         oddPunchDays: daysReport.filter((d) => d.hasOddPunch).length,
         lateDays: daysReport.filter((d) => d.lateMinutes > 10).length,
-        totalHours: +daysReport.reduce((acc, d) => acc + d.hoursWorked, 0).toFixed(2),
+        totalHours: totalHrs,
+        totalWorkedHours: totalHrs,
         totalNormalHours: +daysReport.reduce((acc, d) => acc + d.normalHours, 0).toFixed(2),
         totalOvertimeHours: +daysReport.reduce((acc, d) => acc + d.overtimeHours, 0).toFixed(2)
       }
@@ -633,7 +720,13 @@ export class AttendanceEngine {
     const insideNowCount = liveList.filter((x) => x.isInside).length;
     const absentTodayList = liveList.filter((x) => !x.hasPunchedToday && x.workno !== '1');
 
+    const presentList = liveList.filter((x) => x.isInside);
+    const absentList = liveList.filter((x) => !x.hasPunchedToday);
+
     return {
+      totalEmployees: activeEmployees.length,
+      present: presentList,
+      absent: absentList,
       live: liveList,
       dashboard: {
         todayDate: todayStr,

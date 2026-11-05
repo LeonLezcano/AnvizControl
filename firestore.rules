@@ -1,14 +1,223 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
+
+    // ===============================================================
+    // Assumed Data Model
+    // ===============================================================
+    //
+    // Collection: employees
+    // Document ID: {empId} (e.g., 'EMP-1', 'EMP-3004')
+    // Fields:
+    //   - id: string (optional/required, 1-64 chars) - Employee identifier (immutable on update)
+    //   - cloudEmployeeId: number (optional) - CrossChex cloud identifier
+    //   - name: string (required, 1-128 chars) - Full employee name
+    //   - dni: string (optional, 1-32 chars) - National identity document
+    //   - workno: string (optional, 1-32 chars) - Employee card / work number
+    //   - clockIdBranch1: string (optional, 0-32 chars) - Terminal enrollment ID Branch 1
+    //   - clockIdBranch2: string (optional, 0-32 chars) - Terminal enrollment ID Branch 2
+    //   - department: string (optional, 0-100 chars) - Department name
+    //   - position: string (optional, 0-100 chars) - Job position
+    //   - tel: string (optional, 0-50 chars) - Phone contact
+    //   - email: string (optional, 0-128 chars) - Work email
+    //   - scheduleType: string (optional, 0-32 chars) - 'CORRIDO' | 'CORTADO'
+    //   - shiftStart1: string (optional, 0-10 chars) - Shift start time
+    //   - shiftEnd1: string (optional, 0-10 chars) - Shift end time
+    //   - shiftStart2: string (optional, 0-10 chars or null) - Afternoon shift start
+    //   - shiftEnd2: string (optional, 0-10 chars or null) - Afternoon shift end
+    //   - workDays: list of numbers (optional, max 7 items) - Working day numbers
+    //   - hasFinger: bool (optional) - Biometric fingerprint flag
+    //   - hasPassd: bool (optional) - Password flag
+    //   - hasCard: bool (optional) - RFID card flag
+    //   - status: string (optional, 0-32 chars) - 'ACTIVE' | 'INACTIVE'
+    //   - hourlyRate: number (optional) - Hourly compensation rate
+    //   - updatedAt: string | timestamp (optional, max 50 chars) - Last update timestamp
+    //   - createdAt: string | timestamp (optional, max 50 chars) - Creation timestamp
+    //   - createdBy: string (optional, max 128 chars) - Author UID
+    //
+    // Collection: attendance_logs
+    // Document ID: {logId} (unique hash / uuid string)
+    // Fields:
+    //   - id: string (optional/required, 1-128 chars) - Punch record ID (immutable on update)
+    //   - userCode: string (required, 1-64 chars) - Punch user code
+    //   - employeeNameHint: string (optional, 0-128 chars) - Cached employee name
+    //   - departmentHint: string (optional, 0-100 chars) - Cached department name
+    //   - timestamp: string | timestamp (required) - Timestamp of punch
+    //   - branch: string (optional, 0-100 chars) - Branch name
+    //   - verifyDesc: string (optional, 0-100 chars) - Biometric verification type
+    //   - checktype: number (optional) - Anviz checktype enum
+    //   - manual: bool (optional) - Manual entry flag
+    //   - note: string (optional, 0-500 chars) - Supervisor note
+    //   - createdAt: string | timestamp (optional, max 50 chars) - Creation timestamp
+    //   - createdBy: string (optional, max 128 chars) - Author UID
+    //
+    // Collection: devices
+    // Document ID: {deviceId} (e.g., '1930', '1931')
+    // Fields:
+    //   - id: string (optional/required, 1-64 chars) - Device ID (immutable on update)
+    //   - cloudId: number (optional) - CrossChex terminal cloud ID
+    //   - name: string (required, 1-100 chars) - Branch location / terminal name
+    //   - model: string (optional, 0-50 chars) - Hardware model (e.g., VF30PRO)
+    //   - serialNumber: string (optional, 0-64 chars) - Hardware serial number
+    //   - ip: string (optional, 0-100 chars) - Local IP or push tunnel status
+    //   - port: number (optional) - Protocol TCP port
+    //   - department: string (optional, 0-100 chars) - Department
+    //   - userCount: number (optional) - Enrolled users count
+    //   - fpCount: number (optional) - Enrolled fingerprints count
+    //   - pwdCount: number (optional) - Enrolled passwords count
+    //   - status: string (optional, 0-32 chars) - Device status (ONLINE/OFFLINE)
+    //   - validity: string (optional, 0-64 chars) - Hardware validity date range
+    //   - lastSync: string | timestamp (optional, max 50 chars) - Last sync time
+    //   - updatedAt: string | timestamp (optional, max 50 chars) - Update timestamp
+    //   - createdAt: string | timestamp (optional, max 50 chars) - Creation timestamp
+    //   - createdBy: string (optional, max 128 chars) - Author UID
+    //
+    // ===============================================================
+
+    // ===============================================================
+    // Helper Functions
+    // ===============================================================
+
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return isAuthenticated() && request.auth.token.role == 'ADMIN';
+    }
+
+    function isSupervisor() {
+      return isAuthenticated() && (request.auth.token.role == 'SUPERVISOR' || isAdmin());
+    }
+
+    function areImmutableFieldsUnchanged(fields) {
+      return !request.resource.data.diff(resource.data).affectedKeys().hasAny(fields);
+    }
+
+    function isValidOptionalString(data, field, minLen, maxLen) {
+      return !(field in data) ||
+        data[field] == null ||
+        (data[field] is string && data[field].size() >= minLen && data[field].size() <= maxLen);
+    }
+
+    function isValidOptionalNumber(data, field) {
+      return !(field in data) ||
+        data[field] == null ||
+        (data[field] is number);
+    }
+
+    function isValidOptionalBool(data, field) {
+      return !(field in data) ||
+        data[field] == null ||
+        (data[field] is bool);
+    }
+
+    function isValidOptionalTimestampOrString(data, field) {
+      return !(field in data) ||
+        data[field] == null ||
+        (data[field] is timestamp) ||
+        (data[field] is string && data[field].size() <= 50);
+    }
+
+    // ===============================================================
+    // Domain Validators (Validator Function Pattern)
+    // ===============================================================
+
+    function isValidEmployee(data) {
+      return data.keys().hasAll(['name']) &&
+        data.name is string && data.name.size() > 0 && data.name.size() <= 128 &&
+        isValidOptionalString(data, 'id', 1, 64) &&
+        isValidOptionalNumber(data, 'cloudEmployeeId') &&
+        isValidOptionalString(data, 'dni', 1, 32) &&
+        isValidOptionalString(data, 'workno', 1, 32) &&
+        isValidOptionalString(data, 'clockIdBranch1', 0, 32) &&
+        isValidOptionalString(data, 'clockIdBranch2', 0, 32) &&
+        isValidOptionalString(data, 'department', 0, 100) &&
+        isValidOptionalString(data, 'position', 0, 100) &&
+        isValidOptionalString(data, 'tel', 0, 50) &&
+        isValidOptionalString(data, 'email', 0, 128) &&
+        isValidOptionalString(data, 'scheduleType', 0, 32) &&
+        isValidOptionalString(data, 'shiftStart1', 0, 10) &&
+        isValidOptionalString(data, 'shiftEnd1', 0, 10) &&
+        isValidOptionalString(data, 'shiftStart2', 0, 10) &&
+        isValidOptionalString(data, 'shiftEnd2', 0, 10) &&
+        (!('workDays' in data) || (data.workDays is list && data.workDays.size() <= 7)) &&
+        isValidOptionalBool(data, 'hasFinger') &&
+        isValidOptionalBool(data, 'hasPassd') &&
+        isValidOptionalBool(data, 'hasCard') &&
+        isValidOptionalString(data, 'status', 0, 32) &&
+        isValidOptionalNumber(data, 'hourlyRate') &&
+        isValidOptionalTimestampOrString(data, 'updatedAt') &&
+        isValidOptionalTimestampOrString(data, 'createdAt') &&
+        isValidOptionalString(data, 'createdBy', 0, 128);
+    }
+
+    function isValidAttendanceLog(data) {
+      return data.keys().hasAll(['userCode', 'timestamp']) &&
+        data.userCode is string && data.userCode.size() > 0 && data.userCode.size() <= 64 &&
+        ((data.timestamp is timestamp) || (data.timestamp is string && data.timestamp.size() <= 50)) &&
+        isValidOptionalString(data, 'id', 1, 128) &&
+        isValidOptionalString(data, 'employeeNameHint', 0, 128) &&
+        isValidOptionalString(data, 'departmentHint', 0, 100) &&
+        isValidOptionalString(data, 'branch', 0, 100) &&
+        isValidOptionalString(data, 'verifyDesc', 0, 100) &&
+        isValidOptionalNumber(data, 'checktype') &&
+        isValidOptionalBool(data, 'manual') &&
+        isValidOptionalString(data, 'note', 0, 500) &&
+        isValidOptionalTimestampOrString(data, 'createdAt') &&
+        isValidOptionalString(data, 'createdBy', 0, 128);
+    }
+
+    function isValidDevice(data) {
+      return data.keys().hasAll(['name']) &&
+        data.name is string && data.name.size() > 0 && data.name.size() <= 100 &&
+        isValidOptionalString(data, 'id', 1, 64) &&
+        isValidOptionalNumber(data, 'cloudId') &&
+        isValidOptionalString(data, 'model', 0, 50) &&
+        isValidOptionalString(data, 'serialNumber', 0, 64) &&
+        isValidOptionalString(data, 'ip', 0, 100) &&
+        isValidOptionalNumber(data, 'port') &&
+        isValidOptionalString(data, 'department', 0, 100) &&
+        isValidOptionalNumber(data, 'userCount') &&
+        isValidOptionalNumber(data, 'fpCount') &&
+        isValidOptionalNumber(data, 'pwdCount') &&
+        isValidOptionalString(data, 'status', 0, 32) &&
+        isValidOptionalString(data, 'validity', 0, 64) &&
+        isValidOptionalTimestampOrString(data, 'lastSync') &&
+        isValidOptionalTimestampOrString(data, 'updatedAt') &&
+        isValidOptionalTimestampOrString(data, 'createdAt') &&
+        isValidOptionalString(data, 'createdBy', 0, 128);
+    }
+
+    // ===============================================================
+    // Collection Match Rules
+    // ===============================================================
+
+    // Employees registry
     match /employees/{empId} {
-      allow read, update, delete: if request.auth != null && request.auth.uid == resource.data.createdBy;
-      allow create: if request.auth != null && request.resource.data.createdBy == request.auth.uid;
+      allow read: if isAuthenticated();
+      allow create: if isAdmin() && isValidEmployee(request.resource.data);
+      allow update: if isAdmin() && isValidEmployee(request.resource.data) && areImmutableFieldsUnchanged(['id']);
+      allow delete: if isAdmin();
     }
+
+    // Biometric and manual attendance logs
     match /attendance_logs/{logId} {
-      allow read, update, delete: if request.auth != null && request.auth.uid == resource.data.createdBy;
-      allow create: if request.auth != null && request.resource.data.createdBy == request.auth.uid;
+      allow read: if isAuthenticated();
+      allow create: if isSupervisor() && isValidAttendanceLog(request.resource.data);
+      allow update: if isSupervisor() && isValidAttendanceLog(request.resource.data) && areImmutableFieldsUnchanged(['id']);
+      allow delete: if isAdmin();
     }
+
+    // Connected biometric devices and terminals
+    match /devices/{deviceId} {
+      allow read: if isAuthenticated();
+      allow create: if isAdmin() && isValidDevice(request.resource.data);
+      allow update: if isAdmin() && isValidDevice(request.resource.data) && areImmutableFieldsUnchanged(['id']);
+      allow delete: if isAdmin();
+    }
+
+    // Default deny: close all remaining documents and collections
     match /{document=**} {
       allow read, write: if false;
     }
