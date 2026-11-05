@@ -59,7 +59,16 @@ let currentLogs = [];
 let currentDevices = [];
 let lastReport = null;
 
-// Manejo de Tabs
+// Manejo de Tabs y Vistas
+const tabTitles = {
+  'tab-dashboard': 'Dashboard General',
+  'tab-live': 'Monitor en Vivo (Tiempo Real)',
+  'tab-reports': 'Reporte T&A y Horas Trabajadas',
+  'tab-records': 'Fichadas & Auditoría de Marcas',
+  'tab-employees': 'Personal / Empleados (Padrón)',
+  'tab-devices': 'Estado de Relojes Anviz VF30 Pro'
+};
+
 function switchTab(tabId) {
   document.querySelectorAll('.nav-btn').forEach((b) => b.classList.remove('active'));
   document.querySelectorAll('.tab-content').forEach((tc) => tc.classList.remove('active'));
@@ -69,6 +78,20 @@ function switchTab(tabId) {
 
   const content = document.getElementById(tabId);
   if (content) content.classList.add('active');
+
+  // Actualizar título del topbar
+  const topbarTitle = document.getElementById('topbarCurrentView');
+  if (topbarTitle && tabTitles[tabId]) {
+    topbarTitle.textContent = tabTitles[tabId];
+  }
+
+  // Cerrar sidebar en vista móvil
+  const sidebar = document.getElementById('appSidebar');
+  const overlay = document.getElementById('sidebarOverlay');
+  if (sidebar && sidebar.classList.contains('open')) {
+    sidebar.classList.remove('open');
+    if (overlay) overlay.classList.remove('active');
+  }
 
   if (tabId === 'tab-dashboard') loadDashboard();
   if (tabId === 'tab-live') loadLiveStatus();
@@ -86,6 +109,35 @@ document.querySelectorAll('.nav-btn').forEach((btn) => {
     if (tabId) switchTab(tabId);
   });
 });
+
+// Control de Drawer Móvil
+document.getElementById('btnMobileMenu')?.addEventListener('click', () => {
+  document.getElementById('appSidebar')?.classList.add('open');
+  document.getElementById('sidebarOverlay')?.classList.add('active');
+});
+
+document.getElementById('btnSidebarClose')?.addEventListener('click', () => {
+  document.getElementById('appSidebar')?.classList.remove('open');
+  document.getElementById('sidebarOverlay')?.classList.remove('active');
+});
+
+document.getElementById('sidebarOverlay')?.addEventListener('click', () => {
+  document.getElementById('appSidebar')?.classList.remove('open');
+  document.getElementById('sidebarOverlay')?.classList.remove('active');
+});
+
+// Reloj en tiempo real en Topbar
+function updateTopbarClock() {
+  const el = document.getElementById('topbarClock');
+  if (!el) return;
+  const now = new Date();
+  const hh = String(now.getHours()).padStart(2, '0');
+  const mm = String(now.getMinutes()).padStart(2, '0');
+  const ss = String(now.getSeconds()).padStart(2, '0');
+  el.textContent = `${hh}:${mm}:${ss}`;
+}
+setInterval(updateTopbarClock, 1000);
+updateTopbarClock();
 
 function openModal(id) {
   document.getElementById(id)?.classList.add('open');

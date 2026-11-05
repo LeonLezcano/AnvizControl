@@ -12262,5 +12262,17 @@
     "checktype": 128,
     "manual": false,
     "note": ""
+  },
+  {
+    "id": "LOG-1793900761248-69616",
+    "userCode": "3004",
+    "employeeNameHint": "",
+    "departmentHint": "",
+    "timestamp": "2026-11-15T20:44:09.566Z",
+    "branch": "Neuquen 959",
+    "verifyDesc": "Huella Dactilar",
+    "checktype": 128,
+    "manual": false,
+    "note": ""
   }
 ]

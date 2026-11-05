@@ -1,31 +1,6 @@
 {
   "communities": {
     "0": [
-      "engine_attendanceengine",
-      "engine_attendanceengine_data_dir",
-      "engine_attendanceengine_devices_file",
-      "engine_attendanceengine_dirname",
-      "engine_attendanceengine_employees_file",
-      "engine_attendanceengine_filename",
-      "engine_attendanceengine_logs_file",
-      "engine_attendanceengine_toargentinalocal",
-      "engine_attendanceengine_tombstones_file",
-      "engine_crosschexcloudengine",
-      "engine_crosschexcloudengine_data_dir",
-      "engine_crosschexcloudengine_dirname",
-      "engine_crosschexcloudengine_filename",
-      "engine_crosschexcloudengine_session_file",
-      "server_index",
-      "server_index_dirname",
-      "server_index_filename",
-      "server_index_mime_types",
-      "server_index_parsebody",
-      "server_index_public_dir",
-      "server_index_sendjson",
-      "server_index_server",
-      "tests_anviz_test"
-    ],
-    "1": [
       "engine_attendanceengine_attendanceengine",
       "engine_attendanceengine_attendanceengine_addtombstone",
       "engine_attendanceengine_attendanceengine_appendlogs",
@@ -46,11 +21,11 @@
       "engine_attendanceengine_attendanceengine_saveemployee",
       "engine_attendanceengine_attendanceengine_updatelog",
       "engine_attendanceengine_readjson",
+      "engine_attendanceengine_toargentinalocal",
       "engine_attendanceengine_writejson",
-      "engine_seeddata",
       "engine_seeddata_seeddemodataifempty"
     ],
-    "2": [
+    "1": [
       "engine_anviznetworkscanner",
       "engine_anviznetworkscanner_anviznetworkscanner",
       "engine_anviznetworkscanner_anviznetworkscanner_scansubnet",
@@ -71,7 +46,29 @@
       "scripts_sync_live_clock_time",
       "scripts_sync_live_clock_time_socket",
       "scripts_test_live_clock",
-      "scripts_test_live_clock_socket"
+      "scripts_test_live_clock_socket",
+      "tests_anviz_test"
+    ],
+    "2": [
+      "engine_crosschexcloudengine",
+      "engine_crosschexcloudengine_crosschexcloudengine",
+      "engine_crosschexcloudengine_crosschexcloudengine_apipost",
+      "engine_crosschexcloudengine_crosschexcloudengine_getsavedsession",
+      "engine_crosschexcloudengine_crosschexcloudengine_login",
+      "engine_crosschexcloudengine_crosschexcloudengine_savesession",
+      "engine_crosschexcloudengine_crosschexcloudengine_syncfromcloud",
+      "engine_crosschexcloudengine_data_dir",
+      "engine_crosschexcloudengine_dirname",
+      "engine_crosschexcloudengine_filename",
+      "engine_crosschexcloudengine_session_file",
+      "server_index",
+      "server_index_dirname",
+      "server_index_filename",
+      "server_index_mime_types",
+      "server_index_parsebody",
+      "server_index_public_dir",
+      "server_index_sendjson",
+      "server_index_server"
     ],
     "3": [
       "package",
@@ -109,7 +106,9 @@
       "public_app_runreport",
       "public_app_sanitizer",
       "public_app_setupreportstab",
-      "public_app_switchtab"
+      "public_app_switchtab",
+      "public_app_tabtitles",
+      "public_app_updatetopbarclock"
     ],
     "5": [
       "scripts_bump_version",
@@ -137,23 +136,26 @@
       "agent_agent_uploadtoserver"
     ],
     "7": [
-      "engine_crosschexcloudengine_crosschexcloudengine",
-      "engine_crosschexcloudengine_crosschexcloudengine_apipost",
-      "engine_crosschexcloudengine_crosschexcloudengine_getsavedsession",
-      "engine_crosschexcloudengine_crosschexcloudengine_login",
-      "engine_crosschexcloudengine_crosschexcloudengine_savesession",
-      "engine_crosschexcloudengine_crosschexcloudengine_syncfromcloud"
+      "engine_attendanceengine",
+      "engine_attendanceengine_data_dir",
+      "engine_attendanceengine_devices_file",
+      "engine_attendanceengine_dirname",
+      "engine_attendanceengine_employees_file",
+      "engine_attendanceengine_filename",
+      "engine_attendanceengine_logs_file",
+      "engine_attendanceengine_tombstones_file",
+      "engine_seeddata"
     ]
   },
   "cohesion": {
-    "0": 0.09881422924901186,
-    "1": 0.22529644268774704,
-    "2": 0.1523809523809524,
+    "0": 0.22924901185770752,
+    "1": 0.1471861471861472,
+    "2": 0.14035087719298245,
     "3": 0.10526315789473684,
-    "4": 0.2761904761904762,
+    "4": 0.22794117647058823,
     "5": 0.18181818181818182,
     "6": 0.28888888888888886,
-    "7": 0.6666666666666666
+    "7": 0.2222222222222222
   },
   "gods": [
     {
@@ -211,28 +213,28 @@
   "questions": [
     {
       "type": "bridge_node",
-      "question": "Why does `AnvizProtocolEngine` connect `Community 2` to `Community 0`, `Community 6`?",
-      "why": "High betweenness centrality (0.153) - this node is a cross-community bridge."
+      "question": "Why does `AnvizProtocolEngine` connect `Community 1` to `Community 2`, `Community 6`?",
+      "why": "High betweenness centrality (0.148) - this node is a cross-community bridge."
     },
     {
       "type": "bridge_node",
-      "question": "Why does `AttendanceEngine` connect `Community 1` to `Community 0`?",
-      "why": "High betweenness centrality (0.140) - this node is a cross-community bridge."
-    },
-    {
-      "type": "bridge_node",
-      "question": "Why does `CrossChexCloudEngine` connect `Community 7` to `Community 0`?",
-      "why": "High betweenness centrality (0.041) - this node is a cross-community bridge."
+      "question": "Why does `AttendanceEngine` connect `Community 0` to `Community 1`, `Community 2`, `Community 7`?",
+      "why": "High betweenness centrality (0.136) - this node is a cross-community bridge."
     },
     {
       "type": "isolated_nodes",
       "question": "What connects `__filename`, `__dirname`, `CACHE_FILE` to the rest of the system?",
-      "why": "51 weakly-connected nodes found - possible documentation gaps or missing edges."
+      "why": "52 weakly-connected nodes found - possible documentation gaps or missing edges."
     },
     {
       "type": "low_cohesion",
-      "question": "Should `Community 0` be split into smaller, more focused modules?",
-      "why": "Cohesion score 0.09881422924901186 - nodes in this community are weakly interconnected."
+      "question": "Should `Community 1` be split into smaller, more focused modules?",
+      "why": "Cohesion score 0.1471861471861472 - nodes in this community are weakly interconnected."
+    },
+    {
+      "type": "low_cohesion",
+      "question": "Should `Community 2` be split into smaller, more focused modules?",
+      "why": "Cohesion score 0.14035087719298245 - nodes in this community are weakly interconnected."
     },
     {
       "type": "low_cohesion",

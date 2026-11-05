@@ -28,103 +28,439 @@
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: var(--cc-font); }
-    body { background-color: var(--cc-bg); color: var(--cc-text-primary); min-height: 100vh; padding-bottom: 40px; }
+    body { background-color: var(--cc-bg); color: var(--cc-text-primary); min-height: 100vh; overflow-x: hidden; }
 
-    /* Header superior exacto a CrossChex Cloud */
-    header {
-      background-color: var(--cc-header-bg);
-      color: #ffffff;
-      height: 56px;
-      padding: 0 24px;
+    /* Layout Principal: Barra Lateral + Contenedor de Contenido */
+    .app-layout {
       display: flex;
-      justify-content: space-between;
-      align-items: center;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      min-height: 100vh;
+      width: 100%;
+    }
+
+    /* BARRA LATERAL (SIDEBAR) */
+    .sidebar {
+      width: 260px;
+      min-width: 260px;
+      background: #0f172a;
+      color: #e2e8f0;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
       position: sticky;
       top: 0;
       z-index: 100;
+      border-right: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 2px 0 12px rgba(0, 0, 0, 0.15);
+      transition: transform 0.3s ease;
+    }
+
+    .sidebar-header {
+      padding: 18px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(255, 255, 255, 0.02);
     }
 
     .brand {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
     }
+
     .brand-logo {
-      width: 28px;
-      height: 28px;
-      background: rgba(255, 255, 255, 0.2);
-      border-radius: 6px;
+      width: 32px;
+      height: 32px;
+      background: linear-gradient(135deg, var(--cc-primary), #0ea5e9);
+      border-radius: 8px;
       display: flex;
       align-items: center;
       justify-content: center;
       font-size: 16px;
-    }
-    .brand-title {
-      font-size: 1.15rem;
-      font-weight: 700;
-      letter-spacing: -0.3px;
-    }
-    .brand-company {
-      font-size: 0.82rem;
-      background: rgba(0, 0, 0, 0.15);
-      padding: 3px 10px;
-      border-radius: 999px;
-      margin-left: 6px;
+      box-shadow: 0 2px 6px rgba(5, 170, 140, 0.4);
     }
 
-    /* Navegación por pestañas */
-    nav {
-      display: flex;
-      gap: 4px;
-      height: 100%;
-      align-items: center;
+    .brand-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #ffffff;
+      letter-spacing: -0.3px;
+      line-height: 1.2;
     }
-    .nav-btn {
+
+    .brand-company {
+      font-size: 0.72rem;
+      background: rgba(5, 170, 140, 0.2);
+      color: #38bdf8;
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      padding: 1px 7px;
+      border-radius: 999px;
+      display: inline-block;
+      margin-top: 2px;
+      font-weight: 600;
+    }
+
+    .sidebar-close-btn {
+      display: none;
       background: transparent;
       border: none;
-      color: rgba(255, 255, 255, 0.85);
-      padding: 0 16px;
-      height: 100%;
+      color: #94a3b8;
+      font-size: 1.3rem;
       cursor: pointer;
-      font-size: 0.9rem;
+      padding: 4px;
+    }
+
+    .sidebar-section-title {
+      padding: 18px 18px 8px 18px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      color: #64748b;
+    }
+
+    /* Navegación Vertical */
+    .sidebar-nav {
+      flex: 1;
+      padding: 0 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      overflow-y: auto;
+    }
+
+    .nav-btn {
+      width: 100%;
+      background: transparent;
+      border: 1px solid transparent;
+      color: #94a3b8;
+      padding: 10px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.88rem;
       font-weight: 500;
       display: flex;
       align-items: center;
-      gap: 6px;
-      border-bottom: 3px solid transparent;
+      gap: 12px;
+      text-align: left;
       transition: all 0.2s ease;
-    }
-    .nav-btn:hover {
-      color: #ffffff;
-      background: rgba(255, 255, 255, 0.08);
-    }
-    .nav-btn.active {
-      color: #ffffff;
-      font-weight: 700;
-      border-bottom-color: #ffffff;
-      background: rgba(255, 255, 255, 0.12);
+      position: relative;
     }
 
-    .header-user {
+    .nav-btn:hover {
+      color: #ffffff;
+      background: rgba(255, 255, 255, 0.05);
+      border-color: rgba(255, 255, 255, 0.08);
+      transform: translateX(2px);
+    }
+
+    .nav-btn.active {
+      color: #ffffff;
+      font-weight: 600;
+      background: linear-gradient(90deg, rgba(5, 170, 140, 0.25), rgba(5, 170, 140, 0.08));
+      border-color: rgba(5, 170, 140, 0.4);
+      box-shadow: inset 3px 0 0 var(--cc-primary);
+    }
+
+    .nav-icon {
+      font-size: 1.1rem;
       display: flex;
       align-items: center;
-      gap: 12px;
-      font-size: 0.85rem;
+      justify-content: center;
+      width: 20px;
     }
-    .user-pill {
-      background: rgba(255, 255, 255, 0.18);
-      padding: 4px 12px;
-      border-radius: 16px;
+
+    .nav-text {
+      flex: 1;
+    }
+
+    .nav-badge {
+      font-size: 0.68rem;
+      font-weight: 600;
+      background: rgba(224, 32, 32, 0.2);
+      color: #f87171;
+      padding: 2px 6px;
+      border-radius: 999px;
+      border: 1px solid rgba(224, 32, 32, 0.4);
+    }
+
+    .nav-count {
+      font-size: 0.72rem;
+      font-weight: 700;
+      background: rgba(255, 255, 255, 0.1);
+      color: #cbd5e1;
+      padding: 1px 7px;
+      border-radius: 999px;
+    }
+
+    /* Caja de Enlace de Hardware en Sidebar */
+    .sidebar-hardware-box {
+      margin: 10px 12px;
+      padding: 10px 12px;
+      background: rgba(5, 170, 140, 0.08);
+      border: 1px solid rgba(5, 170, 140, 0.25);
+      border-radius: 8px;
+      font-size: 0.78rem;
+    }
+
+    .hardware-box-header {
       display: flex;
       align-items: center;
       gap: 6px;
+      color: #34d399;
+      font-weight: 600;
+      margin-bottom: 3px;
+    }
+
+    .hw-indicator {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #10b981;
+      box-shadow: 0 0 8px #10b981;
+      display: inline-block;
+    }
+
+    .hardware-box-detail {
+      color: #94a3b8;
+      font-size: 0.72rem;
+      line-height: 1.35;
+    }
+
+    .hardware-box-detail code {
+      color: #38bdf8;
+      font-family: monospace;
+      font-size: 0.76rem;
+    }
+
+    /* Footer del Sidebar */
+    .sidebar-footer {
+      padding: 14px 12px;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(0, 0, 0, 0.2);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .sidebar-user {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .user-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #3b82f6, #05aa8c);
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.8rem;
+    }
+
+    .user-info {
+      flex: 1;
+      overflow: hidden;
+    }
+
+    .user-name {
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: #f1f5f9;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+    }
+
+    .user-role {
+      font-size: 0.7rem;
+      color: #64748b;
+    }
+
+    .sidebar-sync-btn {
+      width: 100%;
+      justify-content: center;
+      gap: 6px;
+      padding: 8px 12px;
+      font-size: 0.82rem;
+      border-radius: 6px;
+    }
+
+    .sidebar-version {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.68rem;
+      color: #475569;
+    }
+
+    .badge-mini {
+      background: rgba(5, 170, 140, 0.15);
+      color: #05aa8c;
+      padding: 1px 5px;
+      border-radius: 4px;
+      font-weight: 600;
+    }
+
+    /* CONTENEDOR DE CONTENIDO PRINCIPAL */
+    .main-content-wrapper {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      background: var(--cc-bg);
+    }
+
+    /* Topbar en contenido */
+    .topbar {
+      height: 56px;
+      background: #ffffff;
+      border-bottom: 1px solid var(--cc-border);
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.03);
+    }
+
+    .topbar-left {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .mobile-menu-btn {
+      display: none;
+      background: transparent;
+      border: 1px solid var(--cc-border);
+      color: var(--cc-text-primary);
+      width: 36px;
+      height: 36px;
+      border-radius: 6px;
+      font-size: 1.2rem;
+      cursor: pointer;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .mobile-menu-btn:hover {
+      background: var(--cc-bg);
+    }
+
+    .topbar-breadcrumb {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.9rem;
+    }
+
+    .breadcrumb-root {
+      color: var(--cc-text-secondary);
+      font-weight: 500;
+    }
+
+    .breadcrumb-sep {
+      color: #d1d5db;
+    }
+
+    .breadcrumb-current {
+      color: var(--cc-text-primary);
+      font-weight: 600;
+    }
+
+    .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .live-clock-pill {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-family: monospace;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--cc-text-regular);
+    }
+
+    .pulse-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--cc-primary);
+      animation: pulseAnim 2s infinite;
+    }
+
+    @keyframes pulseAnim {
+      0% { box-shadow: 0 0 0 0 rgba(5, 170, 140, 0.7); }
+      70% { box-shadow: 0 0 0 6px rgba(5, 170, 140, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(5, 170, 140, 0); }
     }
 
     main {
+      flex: 1;
       max-width: 1360px;
+      width: 100%;
       margin: 20px auto;
-      padding: 0 20px;
+      padding: 0 24px;
+    }
+
+    .sidebar-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 90;
+      backdrop-filter: blur(2px);
+    }
+
+    /* RESPONSIVE: Tablet y Móvil */
+    @media (max-width: 900px) {
+      .sidebar {
+        position: fixed;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        transform: translateX(-100%);
+        z-index: 100;
+      }
+
+      .sidebar.open {
+        transform: translateX(0);
+      }
+
+      .sidebar-close-btn {
+        display: block;
+      }
+
+      .mobile-menu-btn {
+        display: flex;
+      }
+
+      .sidebar-overlay.active {
+        display: block;
+      }
+
+      main {
+        padding: 0 14px;
+        margin: 14px auto;
+      }
     }
 
     .tab-content { display: none; }
@@ -402,7 +738,10 @@
 
     @media print {
       body { background: #fff !important; }
-      header, nav, .filter-bar, .no-print, .btn { display: none !important; }
+      .sidebar, .topbar, .sidebar-overlay, .filter-bar, .no-print, .btn { display: none !important; }
+      .app-layout { display: block !important; }
+      .main-content-wrapper { display: block !important; }
+      main { margin: 0 !important; padding: 0 !important; max-width: 100% !important; }
       .card { border: none !important; box-shadow: none !important; padding: 0 !important; }
       table { border: 1px solid #ddd; }
       th, td { border: 1px solid #ddd; padding: 6px 10px; }
@@ -411,34 +750,106 @@
 </head>
 <body>
 
-  <!-- HEADER -->
-  <header>
-    <div class="brand">
-      <div class="brand-logo">⏱️</div>
-      <div class="brand-title">CrossChex Control</div>
-      <span class="brand-company" id="topCompanyTag">Regondi srl</span>
-    </div>
-
-    <nav class="no-print">
-      <button class="nav-btn active" data-tab="tab-dashboard">📊 Dashboard</button>
-      <button class="nav-btn" data-tab="tab-live">🔴 Monitor en Vivo</button>
-      <button class="nav-btn" data-tab="tab-reports">📋 Reporte T&A</button>
-      <button class="nav-btn" data-tab="tab-records">📑 Fichadas & Rectificación</button>
-      <button class="nav-btn" data-tab="tab-employees">👥 Empleados (24)</button>
-      <button class="nav-btn" data-tab="tab-devices">📡 Relojes VF30 Pro (2)</button>
-    </nav>
-
-    <div class="header-user no-print">
-      <div class="user-pill">
-        <span>👤 Nelson Lezcano</span>
+  <div class="app-layout">
+    <!-- BARRA LATERAL (SIDEBAR) -->
+    <aside class="sidebar no-print" id="appSidebar">
+      <div class="sidebar-header">
+        <div class="brand">
+          <div class="brand-logo">⏱️</div>
+          <div>
+            <div class="brand-title">CrossChex Control</div>
+            <span class="brand-company" id="topCompanyTag">Regondi srl</span>
+          </div>
+        </div>
+        <button class="sidebar-close-btn" id="btnSidebarClose" aria-label="Cerrar Menú">✕</button>
       </div>
-      <button class="btn btn-outline btn-sm" id="btnSyncCloud" style="color: #fff; border-color: rgba(255,255,255,0.4); background: transparent;">
-        🔄 Sincronizar Cloud
-      </button>
-    </div>
-  </header>
 
-  <main>
+      <div class="sidebar-section-title">MENÚ PRINCIPAL</div>
+      <nav class="sidebar-nav">
+        <button class="nav-btn active" data-tab="tab-dashboard">
+          <span class="nav-icon">📊</span>
+          <span class="nav-text">Dashboard General</span>
+        </button>
+        <button class="nav-btn" data-tab="tab-live">
+          <span class="nav-icon">🔴</span>
+          <span class="nav-text">Monitor en Vivo</span>
+          <span class="nav-badge" id="badgeLivePresentes">Planta</span>
+        </button>
+        <button class="nav-btn" data-tab="tab-reports">
+          <span class="nav-icon">📋</span>
+          <span class="nav-text">Reporte T&A</span>
+        </button>
+        <button class="nav-btn" data-tab="tab-records">
+          <span class="nav-icon">📑</span>
+          <span class="nav-text">Fichadas & Auditoría</span>
+        </button>
+        <button class="nav-btn" data-tab="tab-employees">
+          <span class="nav-icon">👥</span>
+          <span class="nav-text">Personal / Empleados</span>
+          <span class="nav-count" id="badgeTotalEmps">24</span>
+        </button>
+        <button class="nav-btn" data-tab="tab-devices">
+          <span class="nav-icon">📡</span>
+          <span class="nav-text">Relojes Anviz VF30</span>
+        </button>
+      </nav>
+
+      <!-- Caja de Enlace de Hardware en Sidebar -->
+      <div class="sidebar-hardware-box">
+        <div class="hardware-box-header">
+          <span class="hw-indicator"></span>
+          <span>Enlace TCP 5010 Activo</span>
+        </div>
+        <div class="hardware-box-detail">
+          VF30 Pro • Neuquén 959<br>
+          <code>192.168.0.218:5010</code>
+        </div>
+      </div>
+
+      <!-- Footer del Sidebar: Usuario, Sincronización y Versión -->
+      <div class="sidebar-footer">
+        <div class="sidebar-user">
+          <div class="user-avatar">NL</div>
+          <div class="user-info">
+            <div class="user-name">Nelson Lezcano</div>
+            <div class="user-role">Control de Calidad</div>
+          </div>
+        </div>
+
+        <button class="btn btn-primary btn-sm sidebar-sync-btn" id="btnSyncCloud">
+          🔄 Sincronizar Cloud Push
+        </button>
+
+        <div class="sidebar-version">
+          <span>AnvizControl v1.0.04</span>
+          <span class="badge-mini">AiAppFactory</span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Overlay para dispositivos móviles -->
+    <div class="sidebar-overlay no-print" id="sidebarOverlay"></div>
+
+    <!-- CONTENEDOR PRINCIPAL -->
+    <div class="main-content-wrapper">
+      <header class="topbar no-print">
+        <div class="topbar-left">
+          <button class="mobile-menu-btn" id="btnMobileMenu" aria-label="Abrir Menú">☰</button>
+          <div class="topbar-breadcrumb">
+            <span class="breadcrumb-root">CrossChex Control</span>
+            <span class="breadcrumb-sep">/</span>
+            <span class="breadcrumb-current" id="topbarCurrentView">Dashboard General</span>
+          </div>
+        </div>
+        <div class="topbar-right">
+          <div class="live-clock-pill">
+            <span class="pulse-dot"></span>
+            <span id="topbarClock">--:--:--</span>
+          </div>
+        </div>
+      </header>
+
+      <main>
     <!-- 1. DASHBOARD PRINCIPAL (ESTILO CROSSCHEX CLOUD) -->
     <section id="tab-dashboard" class="tab-content active">
       <!-- KPIs Superiores -->
@@ -762,6 +1173,8 @@
       </div>
     </section>
   </main>
+  </div> <!-- .main-content-wrapper -->
+  </div> <!-- .app-layout -->
 
   <!-- MODAL EMPLEADO -->
   <div class="modal-overlay" id="modalEmployee">

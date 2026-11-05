@@ -11,8 +11,8 @@
       "_origin": "ast",
       "community": 6,
       "norm_label": "agent.mjs",
-      "id": "agent_agent",
-      "community_name": "Community 6"
+      "community_name": "Community 6",
+      "id": "agent_agent"
     },
     {
       "label": "__filename",
@@ -22,8 +22,8 @@
       "_origin": "ast",
       "community": 6,
       "norm_label": "__filename",
-      "id": "agent_agent_filename",
-      "community_name": "Community 6"
+      "community_name": "Community 6",
+      "id": "agent_agent_filename"
     },
     {
       "label": "__dirname",
@@ -33,8 +33,8 @@
       "_origin": "ast",
       "community": 6,
       "norm_label": "__dirname",
-      "id": "agent_agent_dirname",
-      "community_name": "Community 6"
+      "community_name": "Community 6",
+      "id": "agent_agent_dirname"
     },
     {
       "label": "CACHE_FILE",
@@ -44,8 +44,8 @@
       "_origin": "ast",
       "community": 6,
       "norm_label": "cache_file",
-      "id": "agent_agent_cache_file",
-      "community_name": "Community 6"
+      "community_name": "Community 6",
+      "id": "agent_agent_cache_file"
     },
     {
       "label": "CONFIG",
@@ -55,8 +55,8 @@
       "_origin": "ast",
       "community": 6,
       "norm_label": "config",
-      "id": "agent_agent_config",
-      "community_name": "Community 6"
+      "community_name": "Community 6",
+      "id": "agent_agent_config"
     },
     {
       "label": "loadOfflineQueue()",
@@ -66,8 +66,8 @@
       "_origin": "ast",
       "community": 6,
       "norm_label": "loadofflinequeue()",
-      "id": "agent_agent_loadofflinequeue",
-      "community_name": "Community 6"
+      "community_name": "Community 6",
+      "id": "agent_agent_loadofflinequeue"
     },
     {
       "label": "saveOfflineQueue()",
@@ -77,8 +77,8 @@
       "_origin": "ast",
       "community": 6,
       "norm_label": "saveofflinequeue()",
-      "id": "agent_agent_saveofflinequeue",
-      "community_name": "Community 6"
+      "community_name": "Community 6",
+      "id": "agent_agent_saveofflinequeue"
     },
     {
       "label": "fetchRecordsFromClock()",
@@ -88,8 +88,8 @@
       "_origin": "ast",
       "community": 6,
       "norm_label": "fetchrecordsfromclock()",
-      "id": "agent_agent_fetchrecordsfromclock",
-      "community_name": "Community 6"
+      "community_name": "Community 6",
+      "id": "agent_agent_fetchrecordsfromclock"
     },
     {
       "label": "uploadToServer()",
@@ -99,8 +99,8 @@
       "_origin": "ast",
       "community": 6,
       "norm_label": "uploadtoserver()",
-      "id": "agent_agent_uploadtoserver",
-      "community_name": "Community 6"
+      "community_name": "Community 6",
+      "id": "agent_agent_uploadtoserver"
     },
     {
       "label": "pollCycle()",
@@ -110,8 +110,8 @@
       "_origin": "ast",
       "community": 6,
       "norm_label": "pollcycle()",
-      "id": "agent_agent_pollcycle",
-      "community_name": "Community 6"
+      "community_name": "Community 6",
+      "id": "agent_agent_pollcycle"
     },
     {
       "label": "AnvizNetworkScanner.mjs",
@@ -119,10 +119,10 @@
       "source_file": "engine/AnvizNetworkScanner.mjs",
       "source_location": "L1",
       "_origin": "ast",
-      "community": 2,
+      "community": 1,
       "norm_label": "anviznetworkscanner.mjs",
-      "id": "engine_anviznetworkscanner",
-      "community_name": "Community 2"
+      "community_name": "Community 1",
+      "id": "engine_anviznetworkscanner"
     },
     {
       "label": "AnvizNetworkScanner",
@@ -130,10 +130,10 @@
       "source_file": "engine/AnvizNetworkScanner.mjs",
       "source_location": "L10",
       "_origin": "ast",
-      "community": 2,
+      "community": 1,
       "norm_label": "anviznetworkscanner",
-      "id": "engine_anviznetworkscanner_anviznetworkscanner",
-      "community_name": "Community 2"
+      "community_name": "Community 1",
+      "id": "engine_anviznetworkscanner_anviznetworkscanner"
     },
     {
       "label": ".testAnvizHost()",
@@ -141,10 +141,10 @@
       "source_file": "engine/AnvizNetworkScanner.mjs",
       "source_location": "L19",
       "_origin": "ast",
-      "community": 2,
+      "community": 1,
       "norm_label": ".testanvizhost()",
-      "id": "engine_anviznetworkscanner_anviznetworkscanner_testanvizhost",
-      "community_name": "Community 2"
+      "community_name": "Community 1",
+      "id": "engine_anviznetworkscanner_anviznetworkscanner_testanvizhost"
     },
     {
       "label": ".scanSubnet()",
@@ -152,10 +152,10 @@
       "source_file": "engine/AnvizNetworkScanner.mjs",
       "source_location": "L127",
       "_origin": "ast",
-      "community": 2,
+      "community": 1,
       "norm_label": ".scansubnet()",
-      "id": "engine_anviznetworkscanner_anviznetworkscanner_scansubnet",
-      "community_name": "Community 2"
+      "community_name": "Community 1",
+      "id": "engine_anviznetworkscanner_anviznetworkscanner_scansubnet"
     },
     {
       "label": "AnvizProtocolEngine.mjs",
@@ -163,10 +163,10 @@
       "source_file": "engine/AnvizProtocolEngine.mjs",
       "source_location": "L1",
       "_origin": "ast",
-      "community": 2,
+      "community": 1,
       "norm_label": "anvizprotocolengine.mjs",
-      "id": "engine_anvizprotocolengine",
-      "community_name": "Community 2"
+      "community_name": "Community 1",
+      "id": "engine_anvizprotocolengine"
     },
     {
       "label": "AnvizProtocolEngine",
@@ -174,10 +174,10 @@
       "source_file": "engine/AnvizProtocolEngine.mjs",
       "source_location": "L8",
       "_origin": "ast",
-      "community": 2,
+      "community": 1,
       "norm_label": "anvizprotocolengine",
-      "id": "engine_anvizprotocolengine_anvizprotocolengine",
-      "community_name": "Community 2"
+      "community_name": "Community 1",
+      "id": "engine_anvizprotocolengine_anvizprotocolengine"
     },
     {
       "label": ".calcCRC16()",
@@ -185,10 +185,10 @@
       "source_file": "engine/AnvizProtocolEngine.mjs",
       "source_location": "L41",
       "_origin": "ast",
-      "community": 2,
+      "community": 1,
       "norm_label": ".calccrc16()",
-      "id": "engine_anvizprotocolengine_anvizprotocolengine_calccrc16",
-      "community_name": "Community 2"
+      "community_name": "Community 1",
+      "id": "engine_anvizprotocolengine_anvizprotocolengine_calccrc16"
     },
     {
       "label": ".buildPacket()",
@@ -196,10 +196,10 @@
       "source_file": "engine/AnvizProtocolEngine.mjs",
       "source_location": "L65",
       "_origin": "ast",
-      "community": 2,
+      "community": 1,
       "norm_label": ".buildpacket()",
-      "id": "engine_anvizprotocolengine_anvizprotocolengine_buildpacket",
-      "community_name": "Community 2"
+      "community_name": "Community 1",
+      "id": "engine_anvizprotocolengine_anvizprotocolengine_buildpacket"
     },
     {
       "label": ".buildRequest()",
@@ -207,10 +207,10 @@
       "source_file": "engine/AnvizProtocolEngine.mjs",
       "source_location": "L101",
       "_origin": "ast",
-      "community": 2,
+      "community": 1,
       "norm_label": ".buildrequest()",
-      "id": "engine_anvizprotocolengine_anvizprotocolengine_buildrequest",
-      "community_name": "Community 2"
+      "community_name": "Community 1",
+      "id": "engine_anvizprotocolengine_anvizprotocolengine_buildrequest"
     },
     {
       "label": ".buildResponsePacket()",
@@ -218,10 +218,10 @@
       "source_file": "engine/AnvizProtocolEngine.mjs",
       "source_location": "L109",
       "_origin": "ast",
-      "community": 2,
+      "community": 1,
       "norm_label": ".buildresponsepacket()",
-      "id": "engine_anvizprotocolengine_anvizprotocolengine_buildresponsepacket",
-      "community_name": "Community 2"
+      "community_name": "Community 1",
+      "id": "engine_anvizprotocolengine_anvizprotocolengine_buildresponsepacket"
     },
     {
       "label": ".parseResponse()",
@@ -229,10 +229,10 @@
       "source_file": "engine/AnvizProtocolEngine.mjs",
       "source_location": "L143",
       "_origin": "ast",
-      "community": 2,
+      "community": 1,
       "norm_label": ".parseresponse()",
-      "id": "engine_anvizprotocolengine_anvizprotocolengine_parseresponse",
-      "community_name": "Community 2"
+      "community_name": "Community 1",
+      "id": "engine_anvizprotocolengine_anvizprotocolengine_parseresponse"
     },
     {
       "label": ".parseNetInfo()",
@@ -240,10 +240,10 @@
       "source_file": "engine/AnvizProtocolEngine.mjs",
       "source_location": "L187",
       "_origin": "ast",
-      "community": 2,
+      "community": 1,
       "norm_label": ".parsenetinfo()",
-      "id": "engine_anvizprotocolengine_anvizprotocolengine_parsenetinfo",
-      "community_name": "Community 2"
+      "community_name": "Community 1",
+      "id": "engine_anvizprotocolengine_anvizprotocolengine_parsenetinfo"
     },
     {
       "label": ".parseRecordInfo()",
@@ -251,10 +251,10 @@
       "source_file": "engine/AnvizProtocolEngine.mjs",
       "source_location": "L204",
       "_origin": "ast",
-      "community": 2,
+      "community": 1,
       "norm_label": ".parserecordinfo()",
-      "id": "engine_anvizprotocolengine_anvizprotocolengine_parserecordinfo",
-      "community_name": "Community 2"
+      "community_name": "Community 1",
+      "id": "engine_anvizprotocolengine_anvizprotocolengine_parserecordinfo"
     },
     {
       "label": ".decodeAnvizTimestamp()",
@@ -262,10 +262,10 @@
       "source_file": "engine/AnvizProtocolEngine.mjs",
       "source_location": "L221",
       "_origin": "ast",
-      "community": 2,
+      "community": 1,
       "norm_label": ".decodeanviztimestamp()",
-      "id": "engine_anvizprotocolengine_anvizprotocolengine_decodeanviztimestamp",
-      "community_name": "Community 2"
+      "community_name": "Community 1",
+      "id": "engine_anvizprotocolengine_anvizprotocolengine_decodeanviztimestamp"
     },
     {
       "label": ".parseAttendanceRecords()",
@@ -273,10 +273,10 @@
       "source_file": "engine/AnvizProtocolEngine.mjs",
       "source_location": "L241",
       "_origin": "ast",
-      "community": 2,
+      "community": 1,
       "norm_label": ".parseattendancerecords()",
-      "id": "engine_anvizprotocolengine_anvizprotocolengine_parseattendancerecords",
-      "community_name": "Community 2"
+      "community_name": "Community 1",
+      "id": "engine_anvizprotocolengine_anvizprotocolengine_parseattendancerecords"
     },
     {
       "label": ".encodeDateTime()",
@@ -284,10 +284,10 @@
       "source_file": "engine/AnvizProtocolEngine.mjs",
       "source_location": "L297",
       "_origin": "ast",
-      "community": 2,
+      "community": 1,
       "norm_label": ".encodedatetime()",
-      "id": "engine_anvizprotocolengine_anvizprotocolengine_encodedatetime",
-      "community_name": "Community 2"
+      "community_name": "Community 1",
+      "id": "engine_anvizprotocolengine_anvizprotocolengine_encodedatetime"
     },
     {
       "label": ".parseDateTime()",
@@ -295,10 +295,10 @@
       "source_file": "engine/AnvizProtocolEngine.mjs",
       "source_location": "L313",
       "_origin": "ast",
-      "community": 2,
+      "community": 1,
       "norm_label": ".parsedatetime()",
-      "id": "engine_anvizprotocolengine_anvizprotocolengine_parsedatetime",
-      "community_name": "Community 2"
+      "community_name": "Community 1",
+      "id": "engine_anvizprotocolengine_anvizprotocolengine_parsedatetime"
     },
     {
       "label": "AttendanceEngine.mjs",
@@ -306,10 +306,10 @@
       "source_file": "engine/AttendanceEngine.mjs",
       "source_location": "L1",
       "_origin": "ast",
-      "community": 0,
+      "community": 7,
       "norm_label": "attendanceengine.mjs",
-      "id": "engine_attendanceengine",
-      "community_name": "Community 0"
+      "community_name": "Community 7",
+      "id": "engine_attendanceengine"
     },
     {
       "label": "__filename",
@@ -317,10 +317,10 @@
       "source_file": "engine/AttendanceEngine.mjs",
       "source_location": "L6",
       "_origin": "ast",
-      "community": 0,
+      "community": 7,
       "norm_label": "__filename",
-      "id": "engine_attendanceengine_filename",
-      "community_name": "Community 0"
+      "community_name": "Community 7",
+      "id": "engine_attendanceengine_filename"
     },
     {
       "label": "__dirname",
@@ -328,10 +328,10 @@
       "source_file": "engine/AttendanceEngine.mjs",
       "source_location": "L7",
       "_origin": "ast",
-      "community": 0,
+      "community": 7,
       "norm_label": "__dirname",
-      "id": "engine_attendanceengine_dirname",
-      "community_name": "Community 0"
+      "community_name": "Community 7",
+      "id": "engine_attendanceengine_dirname"
     },
     {
       "label": "DATA_DIR",
@@ -339,10 +339,10 @@
       "source_file": "engine/AttendanceEngine.mjs",
       "source_location": "L8",
       "_origin": "ast",
-      "community": 0,
+      "community": 7,
       "norm_label": "data_dir",
-      "id": "engine_attendanceengine_data_dir",
-      "community_name": "Community 0"
+      "community_name": "Community 7",
+      "id": "engine_attendanceengine_data_dir"
     },
     {
       "label": "EMPLOYEES_FILE",
@@ -350,10 +350,10 @@
       "source_file": "engine/AttendanceEngine.mjs",
       "source_location": "L14",
       "_origin": "ast",
-      "community": 0,
+      "community": 7,
       "norm_label": "employees_file",
-      "id": "engine_attendanceengine_employees_file",
-      "community_name": "Community 0"
+      "community_name": "Community 7",
+      "id": "engine_attendanceengine_employees_file"
     },
     {
       "label": "LOGS_FILE",
@@ -361,10 +361,10 @@
       "source_file": "engine/AttendanceEngine.mjs",
       "source_location": "L15",
       "_origin": "ast",
-      "community": 0,
+      "community": 7,
       "norm_label": "logs_file",
-      "id": "engine_attendanceengine_logs_file",
-      "community_name": "Community 0"
+      "community_name": "Community 7",
+      "id": "engine_attendanceengine_logs_file"
     },
     {
       "label": "DEVICES_FILE",
@@ -372,10 +372,10 @@
       "source_file": "engine/AttendanceEngine.mjs",
       "source_location": "L16",
       "_origin": "ast",
-      "community": 0,
+      "community": 7,
       "norm_label": "devices_file",
-      "id": "engine_attendanceengine_devices_file",
-      "community_name": "Community 0"
+      "community_name": "Community 7",
+      "id": "engine_attendanceengine_devices_file"
     },
     {
       "label": "TOMBSTONES_FILE",
@@ -383,10 +383,10 @@
       "source_file": "engine/AttendanceEngine.mjs",
       "source_location": "L17",
       "_origin": "ast",
-      "community": 0,
+      "community": 7,
       "norm_label": "tombstones_file",
-      "id": "engine_attendanceengine_tombstones_file",
-      "community_name": "Community 0"
+      "community_name": "Community 7",
+      "id": "engine_attendanceengine_tombstones_file"
     },
     {
       "label": "readJson()",
@@ -394,10 +394,10 @@
       "source_file": "engine/AttendanceEngine.mjs",
       "source_location": "L19",
       "_origin": "ast",
-      "community": 1,
+      "community": 0,
       "norm_label": "readjson()",
-      "id": "engine_attendanceengine_readjson",
-      "community_name": "Community 1"
+      "community_name": "Community 0",
+      "id": "engine_attendanceengine_readjson"
     },
     {
       "label": "writeJson()",
@@ -405,10 +405,10 @@
       "source_file": "engine/AttendanceEngine.mjs",
       "source_location": "L32",
       "_origin": "ast",
-      "community": 1,
+      "community": 0,
       "norm_label": "writejson()",
-      "id": "engine_attendanceengine_writejson",
-      "community_name": "Community 1"
+      "community_name": "Community 0",
+      "id": "engine_attendanceengine_writejson"
     },
     {
       "label": "toArgentinaLocal()",
@@ -418,8 +418,8 @@
       "_origin": "ast",
       "community": 0,
       "norm_label": "toargentinalocal()",
-      "id": "engine_attendanceengine_toargentinalocal",
-      "community_name": "Community 0"
+      "community_name": "Community 0",
+      "id": "engine_attendanceengine_toargentinalocal"
     },
     {
       "label": "AttendanceEngine",
@@ -427,10 +427,10 @@
       "source_file": "engine/AttendanceEngine.mjs",
       "source_location": "L71",
       "_origin": "ast",
-      "community": 1,
+      "community": 0,
       "norm_label": "attendanceengine",
-      "id": "engine_attendanceengine_attendanceengine",
-      "community_name": "Community 1"
+      "community_name": "Community 0",
+      "id": "engine_attendanceengine_attendanceengine"
     },
     {
       "label": ".getDevices()",
@@ -438,10 +438,10 @@
       "source_file": "engine/AttendanceEngine.mjs",
       "source_location": "L75",
       "_origin": "ast",
-      "community": 1,
+      "community": 0,
       "norm_label": ".getdevices()",
-      "id": "engine_attendanceengine_attendanceengine_getdevices",
-      "community_name": "Community 1"
+      "community_name": "Community 0",
+      "id": "engine_attendanceengine_attendanceengine_getdevices"
     },
     {
       "label": ".saveDevices()",
@@ -449,10 +449,10 @@
       "source_file": "engine/AttendanceEngine.mjs",
       "source_location": "L111",
       "_origin": "ast",
-      "community": 1,
+      "community": 0,
       "norm_label": ".savedevices()",
-      "id": "engine_attendanceengine_attendanceengine_savedevices",
-      "community_name": "Community 1"
+      "community_name": "Community 0",
+      "id": "engine_attendanceengine_attendanceengine_savedevices"
     },
     {
       "label": ".getTombstones()",
@@ -460,10 +460,10 @@
       "source_file": "engine/AttendanceEngine.mjs",
       "source_location": "L119",
       "_origin": "ast",
-      "community": 1,
+      "community": 0,
       "norm_label": ".gettombstones()",
-      "id": "engine_attendanceengine_attendanceengine_gettombstones",
-      "community_name": "Community 1"
+      "community_name": "Community 0",
+      "id": "engine_attendanceengine_attendanceengine_gettombstones"
     },
     {
       "label": ".addTombstone()",
@@ -471,10 +471,10 @@
       "source_file": "engine/AttendanceEngine.mjs",
       "source_location": "L133",
       "_origin": "ast",
-      "community": 1,
+      "community": 0,
       "norm_label": ".addtombstone()",
-      "id": "engine_attendanceengine_attendanceengine_addtombstone",
-      "community_name": "Community 1"
+      "community_name": "Community 0",
+      "id": "engine_attendanceengine_attendanceengine_addtombstone"
     },
     {
       "label": ".getEmployees()",
@@ -482,10 +482,10 @@
       "source_file": "engine/AttendanceEngine.mjs",
       "source_location": "L142",
       "_origin": "ast",
-      "community": 1,
+      "community": 0,
       "norm_label": ".getemployees()",
-      "id": "engine_attendanceengine_attendanceengine_getemployees",
-      "community_name": "Community 1"
+      "community_name": "Community 0",
+      "id": "engine_attendanceengine_attendanceengine_getemployees"
     },
     {
       "label": ".saveEmployee()",
@@ -493,10 +493,10 @@
       "source_file": "engine/AttendanceEngine.mjs",
       "source_location": "L149",
       "_origin": "ast",
-      "community": 1,
+      "community": 0,
       "norm_label": ".saveemployee()",
-      "id": "engine_attendanceengine_attendanceengine_saveemployee",
-      "community_name": "Community 1"
+      "community_name": "Community 0",
+      "id": "engine_attendanceengine_attendanceengine_saveemployee"
     },
     {
       "label": ".deleteEmployee()",
@@ -504,10 +504,10 @@
       "source_file": "engine/AttendanceEngine.mjs",
       "source_location": "L200",
       "_origin": "ast",
-      "community": 1,
+      "community": 0,
       "norm_label": ".deleteemployee()",
-      "id": "engine_attendanceengine_attendanceengine_deleteemployee",
-      "community_name": "Community 1"
+      "community_name": "Community 0",
+      "id": "engine_attendanceengine_attendanceengine_deleteemployee"
     },
     {
       "label": ".getRawLogs()",
@@ -515,10 +515,10 @@
       "source_file": "engine/AttendanceEngine.mjs",
       "source_location": "L212",
       "_origin": "ast",
-      "community": 1,
+      "community": 0,
       "norm_label": ".getrawlogs()",
-      "id": "engine_attendanceengine_attendanceengine_getrawlogs",
-      "community_name": "Community 1"
+      "community_name": "Community 0",
+      "id": "engine_attendanceengine_attendanceengine_getrawlogs"
     },
     {
       "label": ".appendLogs()",
@@ -526,10 +526,10 @@
       "source_file": "engine/AttendanceEngine.mjs",
       "source_location": "L219",
       "_origin": "ast",
-      "community": 1,
+      "community": 0,
       "norm_label": ".appendlogs()",
-      "id": "engine_attendanceengine_attendanceengine_appendlogs",
-      "community_name": "Community 1"
+      "community_name": "Community 0",
+      "id": "engine_attendanceengine_attendanceengine_appendlogs"
     },
     {
       "label": ".importCrossChexCloudData()",
@@ -537,10 +537,10 @@
       "source_file": "engine/AttendanceEngine.mjs",
       "source_location": "L277",
       "_origin": "ast",
-      "community": 1,
+      "community": 0,
       "norm_label": ".importcrosschexclouddata()",
-      "id": "engine_attendanceengine_attendanceengine_importcrosschexclouddata",
-      "community_name": "Community 1"
+      "community_name": "Community 0",
+      "id": "engine_attendanceengine_attendanceengine_importcrosschexclouddata"
     },
     {
       "label": ".updateLog()",
@@ -548,10 +548,10 @@
       "source_file": "engine/AttendanceEngine.mjs",
       "source_location": "L360",
       "_origin": "ast",
-      "community": 1,
+      "community": 0,
       "norm_label": ".updatelog()",
-      "id": "engine_attendanceengine_attendanceengine_updatelog",
-      "community_name": "Community 1"
+      "community_name": "Community 0",
+      "id": "engine_attendanceengine_attendanceengine_updatelog"
     },
     {
       "label": ".deleteLog()",
@@ -559,10 +559,10 @@
       "source_file": "engine/AttendanceEngine.mjs",
       "source_location": "L379",
       "_origin": "ast",
-      "community": 1,
+      "community": 0,
       "norm_label": ".deletelog()",
-      "id": "engine_attendanceengine_attendanceengine_deletelog",
-      "community_name": "Community 1"
+      "community_name": "Community 0",
+      "id": "engine_attendanceengine_attendanceengine_deletelog"
     },
     {
       "label": ".resolveEmployee()",
@@ -570,10 +570,10 @@
       "source_file": "engine/AttendanceEngine.mjs",
       "source_location": "L390",
       "_origin": "ast",
-      "community": 1,
+      "community": 0,
       "norm_label": ".resolveemployee()",
-      "id": "engine_attendanceengine_attendanceengine_resolveemployee",
-      "community_name": "Community 1"
+      "community_name": "Community 0",
+      "id": "engine_attendanceengine_attendanceengine_resolveemployee"
     },
     {
       "label": ".filterBounces()",
@@ -581,10 +581,10 @@
       "source_file": "engine/AttendanceEngine.mjs",
       "source_location": "L410",
       "_origin": "ast",
-      "community": 1,
+      "community": 0,
       "norm_label": ".filterbounces()",
-      "id": "engine_attendanceengine_attendanceengine_filterbounces",
-      "community_name": "Community 1"
+      "community_name": "Community 0",
+      "id": "engine_attendanceengine_attendanceengine_filterbounces"
     },
     {
       "label": ".deduplicateLogs()",
@@ -592,10 +592,10 @@
       "source_file": "engine/AttendanceEngine.mjs",
       "source_location": "L437",
       "_origin": "ast",
-      "community": 1,
+      "community": 0,
       "norm_label": ".deduplicatelogs()",
-      "id": "engine_attendanceengine_attendanceengine_deduplicatelogs",
-      "community_name": "Community 1"
+      "community_name": "Community 0",
+      "id": "engine_attendanceengine_attendanceengine_deduplicatelogs"
     },
     {
       "label": ".computeDailyAttendance()",
@@ -603,10 +603,10 @@
       "source_file": "engine/AttendanceEngine.mjs",
       "source_location": "L444",
       "_origin": "ast",
-      "community": 1,
+      "community": 0,
       "norm_label": ".computedailyattendance()",
-      "id": "engine_attendanceengine_attendanceengine_computedailyattendance",
-      "community_name": "Community 1"
+      "community_name": "Community 0",
+      "id": "engine_attendanceengine_attendanceengine_computedailyattendance"
     },
     {
       "label": ".calculateAttendance()",
@@ -614,10 +614,10 @@
       "source_file": "engine/AttendanceEngine.mjs",
       "source_location": "L506",
       "_origin": "ast",
-      "community": 1,
+      "community": 0,
       "norm_label": ".calculateattendance()",
-      "id": "engine_attendanceengine_attendanceengine_calculateattendance",
-      "community_name": "Community 1"
+      "community_name": "Community 0",
+      "id": "engine_attendanceengine_attendanceengine_calculateattendance"
     },
     {
       "label": ".getLiveStatus()",
@@ -625,10 +625,10 @@
       "source_file": "engine/AttendanceEngine.mjs",
       "source_location": "L639",
       "_origin": "ast",
-      "community": 1,
+      "community": 0,
       "norm_label": ".getlivestatus()",
-      "id": "engine_attendanceengine_attendanceengine_getlivestatus",
-      "community_name": "Community 1"
+      "community_name": "Community 0",
+      "id": "engine_attendanceengine_attendanceengine_getlivestatus"
     },
     {
       "label": "CrossChexCloudEngine.mjs",
@@ -636,10 +636,10 @@
       "source_file": "engine/CrossChexCloudEngine.mjs",
       "source_location": "L1",
       "_origin": "ast",
-      "community": 0,
+      "community": 2,
       "norm_label": "crosschexcloudengine.mjs",
-      "id": "engine_crosschexcloudengine",
-      "community_name": "Community 0"
+      "community_name": "Community 2",
+      "id": "engine_crosschexcloudengine"
     },
     {
       "label": "__filename",
@@ -647,10 +647,10 @@
       "source_file": "engine/CrossChexCloudEngine.mjs",
       "source_location": "L7",
       "_origin": "ast",
-      "community": 0,
+      "community": 2,
       "norm_label": "__filename",
-      "id": "engine_crosschexcloudengine_filename",
-      "community_name": "Community 0"
+      "community_name": "Community 2",
+      "id": "engine_crosschexcloudengine_filename"
     },
     {
       "label": "__dirname",
@@ -658,10 +658,10 @@
       "source_file": "engine/CrossChexCloudEngine.mjs",
       "source_location": "L8",
       "_origin": "ast",
-      "community": 0,
+      "community": 2,
       "norm_label": "__dirname",
-      "id": "engine_crosschexcloudengine_dirname",
-      "community_name": "Community 0"
+      "community_name": "Community 2",
+      "id": "engine_crosschexcloudengine_dirname"
     },
     {
       "label": "DATA_DIR",
@@ -669,10 +669,10 @@
       "source_file": "engine/CrossChexCloudEngine.mjs",
       "source_location": "L9",
       "_origin": "ast",
-      "community": 0,
+      "community": 2,
       "norm_label": "data_dir",
-      "id": "engine_crosschexcloudengine_data_dir",
-      "community_name": "Community 0"
+      "community_name": "Community 2",
+      "id": "engine_crosschexcloudengine_data_dir"
     },
     {
       "label": "SESSION_FILE",
@@ -680,10 +680,10 @@
       "source_file": "engine/CrossChexCloudEngine.mjs",
       "source_location": "L10",
       "_origin": "ast",
-      "community": 0,
+      "community": 2,
       "norm_label": "session_file",
-      "id": "engine_crosschexcloudengine_session_file",
-      "community_name": "Community 0"
+      "community_name": "Community 2",
+      "id": "engine_crosschexcloudengine_session_file"
     },
     {
       "label": "CrossChexCloudEngine",
@@ -691,10 +691,10 @@
       "source_file": "engine/CrossChexCloudEngine.mjs",
       "source_location": "L12",
       "_origin": "ast",
-      "community": 7,
+      "community": 2,
       "norm_label": "crosschexcloudengine",
-      "id": "engine_crosschexcloudengine_crosschexcloudengine",
-      "community_name": "Community 7"
+      "community_name": "Community 2",
+      "id": "engine_crosschexcloudengine_crosschexcloudengine"
     },
     {
       "label": ".getSavedSession()",
@@ -702,10 +702,10 @@
       "source_file": "engine/CrossChexCloudEngine.mjs",
       "source_location": "L18",
       "_origin": "ast",
-      "community": 7,
+      "community": 2,
       "norm_label": ".getsavedsession()",
-      "id": "engine_crosschexcloudengine_crosschexcloudengine_getsavedsession",
-      "community_name": "Community 7"
+      "community_name": "Community 2",
+      "id": "engine_crosschexcloudengine_crosschexcloudengine_getsavedsession"
     },
     {
       "label": ".saveSession()",
@@ -713,10 +713,10 @@
       "source_file": "engine/CrossChexCloudEngine.mjs",
       "source_location": "L27",
       "_origin": "ast",
-      "community": 7,
+      "community": 2,
       "norm_label": ".savesession()",
-      "id": "engine_crosschexcloudengine_crosschexcloudengine_savesession",
-      "community_name": "Community 7"
+      "community_name": "Community 2",
+      "id": "engine_crosschexcloudengine_crosschexcloudengine_savesession"
     },
     {
       "label": ".apiPost()",
@@ -724,10 +724,10 @@
       "source_file": "engine/CrossChexCloudEngine.mjs",
       "source_location": "L40",
       "_origin": "ast",
-      "community": 7,
+      "community": 2,
       "norm_label": ".apipost()",
-      "id": "engine_crosschexcloudengine_crosschexcloudengine_apipost",
-      "community_name": "Community 7"
+      "community_name": "Community 2",
+      "id": "engine_crosschexcloudengine_crosschexcloudengine_apipost"
     },
     {
       "label": ".login()",
@@ -735,10 +735,10 @@
       "source_file": "engine/CrossChexCloudEngine.mjs",
       "source_location": "L68",
       "_origin": "ast",
-      "community": 7,
+      "community": 2,
       "norm_label": ".login()",
-      "id": "engine_crosschexcloudengine_crosschexcloudengine_login",
-      "community_name": "Community 7"
+      "community_name": "Community 2",
+      "id": "engine_crosschexcloudengine_crosschexcloudengine_login"
     },
     {
       "label": ".syncFromCloud()",
@@ -746,10 +746,10 @@
       "source_file": "engine/CrossChexCloudEngine.mjs",
       "source_location": "L103",
       "_origin": "ast",
-      "community": 7,
+      "community": 2,
       "norm_label": ".syncfromcloud()",
-      "id": "engine_crosschexcloudengine_crosschexcloudengine_syncfromcloud",
-      "community_name": "Community 7"
+      "community_name": "Community 2",
+      "id": "engine_crosschexcloudengine_crosschexcloudengine_syncfromcloud"
     },
     {
       "label": "SeedData.mjs",
@@ -757,10 +757,10 @@
       "source_file": "engine/SeedData.mjs",
       "source_location": "L1",
       "_origin": "ast",
-      "community": 1,
+      "community": 7,
       "norm_label": "seeddata.mjs",
-      "id": "engine_seeddata",
-      "community_name": "Community 1"
+      "community_name": "Community 7",
+      "id": "engine_seeddata"
     },
     {
       "label": "seedDemoDataIfEmpty()",
@@ -768,10 +768,274 @@
       "source_file": "engine/SeedData.mjs",
       "source_location": "L7",
       "_origin": "ast",
-      "community": 1,
+      "community": 0,
       "norm_label": "seeddemodataifempty()",
-      "id": "engine_seeddata_seeddemodataifempty",
-      "community_name": "Community 1"
+      "community_name": "Community 0",
+      "id": "engine_seeddata_seeddemodataifempty"
+    },
+    {
+      "label": "bump-version.mjs",
+      "file_type": "code",
+      "source_file": "scripts/bump-version.mjs",
+      "source_location": "L1",
+      "_origin": "ast",
+      "community": 5,
+      "norm_label": "bump-version.mjs",
+      "community_name": "Community 5",
+      "id": "scripts_bump_version"
+    },
+    {
+      "label": "__filename",
+      "file_type": "code",
+      "source_file": "scripts/bump-version.mjs",
+      "source_location": "L5",
+      "_origin": "ast",
+      "community": 5,
+      "norm_label": "__filename",
+      "community_name": "Community 5",
+      "id": "scripts_bump_version_filename"
+    },
+    {
+      "label": "__dirname",
+      "file_type": "code",
+      "source_file": "scripts/bump-version.mjs",
+      "source_location": "L6",
+      "_origin": "ast",
+      "community": 5,
+      "norm_label": "__dirname",
+      "community_name": "Community 5",
+      "id": "scripts_bump_version_dirname"
+    },
+    {
+      "label": "pkgPath",
+      "file_type": "code",
+      "source_file": "scripts/bump-version.mjs",
+      "source_location": "L7",
+      "_origin": "ast",
+      "community": 5,
+      "norm_label": "pkgpath",
+      "community_name": "Community 5",
+      "id": "scripts_bump_version_pkgpath"
+    },
+    {
+      "label": "verPath",
+      "file_type": "code",
+      "source_file": "scripts/bump-version.mjs",
+      "source_location": "L8",
+      "_origin": "ast",
+      "community": 5,
+      "norm_label": "verpath",
+      "community_name": "Community 5",
+      "id": "scripts_bump_version_verpath"
+    },
+    {
+      "label": "pkg",
+      "file_type": "code",
+      "source_file": "scripts/bump-version.mjs",
+      "source_location": "L10",
+      "_origin": "ast",
+      "community": 5,
+      "norm_label": "pkg",
+      "community_name": "Community 5",
+      "id": "scripts_bump_version_pkg"
+    },
+    {
+      "label": "parts",
+      "file_type": "code",
+      "source_file": "scripts/bump-version.mjs",
+      "source_location": "L11",
+      "_origin": "ast",
+      "community": 5,
+      "norm_label": "parts",
+      "community_name": "Community 5",
+      "id": "scripts_bump_version_parts"
+    },
+    {
+      "label": "major",
+      "file_type": "code",
+      "source_file": "scripts/bump-version.mjs",
+      "source_location": "L12",
+      "_origin": "ast",
+      "community": 5,
+      "norm_label": "major",
+      "community_name": "Community 5",
+      "id": "scripts_bump_version_major"
+    },
+    {
+      "label": "minor",
+      "file_type": "code",
+      "source_file": "scripts/bump-version.mjs",
+      "source_location": "L13",
+      "_origin": "ast",
+      "community": 5,
+      "norm_label": "minor",
+      "community_name": "Community 5",
+      "id": "scripts_bump_version_minor"
+    },
+    {
+      "label": "patch",
+      "file_type": "code",
+      "source_file": "scripts/bump-version.mjs",
+      "source_location": "L14",
+      "_origin": "ast",
+      "community": 5,
+      "norm_label": "patch",
+      "community_name": "Community 5",
+      "id": "scripts_bump_version_patch"
+    },
+    {
+      "label": "versionData",
+      "file_type": "code",
+      "source_file": "scripts/bump-version.mjs",
+      "source_location": "L24",
+      "_origin": "ast",
+      "community": 5,
+      "norm_label": "versiondata",
+      "community_name": "Community 5",
+      "id": "scripts_bump_version_versiondata"
+    },
+    {
+      "label": "sync-live-clock-time.mjs",
+      "file_type": "code",
+      "source_file": "scripts/sync-live-clock-time.mjs",
+      "source_location": "L1",
+      "_origin": "ast",
+      "community": 1,
+      "norm_label": "sync-live-clock-time.mjs",
+      "community_name": "Community 1",
+      "id": "scripts_sync_live_clock_time"
+    },
+    {
+      "label": "socket",
+      "file_type": "code",
+      "source_file": "scripts/sync-live-clock-time.mjs",
+      "source_location": "L10",
+      "_origin": "ast",
+      "community": 1,
+      "norm_label": "socket",
+      "community_name": "Community 1",
+      "id": "scripts_sync_live_clock_time_socket"
+    },
+    {
+      "label": "test-live-clock.mjs",
+      "file_type": "code",
+      "source_file": "scripts/test-live-clock.mjs",
+      "source_location": "L1",
+      "_origin": "ast",
+      "community": 1,
+      "norm_label": "test-live-clock.mjs",
+      "community_name": "Community 1",
+      "id": "scripts_test_live_clock"
+    },
+    {
+      "label": "socket",
+      "file_type": "code",
+      "source_file": "scripts/test-live-clock.mjs",
+      "source_location": "L10",
+      "_origin": "ast",
+      "community": 1,
+      "norm_label": "socket",
+      "community_name": "Community 1",
+      "id": "scripts_test_live_clock_socket"
+    },
+    {
+      "label": "index.mjs",
+      "file_type": "code",
+      "source_file": "server/index.mjs",
+      "source_location": "L1",
+      "_origin": "ast",
+      "community": 2,
+      "norm_label": "index.mjs",
+      "community_name": "Community 2",
+      "id": "server_index"
+    },
+    {
+      "label": "__filename",
+      "file_type": "code",
+      "source_file": "server/index.mjs",
+      "source_location": "L11",
+      "_origin": "ast",
+      "community": 2,
+      "norm_label": "__filename",
+      "community_name": "Community 2",
+      "id": "server_index_filename"
+    },
+    {
+      "label": "__dirname",
+      "file_type": "code",
+      "source_file": "server/index.mjs",
+      "source_location": "L12",
+      "_origin": "ast",
+      "community": 2,
+      "norm_label": "__dirname",
+      "community_name": "Community 2",
+      "id": "server_index_dirname"
+    },
+    {
+      "label": "PUBLIC_DIR",
+      "file_type": "code",
+      "source_file": "server/index.mjs",
+      "source_location": "L13",
+      "_origin": "ast",
+      "community": 2,
+      "norm_label": "public_dir",
+      "community_name": "Community 2",
+      "id": "server_index_public_dir"
+    },
+    {
+      "label": "sendJson()",
+      "file_type": "code",
+      "source_file": "server/index.mjs",
+      "source_location": "L16",
+      "_origin": "ast",
+      "community": 2,
+      "norm_label": "sendjson()",
+      "community_name": "Community 2",
+      "id": "server_index_sendjson"
+    },
+    {
+      "label": "parseBody()",
+      "file_type": "code",
+      "source_file": "server/index.mjs",
+      "source_location": "L26",
+      "_origin": "ast",
+      "community": 2,
+      "norm_label": "parsebody()",
+      "community_name": "Community 2",
+      "id": "server_index_parsebody"
+    },
+    {
+      "label": "MIME_TYPES",
+      "file_type": "code",
+      "source_file": "server/index.mjs",
+      "source_location": "L47",
+      "_origin": "ast",
+      "community": 2,
+      "norm_label": "mime_types",
+      "community_name": "Community 2",
+      "id": "server_index_mime_types"
+    },
+    {
+      "label": "server",
+      "file_type": "code",
+      "source_file": "server/index.mjs",
+      "source_location": "L58",
+      "_origin": "ast",
+      "community": 2,
+      "norm_label": "server",
+      "community_name": "Community 2",
+      "id": "server_index_server"
+    },
+    {
+      "label": "anviz.test.mjs",
+      "file_type": "code",
+      "source_file": "tests/anviz.test.mjs",
+      "source_location": "L1",
+      "_origin": "ast",
+      "community": 1,
+      "norm_label": "anviz.test.mjs",
+      "community_name": "Community 1",
+      "id": "tests_anviz_test"
     },
     {
       "label": "package.json",
@@ -1038,10 +1302,21 @@
       "community_name": "Community 4"
     },
     {
-      "label": "switchTab()",
+      "label": "tabTitles",
       "file_type": "code",
       "source_file": "public/app.js",
       "source_location": "L63",
+      "_origin": "ast",
+      "community": 4,
+      "norm_label": "tabtitles",
+      "id": "public_app_tabtitles",
+      "community_name": "Community 4"
+    },
+    {
+      "label": "switchTab()",
+      "file_type": "code",
+      "source_file": "public/app.js",
+      "source_location": "L72",
       "_origin": "ast",
       "community": 4,
       "norm_label": "switchtab()",
@@ -1049,10 +1324,21 @@
       "community_name": "Community 4"
     },
     {
+      "label": "updateTopbarClock()",
+      "file_type": "code",
+      "source_file": "public/app.js",
+      "source_location": "L130",
+      "_origin": "ast",
+      "community": 4,
+      "norm_label": "updatetopbarclock()",
+      "id": "public_app_updatetopbarclock",
+      "community_name": "Community 4"
+    },
+    {
       "label": "openModal()",
       "file_type": "code",
       "source_file": "public/app.js",
-      "source_location": "L90",
+      "source_location": "L142",
       "_origin": "ast",
       "community": 4,
       "norm_label": "openmodal()",
@@ -1063,7 +1349,7 @@
       "label": "closeModal()",
       "file_type": "code",
       "source_file": "public/app.js",
-      "source_location": "L94",
+      "source_location": "L146",
       "_origin": "ast",
       "community": 4,
       "norm_label": "closemodal()",
@@ -1074,7 +1360,7 @@
       "label": "loadDashboard()",
       "file_type": "code",
       "source_file": "public/app.js",
-      "source_location": "L102",
+      "source_location": "L154",
       "_origin": "ast",
       "community": 4,
       "norm_label": "loaddashboard()",
@@ -1085,7 +1371,7 @@
       "label": "loadDevices()",
       "file_type": "code",
       "source_file": "public/app.js",
-      "source_location": "L157",
+      "source_location": "L209",
       "_origin": "ast",
       "community": 4,
       "norm_label": "loaddevices()",
@@ -1096,7 +1382,7 @@
       "label": "loadLiveStatus()",
       "file_type": "code",
       "source_file": "public/app.js",
-      "source_location": "L201",
+      "source_location": "L253",
       "_origin": "ast",
       "community": 4,
       "norm_label": "loadlivestatus()",
@@ -1107,7 +1393,7 @@
       "label": "setupReportsTab()",
       "file_type": "code",
       "source_file": "public/app.js",
-      "source_location": "L239",
+      "source_location": "L291",
       "_origin": "ast",
       "community": 4,
       "norm_label": "setupreportstab()",
@@ -1118,7 +1404,7 @@
       "label": "runReport()",
       "file_type": "code",
       "source_file": "public/app.js",
-      "source_location": "L259",
+      "source_location": "L311",
       "_origin": "ast",
       "community": 4,
       "norm_label": "runreport()",
@@ -1129,7 +1415,7 @@
       "label": "loadLogs()",
       "file_type": "code",
       "source_file": "public/app.js",
-      "source_location": "L326",
+      "source_location": "L378",
       "_origin": "ast",
       "community": 4,
       "norm_label": "loadlogs()",
@@ -1140,276 +1426,12 @@
       "label": "loadEmployees()",
       "file_type": "code",
       "source_file": "public/app.js",
-      "source_location": "L452",
+      "source_location": "L504",
       "_origin": "ast",
       "community": 4,
       "norm_label": "loademployees()",
       "id": "public_app_loademployees",
       "community_name": "Community 4"
-    },
-    {
-      "label": "bump-version.mjs",
-      "file_type": "code",
-      "source_file": "scripts/bump-version.mjs",
-      "source_location": "L1",
-      "_origin": "ast",
-      "community": 5,
-      "norm_label": "bump-version.mjs",
-      "id": "scripts_bump_version",
-      "community_name": "Community 5"
-    },
-    {
-      "label": "__filename",
-      "file_type": "code",
-      "source_file": "scripts/bump-version.mjs",
-      "source_location": "L5",
-      "_origin": "ast",
-      "community": 5,
-      "norm_label": "__filename",
-      "id": "scripts_bump_version_filename",
-      "community_name": "Community 5"
-    },
-    {
-      "label": "__dirname",
-      "file_type": "code",
-      "source_file": "scripts/bump-version.mjs",
-      "source_location": "L6",
-      "_origin": "ast",
-      "community": 5,
-      "norm_label": "__dirname",
-      "id": "scripts_bump_version_dirname",
-      "community_name": "Community 5"
-    },
-    {
-      "label": "pkgPath",
-      "file_type": "code",
-      "source_file": "scripts/bump-version.mjs",
-      "source_location": "L7",
-      "_origin": "ast",
-      "community": 5,
-      "norm_label": "pkgpath",
-      "id": "scripts_bump_version_pkgpath",
-      "community_name": "Community 5"
-    },
-    {
-      "label": "verPath",
-      "file_type": "code",
-      "source_file": "scripts/bump-version.mjs",
-      "source_location": "L8",
-      "_origin": "ast",
-      "community": 5,
-      "norm_label": "verpath",
-      "id": "scripts_bump_version_verpath",
-      "community_name": "Community 5"
-    },
-    {
-      "label": "pkg",
-      "file_type": "code",
-      "source_file": "scripts/bump-version.mjs",
-      "source_location": "L10",
-      "_origin": "ast",
-      "community": 5,
-      "norm_label": "pkg",
-      "id": "scripts_bump_version_pkg",
-      "community_name": "Community 5"
-    },
-    {
-      "label": "parts",
-      "file_type": "code",
-      "source_file": "scripts/bump-version.mjs",
-      "source_location": "L11",
-      "_origin": "ast",
-      "community": 5,
-      "norm_label": "parts",
-      "id": "scripts_bump_version_parts",
-      "community_name": "Community 5"
-    },
-    {
-      "label": "major",
-      "file_type": "code",
-      "source_file": "scripts/bump-version.mjs",
-      "source_location": "L12",
-      "_origin": "ast",
-      "community": 5,
-      "norm_label": "major",
-      "id": "scripts_bump_version_major",
-      "community_name": "Community 5"
-    },
-    {
-      "label": "minor",
-      "file_type": "code",
-      "source_file": "scripts/bump-version.mjs",
-      "source_location": "L13",
-      "_origin": "ast",
-      "community": 5,
-      "norm_label": "minor",
-      "id": "scripts_bump_version_minor",
-      "community_name": "Community 5"
-    },
-    {
-      "label": "patch",
-      "file_type": "code",
-      "source_file": "scripts/bump-version.mjs",
-      "source_location": "L14",
-      "_origin": "ast",
-      "community": 5,
-      "norm_label": "patch",
-      "id": "scripts_bump_version_patch",
-      "community_name": "Community 5"
-    },
-    {
-      "label": "versionData",
-      "file_type": "code",
-      "source_file": "scripts/bump-version.mjs",
-      "source_location": "L24",
-      "_origin": "ast",
-      "community": 5,
-      "norm_label": "versiondata",
-      "id": "scripts_bump_version_versiondata",
-      "community_name": "Community 5"
-    },
-    {
-      "label": "sync-live-clock-time.mjs",
-      "file_type": "code",
-      "source_file": "scripts/sync-live-clock-time.mjs",
-      "source_location": "L1",
-      "_origin": "ast",
-      "community": 2,
-      "norm_label": "sync-live-clock-time.mjs",
-      "id": "scripts_sync_live_clock_time",
-      "community_name": "Community 2"
-    },
-    {
-      "label": "socket",
-      "file_type": "code",
-      "source_file": "scripts/sync-live-clock-time.mjs",
-      "source_location": "L10",
-      "_origin": "ast",
-      "community": 2,
-      "norm_label": "socket",
-      "id": "scripts_sync_live_clock_time_socket",
-      "community_name": "Community 2"
-    },
-    {
-      "label": "test-live-clock.mjs",
-      "file_type": "code",
-      "source_file": "scripts/test-live-clock.mjs",
-      "source_location": "L1",
-      "_origin": "ast",
-      "community": 2,
-      "norm_label": "test-live-clock.mjs",
-      "id": "scripts_test_live_clock",
-      "community_name": "Community 2"
-    },
-    {
-      "label": "socket",
-      "file_type": "code",
-      "source_file": "scripts/test-live-clock.mjs",
-      "source_location": "L10",
-      "_origin": "ast",
-      "community": 2,
-      "norm_label": "socket",
-      "id": "scripts_test_live_clock_socket",
-      "community_name": "Community 2"
-    },
-    {
-      "label": "index.mjs",
-      "file_type": "code",
-      "source_file": "server/index.mjs",
-      "source_location": "L1",
-      "_origin": "ast",
-      "community": 0,
-      "norm_label": "index.mjs",
-      "id": "server_index",
-      "community_name": "Community 0"
-    },
-    {
-      "label": "__filename",
-      "file_type": "code",
-      "source_file": "server/index.mjs",
-      "source_location": "L11",
-      "_origin": "ast",
-      "community": 0,
-      "norm_label": "__filename",
-      "id": "server_index_filename",
-      "community_name": "Community 0"
-    },
-    {
-      "label": "__dirname",
-      "file_type": "code",
-      "source_file": "server/index.mjs",
-      "source_location": "L12",
-      "_origin": "ast",
-      "community": 0,
-      "norm_label": "__dirname",
-      "id": "server_index_dirname",
-      "community_name": "Community 0"
-    },
-    {
-      "label": "PUBLIC_DIR",
-      "file_type": "code",
-      "source_file": "server/index.mjs",
-      "source_location": "L13",
-      "_origin": "ast",
-      "community": 0,
-      "norm_label": "public_dir",
-      "id": "server_index_public_dir",
-      "community_name": "Community 0"
-    },
-    {
-      "label": "sendJson()",
-      "file_type": "code",
-      "source_file": "server/index.mjs",
-      "source_location": "L16",
-      "_origin": "ast",
-      "community": 0,
-      "norm_label": "sendjson()",
-      "id": "server_index_sendjson",
-      "community_name": "Community 0"
-    },
-    {
-      "label": "parseBody()",
-      "file_type": "code",
-      "source_file": "server/index.mjs",
-      "source_location": "L26",
-      "_origin": "ast",
-      "community": 0,
-      "norm_label": "parsebody()",
-      "id": "server_index_parsebody",
-      "community_name": "Community 0"
-    },
-    {
-      "label": "MIME_TYPES",
-      "file_type": "code",
-      "source_file": "server/index.mjs",
-      "source_location": "L47",
-      "_origin": "ast",
-      "community": 0,
-      "norm_label": "mime_types",
-      "id": "server_index_mime_types",
-      "community_name": "Community 0"
-    },
-    {
-      "label": "server",
-      "file_type": "code",
-      "source_file": "server/index.mjs",
-      "source_location": "L58",
-      "_origin": "ast",
-      "community": 0,
-      "norm_label": "server",
-      "id": "server_index_server",
-      "community_name": "Community 0"
-    },
-    {
-      "label": "anviz.test.mjs",
-      "file_type": "code",
-      "source_file": "tests/anviz.test.mjs",
-      "source_location": "L1",
-      "_origin": "ast",
-      "community": 0,
-      "norm_label": "anviz.test.mjs",
-      "id": "tests_anviz_test",
-      "community_name": "Community 0"
     }
   ],
   "links": [
@@ -3177,542 +3199,6 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
-      "source_file": "package.json",
-      "source_location": "L20",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "package",
-      "target": "package_author"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "package.json",
-      "source_location": "L4",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "package",
-      "target": "package_description"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "package.json",
-      "source_location": "L14",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "package",
-      "target": "package_keywords"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "package.json",
-      "source_location": "L21",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "package",
-      "target": "package_license"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "package.json",
-      "source_location": "L6",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "package",
-      "target": "package_main"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "package.json",
-      "source_location": "L2",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "package",
-      "target": "package_name"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "package.json",
-      "source_location": "L7",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "package",
-      "target": "package_scripts"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "package.json",
-      "source_location": "L5",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "package",
-      "target": "package_type"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "package.json",
-      "source_location": "L3",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "package",
-      "target": "package_version"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "package.json",
-      "source_location": "L10",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "package_scripts",
-      "target": "package_scripts_agent"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "package.json",
-      "source_location": "L9",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "package_scripts",
-      "target": "package_scripts_dev"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "package.json",
-      "source_location": "L8",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "package_scripts",
-      "target": "package_scripts_start"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "package.json",
-      "source_location": "L11",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "package_scripts",
-      "target": "package_scripts_test"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "package.json",
-      "source_location": "L12",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "package_scripts",
-      "target": "package_scripts_version_bump"
-    },
-    {
-      "relation": "extends",
-      "confidence": "EXTRACTED",
-      "source_file": "package.json",
-      "source_location": "L14",
-      "weight": 1.0,
-      "context": "import",
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "package_keywords",
-      "target": "ref_anviz"
-    },
-    {
-      "relation": "extends",
-      "confidence": "EXTRACTED",
-      "source_file": "package.json",
-      "source_location": "L14",
-      "weight": 1.0,
-      "context": "import",
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "package_keywords",
-      "target": "ref_attendance"
-    },
-    {
-      "relation": "extends",
-      "confidence": "EXTRACTED",
-      "source_file": "package.json",
-      "source_location": "L14",
-      "weight": 1.0,
-      "context": "import",
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "package_keywords",
-      "target": "ref_biometrics"
-    },
-    {
-      "relation": "extends",
-      "confidence": "EXTRACTED",
-      "source_file": "package.json",
-      "source_location": "L14",
-      "weight": 1.0,
-      "context": "import",
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "package_keywords",
-      "target": "ref_vf30pro"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "public/app.js",
-      "source_location": "L94",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "public_app",
-      "target": "public_app_closemodal"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "public/app.js",
-      "source_location": "L59",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "public_app",
-      "target": "public_app_currentdevices"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "public/app.js",
-      "source_location": "L57",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "public_app",
-      "target": "public_app_currentemployees"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "public/app.js",
-      "source_location": "L58",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "public_app",
-      "target": "public_app_currentlogs"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "public/app.js",
-      "source_location": "L102",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "public_app",
-      "target": "public_app_loaddashboard"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "public/app.js",
-      "source_location": "L157",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "public_app",
-      "target": "public_app_loaddevices"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "public/app.js",
-      "source_location": "L452",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "public_app",
-      "target": "public_app_loademployees"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "public/app.js",
-      "source_location": "L201",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "public_app",
-      "target": "public_app_loadlivestatus"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "public/app.js",
-      "source_location": "L326",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "public_app",
-      "target": "public_app_loadlogs"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "public/app.js",
-      "source_location": "L90",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "public_app",
-      "target": "public_app_openmodal"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "public/app.js",
-      "source_location": "L259",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "public_app",
-      "target": "public_app_runreport"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "public/app.js",
-      "source_location": "L7",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "public_app",
-      "target": "public_app_sanitizer"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "public/app.js",
-      "source_location": "L239",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "public_app",
-      "target": "public_app_setupreportstab"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "public/app.js",
-      "source_location": "L63",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "public_app",
-      "target": "public_app_switchtab"
-    },
-    {
-      "relation": "references",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "public/app.js",
-      "source_location": "L129",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "public_app_loaddashboard",
-      "target": "public_app_sanitizer"
-    },
-    {
-      "relation": "references",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "public/app.js",
-      "source_location": "L168",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "public_app_loaddevices",
-      "target": "public_app_sanitizer"
-    },
-    {
-      "relation": "references",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "public/app.js",
-      "source_location": "L455",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "public_app_loademployees",
-      "target": "public_app_sanitizer"
-    },
-    {
-      "relation": "references",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "public/app.js",
-      "source_location": "L204",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "public_app_loadlivestatus",
-      "target": "public_app_sanitizer"
-    },
-    {
-      "relation": "references",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "public/app.js",
-      "source_location": "L329",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "public_app_loadlogs",
-      "target": "public_app_sanitizer"
-    },
-    {
-      "relation": "references",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "public/app.js",
-      "source_location": "L266",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "public_app_runreport",
-      "target": "public_app_sanitizer"
-    },
-    {
-      "relation": "references",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "public/app.js",
-      "source_location": "L243",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "public_app_setupreportstab",
-      "target": "public_app_sanitizer"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "public/app.js",
-      "source_location": "L73",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "public_app_switchtab",
-      "target": "public_app_loaddashboard"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "public/app.js",
-      "source_location": "L78",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "public_app_switchtab",
-      "target": "public_app_loaddevices"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "public/app.js",
-      "source_location": "L77",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "public_app_switchtab",
-      "target": "public_app_loademployees"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "public/app.js",
-      "source_location": "L74",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "public_app_switchtab",
-      "target": "public_app_loadlivestatus"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "public/app.js",
-      "source_location": "L76",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "public_app_switchtab",
-      "target": "public_app_loadlogs"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "public/app.js",
-      "source_location": "L75",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "public_app_switchtab",
-      "target": "public_app_setupreportstab"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "public/app.js",
-      "source_location": "L150",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "public_app_loaddashboard",
-      "target": "public_app_loaddevices"
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "source_file": "public/app.js",
-      "source_location": "L255",
-      "weight": 1.0,
-      "_origin": "ast",
-      "confidence_score": 1.0,
-      "source": "public_app_setupreportstab",
-      "target": "public_app_runreport"
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
       "source_file": "scripts/bump-version.mjs",
       "source_location": "L6",
       "weight": 1.0,
@@ -3918,8 +3404,567 @@
       "confidence_score": 1.0,
       "source": "server_index",
       "target": "server_index_server"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L20",
+      "weight": 1.0,
+      "_origin": "ast",
+      "confidence_score": 1.0,
+      "source": "package",
+      "target": "package_author"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L4",
+      "weight": 1.0,
+      "_origin": "ast",
+      "confidence_score": 1.0,
+      "source": "package",
+      "target": "package_description"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L14",
+      "weight": 1.0,
+      "_origin": "ast",
+      "confidence_score": 1.0,
+      "source": "package",
+      "target": "package_keywords"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L21",
+      "weight": 1.0,
+      "_origin": "ast",
+      "confidence_score": 1.0,
+      "source": "package",
+      "target": "package_license"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L6",
+      "weight": 1.0,
+      "_origin": "ast",
+      "confidence_score": 1.0,
+      "source": "package",
+      "target": "package_main"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L2",
+      "weight": 1.0,
+      "_origin": "ast",
+      "confidence_score": 1.0,
+      "source": "package",
+      "target": "package_name"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L7",
+      "weight": 1.0,
+      "_origin": "ast",
+      "confidence_score": 1.0,
+      "source": "package",
+      "target": "package_scripts"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L5",
+      "weight": 1.0,
+      "_origin": "ast",
+      "confidence_score": 1.0,
+      "source": "package",
+      "target": "package_type"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L3",
+      "weight": 1.0,
+      "_origin": "ast",
+      "confidence_score": 1.0,
+      "source": "package",
+      "target": "package_version"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L10",
+      "weight": 1.0,
+      "_origin": "ast",
+      "confidence_score": 1.0,
+      "source": "package_scripts",
+      "target": "package_scripts_agent"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L9",
+      "weight": 1.0,
+      "_origin": "ast",
+      "confidence_score": 1.0,
+      "source": "package_scripts",
+      "target": "package_scripts_dev"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L8",
+      "weight": 1.0,
+      "_origin": "ast",
+      "confidence_score": 1.0,
+      "source": "package_scripts",
+      "target": "package_scripts_start"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L11",
+      "weight": 1.0,
+      "_origin": "ast",
+      "confidence_score": 1.0,
+      "source": "package_scripts",
+      "target": "package_scripts_test"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L12",
+      "weight": 1.0,
+      "_origin": "ast",
+      "confidence_score": 1.0,
+      "source": "package_scripts",
+      "target": "package_scripts_version_bump"
+    },
+    {
+      "relation": "extends",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L14",
+      "weight": 1.0,
+      "context": "import",
+      "_origin": "ast",
+      "confidence_score": 1.0,
+      "source": "package_keywords",
+      "target": "ref_anviz"
+    },
+    {
+      "relation": "extends",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L14",
+      "weight": 1.0,
+      "context": "import",
+      "_origin": "ast",
+      "confidence_score": 1.0,
+      "source": "package_keywords",
+      "target": "ref_attendance"
+    },
+    {
+      "relation": "extends",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L14",
+      "weight": 1.0,
+      "context": "import",
+      "_origin": "ast",
+      "confidence_score": 1.0,
+      "source": "package_keywords",
+      "target": "ref_biometrics"
+    },
+    {
+      "relation": "extends",
+      "confidence": "EXTRACTED",
+      "source_file": "package.json",
+      "source_location": "L14",
+      "weight": 1.0,
+      "context": "import",
+      "_origin": "ast",
+      "confidence_score": 1.0,
+      "source": "package_keywords",
+      "target": "ref_vf30pro"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "public/app.js",
+      "source_location": "L146",
+      "weight": 1.0,
+      "_origin": "ast",
+      "confidence_score": 1.0,
+      "source": "public_app",
+      "target": "public_app_closemodal"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "public/app.js",
+      "source_location": "L59",
+      "weight": 1.0,
+      "_origin": "ast",
+      "confidence_score": 1.0,
+      "source": "public_app",
+      "target": "public_app_currentdevices"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "public/app.js",
+      "source_location": "L57",
+      "weight": 1.0,
+      "_origin": "ast",
+      "confidence_score": 1.0,
+      "source": "public_app",
+      "target": "public_app_currentemployees"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "public/app.js",
+      "source_location": "L58",
+      "weight": 1.0,
+      "_origin": "ast",
+      "confidence_score": 1.0,
+      "source": "public_app",
+      "target": "public_app_currentlogs"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "public/app.js",
+      "source_location": "L154",
+      "weight": 1.0,
+      "_origin": "ast",
+      "confidence_score": 1.0,
+      "source": "public_app",
+      "target": "public_app_loaddashboard"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "public/app.js",
+      "source_location": "L209",
+      "weight": 1.0,
+      "_origin": "ast",
+      "confidence_score": 1.0,
+      "source": "public_app",
+      "target": "public_app_loaddevices"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "public/app.js",
+      "source_location": "L504",
+      "weight": 1.0,
+      "_origin": "ast",
+      "confidence_score": 1.0,
+      "source": "public_app",
+      "target": "public_app_loademployees"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "public/app.js",
+      "source_location": "L253",
+      "weight": 1.0,
+      "_origin": "ast",
+      "confidence_score": 1.0,
+      "source": "public_app",
+      "target": "public_app_loadlivestatus"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "public/app.js",
+      "source_location": "L378",
+      "weight": 1.0,
+      "_origin": "ast",
+      "confidence_score": 1.0,
+      "source": "public_app",
+      "target": "public_app_loadlogs"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "public/app.js",
+      "source_location": "L142",
+      "weight": 1.0,
+      "_origin": "ast",
+      "confidence_score": 1.0,
+      "source": "public_app",
+      "target": "public_app_openmodal"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "public/app.js",
+      "source_location": "L311",
+      "weight": 1.0,
+      "_origin": "ast",
+      "confidence_score": 1.0,
+      "source": "public_app",
+      "target": "public_app_runreport"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "public/app.js",
+      "source_location": "L7",
+      "weight": 1.0,
+      "_origin": "ast",
+      "confidence_score": 1.0,
+      "source": "public_app",
+      "target": "public_app_sanitizer"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "public/app.js",
+      "source_location": "L291",
+      "weight": 1.0,
+      "_origin": "ast",
+      "confidence_score": 1.0,
+      "source": "public_app",
+      "target": "public_app_setupreportstab"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "public/app.js",
+      "source_location": "L72",
+      "weight": 1.0,
+      "_origin": "ast",
+      "confidence_score": 1.0,
+      "source": "public_app",
+      "target": "public_app_switchtab"
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "public/app.js",
+      "source_location": "L63",
+      "weight": 1.0,
+      "_origin": "ast",
+      "confidence_score": 1.0,
+      "source": "public_app",
+      "target": "public_app_tabtitles"
+    },
+    {
+      "relation": "indirect_call",
+      "confidence": "INFERRED",
+      "source_file": "public/app.js",
+      "source_location": "L139",
+      "weight": 1.0,
+      "_origin": "ast",
+      "context": "argument",
+      "confidence_score": 0.5,
+      "source": "public_app",
+      "target": "public_app_updatetopbarclock"
+    },
+    {
+      "relation": "references",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "public/app.js",
+      "source_location": "L181",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "public_app_loaddashboard",
+      "target": "public_app_sanitizer"
+    },
+    {
+      "relation": "references",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "public/app.js",
+      "source_location": "L220",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "public_app_loaddevices",
+      "target": "public_app_sanitizer"
+    },
+    {
+      "relation": "references",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "public/app.js",
+      "source_location": "L507",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "public_app_loademployees",
+      "target": "public_app_sanitizer"
+    },
+    {
+      "relation": "references",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "public/app.js",
+      "source_location": "L256",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "public_app_loadlivestatus",
+      "target": "public_app_sanitizer"
+    },
+    {
+      "relation": "references",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "public/app.js",
+      "source_location": "L381",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "public_app_loadlogs",
+      "target": "public_app_sanitizer"
+    },
+    {
+      "relation": "references",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "public/app.js",
+      "source_location": "L318",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "public_app_runreport",
+      "target": "public_app_sanitizer"
+    },
+    {
+      "relation": "references",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "public/app.js",
+      "source_location": "L295",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "public_app_setupreportstab",
+      "target": "public_app_sanitizer"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "public/app.js",
+      "source_location": "L96",
+      "weight": 1.0,
+      "_origin": "ast",
+      "confidence_score": 1.0,
+      "source": "public_app_switchtab",
+      "target": "public_app_loaddashboard"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "public/app.js",
+      "source_location": "L101",
+      "weight": 1.0,
+      "_origin": "ast",
+      "confidence_score": 1.0,
+      "source": "public_app_switchtab",
+      "target": "public_app_loaddevices"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "public/app.js",
+      "source_location": "L100",
+      "weight": 1.0,
+      "_origin": "ast",
+      "confidence_score": 1.0,
+      "source": "public_app_switchtab",
+      "target": "public_app_loademployees"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "public/app.js",
+      "source_location": "L97",
+      "weight": 1.0,
+      "_origin": "ast",
+      "confidence_score": 1.0,
+      "source": "public_app_switchtab",
+      "target": "public_app_loadlivestatus"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "public/app.js",
+      "source_location": "L99",
+      "weight": 1.0,
+      "_origin": "ast",
+      "confidence_score": 1.0,
+      "source": "public_app_switchtab",
+      "target": "public_app_loadlogs"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "public/app.js",
+      "source_location": "L98",
+      "weight": 1.0,
+      "_origin": "ast",
+      "confidence_score": 1.0,
+      "source": "public_app_switchtab",
+      "target": "public_app_setupreportstab"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "public/app.js",
+      "source_location": "L202",
+      "weight": 1.0,
+      "_origin": "ast",
+      "confidence_score": 1.0,
+      "source": "public_app_loaddashboard",
+      "target": "public_app_loaddevices"
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "public/app.js",
+      "source_location": "L307",
+      "weight": 1.0,
+      "_origin": "ast",
+      "confidence_score": 1.0,
+      "source": "public_app_setupreportstab",
+      "target": "public_app_runreport"
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "acc2f9a07a9e0b3adb8d1a73dc2f7c41d58e0928"
+  "built_at_commit": "5770c725e5b5005e5e1ffe9f799300906e1c5e8c"
 }
