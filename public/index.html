@@ -1093,9 +1093,33 @@
           <span class="card-title">📑 Registro de Fichadas y Rectificación Manual</span>
           <button class="btn btn-primary" id="btnOpenNewPunchModal">➕ Agregar Fichada Manual</button>
         </div>
-        <p style="font-size: 0.82rem; color: var(--cc-text-secondary); margin-bottom: 12px;">
-          Permite rectificar horarios olvidados, ajustar salidas omitidas y eliminar dobles fichadas accidentales con auditoría.
+        <p style="font-size: 0.82rem; color: var(--cc-text-secondary); margin-bottom: 14px;">
+          Permite auditar el flujo cronológico de marcas de ambas sucursales, rectificar horarios olvidados y eliminar dobles fichadas accidentales con auditoría.
         </p>
+
+        <!-- Barra de Búsqueda y Filtros de Auditoría -->
+        <div class="filter-bar no-print" style="margin-bottom: 16px;">
+          <div class="form-group" style="flex: 1; min-width: 200px;">
+            <label style="font-size: 0.78rem;">Buscar por Empleado o Legajo:</label>
+            <input type="text" id="searchLogsText" class="form-control" placeholder="Escriba nombre o legajo (ej: Nelson o 3004)...">
+          </div>
+          <div class="form-group" style="min-width: 180px;">
+            <label style="font-size: 0.78rem;">Sucursal / Reloj:</label>
+            <select id="filterLogsBranch" class="form-control">
+              <option value="">Todas las Sucursales</option>
+              <option value="Neuquen">Neuquén 959 (Local)</option>
+              <option value="Ballarini">Ballarini 1111 (Remoto)</option>
+            </select>
+          </div>
+          <div class="form-group" style="min-width: 150px;">
+            <label style="font-size: 0.78rem;">Filtrar por Fecha:</label>
+            <input type="date" id="filterLogsDate" class="form-control">
+          </div>
+          <div class="form-group" style="display: flex; align-items: flex-end;">
+            <button class="btn btn-outline" id="btnClearLogsFilter" style="height: 38px;">Limpiar</button>
+          </div>
+        </div>
+
         <div class="table-container">
           <table id="tblLogs">
             <thead>

@@ -17,8 +17,26 @@ const Sanitizer = {
 
   safeSetInnerHTML(element, rawHTML) {
     if (!element) return;
+    const tag = (element.tagName || '').toUpperCase();
+    let wrappedHTML = rawHTML;
+    let selector = 'body';
+
+    if (tag === 'TR') {
+      wrappedHTML = `<table><tbody><tr>${rawHTML}</tr></tbody></table>`;
+      selector = 'tr';
+    } else if (tag === 'TBODY' || tag === 'THEAD' || tag === 'TFOOT') {
+      wrappedHTML = `<table><tbody>${rawHTML}</tbody></table>`;
+      selector = 'tbody';
+    } else if (tag === 'TABLE') {
+      wrappedHTML = `<table>${rawHTML}</table>`;
+      selector = 'table';
+    } else if (tag === 'SELECT') {
+      wrappedHTML = `<select>${rawHTML}</select>`;
+      selector = 'select';
+    }
+
     const parser = new DOMParser();
-    const doc = parser.parseFromString(rawHTML, 'text/html');
+    const doc = parser.parseFromString(wrappedHTML, 'text/html');
 
     // Remover elementos potencialmente peligrosos
     const scripts = doc.querySelectorAll('script, iframe, object, embed');
@@ -40,7 +58,8 @@ const Sanitizer = {
       });
     });
 
-    element.replaceChildren(...Array.from(doc.body.childNodes));
+    const root = doc.querySelector(selector) || doc.body;
+    element.replaceChildren(...Array.from(root.childNodes));
   },
 
   sanitizeURL(url) {
@@ -375,6 +394,84 @@ async function runReport() {
 }
 
 // 5. REGISTROS & FICHADAS (RECTIFICACIÓN)
+function renderLogsTable(logsToRender) {
+  const tbody = document.querySelector('#tblLogs tbody');
+  if (!tbody) return;
+  tbody.replaceChildren();
+
+  if (!logsToRender || logsToRender.length === 0) {
+    Sanitizer.safeSetInnerHTML(
+      tbody,
+      '<tr><td colspan="9" style="text-align: center; color: var(--cc-text-secondary); padding: 24px;">No se encontraron fichadas con los filtros seleccionados.</td></tr>'
+    );
+    return;
+  }
+
+  const sorted = [...logsToRender].reverse().slice(0, 300);
+
+  sorted.forEach((l) => {
+    const tr = document.createElement('tr');
+    const originBadge = l.manual
+      ? '<span class="badge badge-warning">✏️ Manual / Editada</span>'
+      : '<span class="badge badge-success">🤖 Anviz Reloj</span>';
+
+    Sanitizer.safeSetInnerHTML(
+      tr,
+      `
+      <td><code>${Sanitizer.escapeHTML(l.workno || l.userCode)}</code></td>
+      <td><strong>${Sanitizer.escapeHTML(l.employeeName || 'Empleado ' + (l.workno || l.userCode))}</strong></td>
+      <td><small style="color: var(--cc-text-secondary);">${Sanitizer.escapeHTML(l.department || 'Regondi srl')}</small></td>
+      <td><span style="font-family: monospace;">${Sanitizer.escapeHTML(l.localDate)}</span></td>
+      <td><b style="font-family: monospace; color: var(--cc-text-primary);">${Sanitizer.escapeHTML(l.localTime)}</b></td>
+      <td><span class="badge badge-primary">${Sanitizer.escapeHTML(l.branch)}</span></td>
+      <td><small>${Sanitizer.escapeHTML(l.verifyDesc)}</small></td>
+      <td>${originBadge}</td>
+      <td style="white-space: nowrap;">
+        <button class="btn btn-outline btn-sm" onclick="editPunch('${Sanitizer.escapeHTML(l.id)}')" title="Rectificar">✏️</button>
+        <button class="btn btn-danger-outline btn-sm" onclick="deletePunch('${Sanitizer.escapeHTML(l.id)}')" title="Eliminar">🗑️</button>
+      </td>
+    `
+    );
+    tbody.appendChild(tr);
+  });
+}
+
+function applyLogsFilters() {
+  const q = (document.getElementById('searchLogsText')?.value || '').toLowerCase().trim();
+  const b = (document.getElementById('filterLogsBranch')?.value || '').toLowerCase().trim();
+  const d = (document.getElementById('filterLogsDate')?.value || '').trim();
+
+  let filtered = currentLogs;
+  if (q) {
+    filtered = filtered.filter((l) => {
+      const code = String(l.workno || l.userCode || '').toLowerCase();
+      const name = String(l.employeeName || '').toLowerCase();
+      return code.includes(q) || name.includes(q);
+    });
+  }
+  if (b) {
+    filtered = filtered.filter((l) => String(l.branch || '').toLowerCase().includes(b));
+  }
+  if (d) {
+    filtered = filtered.filter((l) => String(l.localDate || '').startsWith(d));
+  }
+
+  renderLogsTable(filtered);
+}
+
+document.getElementById('searchLogsText')?.addEventListener('input', applyLogsFilters);
+document.getElementById('filterLogsBranch')?.addEventListener('change', applyLogsFilters);
+document.getElementById('filterLogsDate')?.addEventListener('change', applyLogsFilters);
+document.getElementById('btnClearLogsFilter')?.addEventListener('click', () => {
+  const searchInput = document.getElementById('searchLogsText');
+  const branchSelect = document.getElementById('filterLogsBranch');
+  const dateInput = document.getElementById('filterLogsDate');
+  if (searchInput) searchInput.value = '';
+  if (branchSelect) branchSelect.value = '';
+  if (dateInput) dateInput.value = '';
+  renderLogsTable(currentLogs);
+});
+
 async function loadLogs() {
   const tbody = document.querySelector('#tblLogs tbody');
   if (!tbody) return;
@@ -386,32 +483,7 @@ async function loadLogs() {
     if (!data.success) throw new Error(data.error);
 
     currentLogs = data.logs;
-    tbody.replaceChildren();
-    const sorted = [...currentLogs].reverse().slice(0, 300);
-
-    sorted.forEach((l) => {
-      const tr = document.createElement('tr');
-      const originBadge = l.manual ? '<span class="badge badge-warning">✏️ Manual / Editada</span>' : '<span class="badge badge-success">🤖 Anviz Reloj</span>';
-
-      Sanitizer.safeSetInnerHTML(
-        tr,
-        `
-        <td><b>${Sanitizer.escapeHTML(l.workno || l.userCode)}</b></td>
-        <td><strong>${Sanitizer.escapeHTML(l.employeeName)}</strong></td>
-        <td><small>${Sanitizer.escapeHTML(l.department || 'Regondi srl')}</small></td>
-        <td>${Sanitizer.escapeHTML(l.localDate)}</td>
-        <td><b>${Sanitizer.escapeHTML(l.localTime)}</b></td>
-        <td><span class="badge badge-primary">${Sanitizer.escapeHTML(l.branch)}</span></td>
-        <td>${Sanitizer.escapeHTML(l.verifyDesc)}</td>
-        <td>${originBadge}</td>
-        <td>
-          <button class="btn btn-outline btn-sm" onclick="editPunch('${Sanitizer.escapeHTML(l.id)}')">✏️</button>
-          <button class="btn btn-danger-outline btn-sm" onclick="deletePunch('${Sanitizer.escapeHTML(l.id)}')">🗑️</button>
-        </td>
-      `
-      );
-      tbody.appendChild(tr);
-    });
+    applyLogsFilters();
   } catch (err) {
     Sanitizer.safeSetInnerHTML(tbody, `<tr><td colspan="9" style="color: var(--cc-danger);">Error: ${Sanitizer.escapeHTML(err.message)}</td></tr>`);
   }
