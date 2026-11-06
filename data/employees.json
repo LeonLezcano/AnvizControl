@@ -78,7 +78,7 @@
     "clockIdBranch1": "3012",
     "clockIdBranch2": "3012",
     "department": "Regondi",
-    "position": "",
+    "position": "Administración",
     "tel": "",
     "email": "",
     "scheduleType": "CORRIDO",
@@ -98,7 +98,7 @@
     "hasCard": false,
     "status": "ACTIVE",
     "hourlyRate": 0,
-    "updatedAt": "2026-11-06T16:06:13.383Z"
+    "updatedAt": "2026-11-06T16:54:25.113Z"
   },
   {
     "id": "EMP-1020",
@@ -109,7 +109,7 @@
     "clockIdBranch1": "1020",
     "clockIdBranch2": "1020",
     "department": "Regondi",
-    "position": "",
+    "position": "Gerente",
     "tel": "",
     "email": "",
     "scheduleType": "CORRIDO",
@@ -129,7 +129,7 @@
     "hasCard": false,
     "status": "ACTIVE",
     "hourlyRate": 0,
-    "updatedAt": "2026-11-06T16:06:13.386Z"
+    "updatedAt": "2026-11-06T16:54:38.058Z"
   },
   {
     "id": "EMP-11",
@@ -140,7 +140,7 @@
     "clockIdBranch1": "11",
     "clockIdBranch2": "11",
     "department": "Regondi",
-    "position": "",
+    "position": "Repartidor",
     "tel": "",
     "email": "",
     "scheduleType": "CORRIDO",
@@ -160,7 +160,7 @@
     "hasCard": false,
     "status": "ACTIVE",
     "hourlyRate": 0,
-    "updatedAt": "2026-11-06T16:06:13.387Z"
+    "updatedAt": "2026-11-06T16:54:50.809Z"
   },
   {
     "id": "EMP-2205",
@@ -171,7 +171,7 @@
     "clockIdBranch1": "2205",
     "clockIdBranch2": "2205",
     "department": "Regondi",
-    "position": "",
+    "position": "Repartidor",
     "tel": "",
     "email": "",
     "scheduleType": "CORRIDO",
@@ -191,7 +191,7 @@
     "hasCard": false,
     "status": "ACTIVE",
     "hourlyRate": 0,
-    "updatedAt": "2026-11-06T16:06:13.389Z"
+    "updatedAt": "2026-11-06T16:55:10.010Z"
   },
   {
     "id": "EMP-3254",
@@ -202,7 +202,7 @@
     "clockIdBranch1": "3254",
     "clockIdBranch2": "3254",
     "department": "Regondi",
-    "position": "",
+    "position": "Mantenimiento / Servicio Tecnico",
     "tel": "",
     "email": "",
     "scheduleType": "CORRIDO",
@@ -222,7 +222,7 @@
     "hasCard": false,
     "status": "ACTIVE",
     "hourlyRate": 0,
-    "updatedAt": "2026-11-06T16:06:13.390Z"
+    "updatedAt": "2026-11-06T16:55:31.122Z"
   },
   {
     "id": "EMP-3256",
@@ -233,7 +233,7 @@
     "clockIdBranch1": "3256",
     "clockIdBranch2": "3256",
     "department": "Regondi",
-    "position": "",
+    "position": "Lavador",
     "tel": "",
     "email": "",
     "scheduleType": "CORRIDO",
@@ -253,7 +253,7 @@
     "hasCard": false,
     "status": "ACTIVE",
     "hourlyRate": 0,
-    "updatedAt": "2026-11-06T16:06:13.392Z"
+    "updatedAt": "2026-11-06T16:55:45.585Z"
   },
   {
     "id": "EMP-3265",
@@ -264,7 +264,7 @@
     "clockIdBranch1": "3265",
     "clockIdBranch2": "3265",
     "department": "Regondi",
-    "position": "",
+    "position": "Repartidor",
     "tel": "",
     "email": "",
     "scheduleType": "CORRIDO",
@@ -284,7 +284,7 @@
     "hasCard": false,
     "status": "ACTIVE",
     "hourlyRate": 0,
-    "updatedAt": "2026-11-06T16:06:13.393Z"
+    "updatedAt": "2026-11-06T16:55:53.769Z"
   },
   {
     "id": "EMP-3782",
@@ -326,7 +326,7 @@
     "clockIdBranch1": "520",
     "clockIdBranch2": "520",
     "department": "Regondi",
-    "position": "",
+    "position": "Administración",
     "tel": "",
     "email": "",
     "scheduleType": "CORRIDO",
@@ -346,7 +346,7 @@
     "hasCard": false,
     "status": "ACTIVE",
     "hourlyRate": 0,
-    "updatedAt": "2026-11-06T16:06:13.396Z"
+    "updatedAt": "2026-11-06T16:56:07.105Z"
   },
   {
     "id": "EMP-5339",
@@ -357,7 +357,7 @@
     "clockIdBranch1": "5339",
     "clockIdBranch2": "5339",
     "department": "Regondi",
-    "position": "",
+    "position": "Repartidor",
     "tel": "",
     "email": "",
     "scheduleType": "CORRIDO",
@@ -377,7 +377,7 @@
     "hasCard": false,
     "status": "ACTIVE",
     "hourlyRate": 0,
-    "updatedAt": "2026-11-06T16:06:13.397Z"
+    "updatedAt": "2026-11-06T16:56:14.067Z"
   },
   {
     "id": "EMP-5554",
@@ -388,7 +388,7 @@
     "clockIdBranch1": "5554",
     "clockIdBranch2": "5554",
     "department": "Regondi",
-    "position": "",
+    "position": "Repartidor",
     "tel": "",
     "email": "",
     "scheduleType": "CORRIDO",
@@ -408,7 +408,7 @@
     "hasCard": false,
     "status": "ACTIVE",
     "hourlyRate": 0,
-    "updatedAt": "2026-11-06T16:06:13.398Z"
+    "updatedAt": "2026-11-06T16:56:21.929Z"
   },
   {
     "id": "EMP-7070",
@@ -419,7 +419,7 @@
     "clockIdBranch1": "7070",
     "clockIdBranch2": "7070",
     "department": "Regondi",
-    "position": "",
+    "position": "Pago a Proveedores",
     "tel": "",
     "email": "",
     "scheduleType": "CORRIDO",
@@ -439,7 +439,7 @@
     "hasCard": false,
     "status": "ACTIVE",
     "hourlyRate": 0,
-    "updatedAt": "2026-11-06T16:06:13.400Z"
+    "updatedAt": "2026-11-06T16:56:37.185Z"
   },
   {
     "id": "EMP-7475",
@@ -450,7 +450,7 @@
     "clockIdBranch1": "7475",
     "clockIdBranch2": "7475",
     "department": "Regondi",
-    "position": "",
+    "position": "Logistica",
     "tel": "",
     "email": "",
     "scheduleType": "CORRIDO",
@@ -470,7 +470,7 @@
     "hasCard": false,
     "status": "ACTIVE",
     "hourlyRate": 0,
-    "updatedAt": "2026-11-06T16:06:13.401Z"
+    "updatedAt": "2026-11-06T16:56:46.641Z"
   },
   {
     "id": "EMP-9240",
@@ -481,7 +481,7 @@
     "clockIdBranch1": "9240",
     "clockIdBranch2": "9240",
     "department": "Regondi",
-    "position": "",
+    "position": "Cobranzas",
     "tel": "",
     "email": "",
     "scheduleType": "CORRIDO",
@@ -501,7 +501,7 @@
     "hasCard": false,
     "status": "ACTIVE",
     "hourlyRate": 0,
-    "updatedAt": "2026-11-06T16:06:13.402Z"
+    "updatedAt": "2026-11-06T16:56:56.601Z"
   },
   {
     "id": "EMP-6467",
@@ -512,7 +512,7 @@
     "clockIdBranch1": "6467",
     "clockIdBranch2": "6467",
     "department": "Regondi srl",
-    "position": "",
+    "position": "Repartidor",
     "tel": "",
     "email": "",
     "scheduleType": "CORRIDO",
@@ -532,7 +532,7 @@
     "hasCard": false,
     "status": "ACTIVE",
     "hourlyRate": 0,
-    "updatedAt": "2026-11-06T16:06:13.403Z"
+    "updatedAt": "2026-11-06T16:57:07.249Z"
   },
   {
     "id": "EMP-9753",
@@ -543,7 +543,7 @@
     "clockIdBranch1": "9753",
     "clockIdBranch2": "9753",
     "department": "Regondi srl",
-    "position": "",
+    "position": "Lavador / Reparto",
     "tel": "",
     "email": "",
     "scheduleType": "CORRIDO",
@@ -563,7 +563,7 @@
     "hasCard": false,
     "status": "ACTIVE",
     "hourlyRate": 0,
-    "updatedAt": "2026-11-06T16:06:13.404Z"
+    "updatedAt": "2026-11-06T16:57:27.546Z"
   },
   {
     "id": "EMP-7574",
@@ -574,7 +574,7 @@
     "clockIdBranch1": "7574",
     "clockIdBranch2": "7574",
     "department": "Regondi srl",
-    "position": "",
+    "position": "Repartidor",
     "tel": "",
     "email": "",
     "scheduleType": "CORRIDO",
@@ -594,7 +594,7 @@
     "hasCard": false,
     "status": "ACTIVE",
     "hourlyRate": 0,
-    "updatedAt": "2026-11-06T16:06:13.404Z"
+    "updatedAt": "2026-11-06T16:58:44.129Z"
   },
   {
     "id": "EMP-5351",
@@ -605,7 +605,7 @@
     "clockIdBranch1": "5351",
     "clockIdBranch2": "5351",
     "department": "Regondi srl",
-    "position": "",
+    "position": "Limpieza",
     "tel": "",
     "email": "",
     "scheduleType": "CORRIDO",
@@ -625,7 +625,7 @@
     "hasCard": false,
     "status": "ACTIVE",
     "hourlyRate": 0,
-    "updatedAt": "2026-11-06T16:06:13.405Z"
+    "updatedAt": "2026-11-06T16:58:52.937Z"
   },
   {
     "id": "EMP-9111",
@@ -636,7 +636,7 @@
     "clockIdBranch1": "9111",
     "clockIdBranch2": "9111",
     "department": "Regondi srl",
-    "position": "",
+    "position": "Repartidor",
     "tel": "",
     "email": "",
     "scheduleType": "CORRIDO",
@@ -656,7 +656,7 @@
     "hasCard": false,
     "status": "ACTIVE",
     "hourlyRate": 0,
-    "updatedAt": "2026-11-06T16:06:13.406Z"
+    "updatedAt": "2026-11-06T16:59:01.065Z"
   },
   {
     "id": "EMP-4313",
@@ -667,7 +667,7 @@
     "clockIdBranch1": "4313",
     "clockIdBranch2": "4313",
     "department": "Regondi srl",
-    "position": "",
+    "position": "Servicio Técnico",
     "tel": "",
     "email": "",
     "scheduleType": "CORRIDO",
@@ -687,7 +687,7 @@
     "hasCard": false,
     "status": "ACTIVE",
     "hourlyRate": 0,
-    "updatedAt": "2026-11-06T16:06:13.407Z"
+    "updatedAt": "2026-11-06T16:59:15.489Z"
   },
   {
     "id": "EMP-4779",
@@ -698,7 +698,7 @@
     "clockIdBranch1": "4779",
     "clockIdBranch2": "4779",
     "department": "Regondi srl",
-    "position": "",
+    "position": "Lavador",
     "tel": "",
     "email": "",
     "scheduleType": "CORRIDO",
@@ -718,7 +718,7 @@
     "hasCard": false,
     "status": "ACTIVE",
     "hourlyRate": 0,
-    "updatedAt": "2026-11-06T16:06:13.408Z"
+    "updatedAt": "2026-11-06T16:59:30.594Z"
   },
   {
     "id": "EMP-4682",
@@ -729,7 +729,7 @@
     "clockIdBranch1": "4682",
     "clockIdBranch2": "4682",
     "department": "Regondi srl",
-    "position": "",
+    "position": "Lavador",
     "tel": "",
     "email": "",
     "scheduleType": "CORRIDO",
@@ -749,7 +749,7 @@
     "hasCard": false,
     "status": "ACTIVE",
     "hourlyRate": 0,
-    "updatedAt": "2026-11-06T16:06:13.409Z"
+    "updatedAt": "2026-11-06T16:59:38.793Z"
   },
   {
     "id": "EMP-3095",
