@@ -807,15 +807,123 @@
       border-bottom: 1px solid var(--cc-border);
     }
 
+    .print-only {
+      display: none !important;
+    }
+
     @media print {
-      body { background: #fff !important; }
-      .sidebar, .topbar, .sidebar-overlay, .filter-bar, .no-print, .btn { display: none !important; }
-      .app-layout { display: block !important; }
-      .main-content-wrapper { display: block !important; }
-      main { margin: 0 !important; padding: 0 !important; max-width: 100% !important; }
-      .card { border: none !important; box-shadow: none !important; padding: 0 !important; }
-      table { border: 1px solid #ddd; }
-      th, td { border: 1px solid #ddd; padding: 6px 10px; }
+      @page {
+        size: A4 portrait;
+        margin: 12mm 10mm;
+      }
+      body {
+        background: #fff !important;
+        color: #111 !important;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+        font-size: 9pt !important;
+      }
+      .sidebar, .topbar, .sidebar-overlay, .filter-bar, .no-print, .btn, button, .card-header button {
+        display: none !important;
+      }
+      .app-layout {
+        display: block !important;
+      }
+      .main-content-wrapper {
+        display: block !important;
+        margin: 0 !important;
+        padding: 0 !important;
+      }
+      main {
+        margin: 0 !important;
+        padding: 0 !important;
+        max-width: 100% !important;
+      }
+      .tab-content {
+        display: none !important;
+      }
+      .tab-content.active {
+        display: block !important;
+      }
+      .card {
+        border: none !important;
+        box-shadow: none !important;
+        padding: 0 !important;
+        margin: 0 !important;
+      }
+      .card-header {
+        border-bottom: 2px solid #222 !important;
+        padding-bottom: 6px !important;
+        margin-bottom: 12px !important;
+      }
+      .card-title {
+        font-size: 13pt !important;
+        color: #000 !important;
+      }
+      .print-only {
+        display: block !important;
+      }
+      table {
+        border-collapse: collapse !important;
+        width: 100% !important;
+        border: 1px solid #444 !important;
+        font-size: 8.5pt !important;
+      }
+      th, td {
+        border: 1px solid #777 !important;
+        padding: 4px 6px !important;
+        color: #000 !important;
+      }
+      th {
+        background: #f1f5f9 !important;
+        font-weight: 700 !important;
+        text-align: left !important;
+      }
+      .kpi-row {
+        display: grid !important;
+        grid-template-columns: repeat(4, 1fr) !important;
+        gap: 8px !important;
+        margin-bottom: 12px !important;
+      }
+      .kpi-card {
+        border: 1px solid #cbd5e1 !important;
+        padding: 6px 10px !important;
+        box-shadow: none !important;
+        background: #fafafa !important;
+      }
+      .kpi-title {
+        font-size: 7.5pt !important;
+        color: #475569 !important;
+        text-transform: uppercase !important;
+      }
+      .kpi-value {
+        font-size: 11pt !important;
+        font-weight: 700 !important;
+        color: #0f172a !important;
+      }
+      .badge {
+        border: 1px solid #64748b !important;
+        color: #0f172a !important;
+        background: transparent !important;
+        padding: 1px 4px !important;
+        font-size: 7.5pt !important;
+      }
+      .page-break {
+        page-break-after: always !important;
+        break-after: page !important;
+      }
+      .employee-sheet {
+        page-break-after: always !important;
+        break-after: page !important;
+        padding-top: 10px !important;
+      }
+      .employee-sheet:last-child {
+        page-break-after: auto !important;
+        break-after: auto !important;
+      }
+      .signature-block {
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+      }
     }
   </style>
 </head>
@@ -1086,15 +1194,33 @@
       <div class="card">
         <div class="card-header">
           <span class="card-title">📋 Reporte de Asistencia T&A (Timesheets)</span>
-          <div class="no-print" style="display: flex; gap: 8px;">
-            <button class="btn btn-outline" onclick="window.print()">🖨️ Imprimir Planilla</button>
+          <div class="no-print" style="display: flex; gap: 8px; flex-wrap: wrap;">
+            <button class="btn btn-outline" id="btnPrintReport">🖨️ Imprimir / Guardar PDF</button>
+            <button class="btn btn-outline" id="btnPrintBatchIndividual" title="Genera un PDF con una hoja individual por cada empleado">📄 Planillas Individuales (PDF Lote)</button>
             <button class="btn btn-primary" id="btnExportCSV">📥 Exportar a Excel (CSV)</button>
+            <button class="btn btn-outline" id="btnExportDetailedAllCSV" title="Exporta todas las jornadas de todos los empleados a Excel">📊 Excel Detallado (Todos)</button>
+          </div>
+        </div>
+
+        <!-- Membrete Exclusivo para Impresión y PDF -->
+        <div class="print-only" id="printDocHeader" style="margin-bottom: 16px; border-bottom: 2px solid #000; padding-bottom: 8px;">
+          <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+            <div>
+              <h2 style="margin: 0; font-size: 15pt; color: #000; text-transform: uppercase;">REGONDI SRL</h2>
+              <div style="font-size: 9.5pt; color: #222; font-weight: 600;">CrossChex Control • Sistema de Asistencia Biométrico Anviz</div>
+              <div style="font-size: 8.5pt; color: #555;">Plantas Operativas: Neuquén 959 (Local) / Ballarini 1111 (Remoto)</div>
+            </div>
+            <div style="text-align: right; font-size: 8.5pt;">
+              <div><strong>Fecha de Emisión:</strong> <span id="printDocDate">-</span></div>
+              <div><strong>Período Auditado:</strong> <span id="printDocRange">-</span></div>
+              <div id="printDocScope" style="font-weight: 700; color: #000; margin-top: 4px;">Toda la Plantilla de Personal</div>
+            </div>
           </div>
         </div>
 
         <div class="filter-bar no-print">
-          <div class="form-group" style="min-width: 260px;">
-            <label>Empleado:</label>
+          <div class="form-group" style="min-width: 280px;">
+            <label>Alcance / Empleado:</label>
             <select id="repEmployeeSelect" class="form-control"></select>
           </div>
           <div class="form-group">
@@ -1103,42 +1229,42 @@
           </div>
           <div class="form-group">
             <label>Hasta:</label>
-            <input type="date" id="repEndDate" class="form-control" value="2026-10-30">
+            <input type="date" id="repEndDate" class="form-control" value="2026-10-31">
           </div>
           <button class="btn btn-primary" id="btnRunReport" style="height: 35px;">🔍 Calcular Asistencia</button>
         </div>
 
-        <!-- Resumen del Empleado -->
+        <!-- Resumen de Métricas KPI -->
         <div class="kpi-row" id="reportSummaryCards">
-          <div class="kpi-card" >
+          <div class="kpi-card">
             <div>
-              <div class="kpi-title">Total Horas Trabajadas</div>
+              <div class="kpi-title" id="kpiTitle1">Total Horas Trabajadas</div>
               <div class="kpi-value" id="sumTotalHours" style="color: var(--cc-primary);">0 h</div>
             </div>
           </div>
-          <div class="kpi-card" >
+          <div class="kpi-card">
             <div>
-              <div class="kpi-title">Días Trabajados</div>
+              <div class="kpi-title" id="kpiTitle2">Días Trabajados</div>
               <div class="kpi-value" id="sumDaysWorked" style="color: var(--cc-green);">0</div>
             </div>
           </div>
-          <div class="kpi-card" >
+          <div class="kpi-card">
             <div>
-              <div class="kpi-title">Ausencias</div>
+              <div class="kpi-title" id="kpiTitle3">Ausencias</div>
               <div class="kpi-value" id="sumAbsences" style="color: var(--cc-danger);">0</div>
             </div>
           </div>
-          <div class="kpi-card" >
+          <div class="kpi-card">
             <div>
-              <div class="kpi-title">Fichadas Impares (Sin salida)</div>
+              <div class="kpi-title" id="kpiTitle4">Fichadas Impares (Sin salida)</div>
               <div class="kpi-value" id="sumOddPunches" style="color: var(--cc-warning);">0</div>
             </div>
           </div>
         </div>
 
-        <div class="table-container">
+        <div class="table-container" id="reportMainTableContainer">
           <table id="tblReportDetails">
-            <thead>
+            <thead id="tblReportHead">
               <tr>
                 <th>Fecha</th>
                 <th>Día</th>
@@ -1154,6 +1280,23 @@
             <tbody></tbody>
           </table>
         </div>
+
+        <!-- Firmas para PDF y Documentos Físicos -->
+        <div class="print-only signature-block" id="printDocSignatures" style="margin-top: 36px; padding-top: 10px;">
+          <div style="display: flex; justify-content: space-around; text-align: center;">
+            <div style="width: 220px; border-top: 1px solid #333; padding-top: 6px; font-size: 8.5pt;">
+              <strong id="printSignEmpName">Firma del Empleado</strong><br>
+              <span style="font-size: 7.5pt; color: #555;">Conformidad de Asistencia</span>
+            </div>
+            <div style="width: 220px; border-top: 1px solid #333; padding-top: 6px; font-size: 8.5pt;">
+              <strong>Recursos Humanos / Dirección</strong><br>
+              <span style="font-size: 7.5pt; color: #555;">Regondi srl</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Contenedor exclusivo para impresión en lote de fichas individuales (A4 por empleado) -->
+        <div id="batchPrintContainer" class="print-only"></div>
       </div>
     </section>
 

@@ -63,11 +63,11 @@
     "hasCard": false,
     "status": "ACTIVE",
     "hourlyRate": 0,
-    "updatedAt": "2026-11-06T16:13:00.024Z",
+    "updatedAt": "2026-11-06T16:48:15.056Z",
     "lastEnrollBranch": "Neuquen 959",
     "lastEnrollDeviceId": "1930",
     "lastFingerSlot": 0,
-    "enrolledAt": "2026-11-06T16:13:00.024Z"
+    "enrolledAt": "2026-11-06T16:48:15.056Z"
   },
   {
     "id": "EMP-3012",

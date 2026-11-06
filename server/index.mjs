@@ -220,16 +220,20 @@ const server = http.createServer(async (req, res) => {
     // API: REPORTES Y ASISTENCIA
     // ==========================================
     if (pathname === '/api/reports/attendance' && req.method === 'GET') {
-      const empId = parsedUrl.searchParams.get('employeeId');
+      const empId = parsedUrl.searchParams.get('employeeId') || 'ALL';
       const start = parsedUrl.searchParams.get('startDate') || '2026-10-01';
       const end = parsedUrl.searchParams.get('endDate') || '2026-10-30';
 
-      if (!empId) {
-        return sendJson(res, 400, { success: false, error: 'Debe especificar el employeeId' });
+      if (empId.toUpperCase() === 'ALL') {
+        const report = AttendanceEngine.calculateAllAttendance(start, end);
+        return sendJson(res, 200, { success: true, mode: 'ALL', report });
       }
 
       const report = AttendanceEngine.calculateAttendance(empId, start, end);
-      return sendJson(res, 200, { success: true, report });
+      if (!report) {
+        return sendJson(res, 404, { success: false, error: 'Empleado no encontrado' });
+      }
+      return sendJson(res, 200, { success: true, mode: 'SINGLE', report });
     }
 
     // ==========================================

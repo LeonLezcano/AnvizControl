@@ -77,6 +77,7 @@ let currentEmployees = [];
 let currentLogs = [];
 let currentDevices = [];
 let lastReport = null;
+let lastReportMode = 'ALL';
 
 // Manejo de Tabs y Vistas
 const tabTitles = {
@@ -313,28 +314,33 @@ function setupReportsTab() {
 
   Sanitizer.safeSetInnerHTML(
     select,
-    currentEmployees
-      .map(
-        (e) => `
-    <option value="${e.id}">${Sanitizer.escapeHTML(e.name)} (Legajo: ${Sanitizer.escapeHTML(e.workno)})</option>
-  `
-      )
-      .join('')
+    `
+    <option value="ALL">👥 Toda la Plantilla (Consolidado General)</option>
+    ` +
+      currentEmployees
+        .map(
+          (e) => `
+      <option value="${e.id}">${Sanitizer.escapeHTML(e.name)} (Legajo: ${Sanitizer.escapeHTML(e.workno)})</option>
+    `
+        )
+        .join('')
   );
 
-  if (currentEmployees.length > 0) {
-    runReport();
-  }
+  runReport();
 }
 
 async function runReport() {
-  const empId = document.getElementById('repEmployeeSelect')?.value;
+  const empId = document.getElementById('repEmployeeSelect')?.value || 'ALL';
   const start = document.getElementById('repStartDate')?.value;
   const end = document.getElementById('repEndDate')?.value;
   const tbody = document.querySelector('#tblReportDetails tbody');
-  if (!tbody || !empId) return;
+  const thead = document.getElementById('tblReportHead');
+  if (!tbody || !start || !end) return;
 
-  Sanitizer.safeSetInnerHTML(tbody, '<tr><td colspan="9" style="text-align: center;">Calculando asistencia de ambas sucursales...</td></tr>');
+  Sanitizer.safeSetInnerHTML(
+    tbody,
+    '<tr><td colspan="10" style="text-align: center; padding: 24px; color: var(--cc-text-secondary);">Calculando asistencia de ambas sucursales...</td></tr>'
+  );
 
   try {
     const res = await fetch(`/api/reports/attendance?employeeId=${empId}&startDate=${start}&endDate=${end}`);
@@ -342,56 +348,180 @@ async function runReport() {
     if (!data.success) throw new Error(data.error);
 
     lastReport = data.report;
+    lastReportMode = data.mode || (empId === 'ALL' ? 'ALL' : 'SINGLE');
     const r = data.report;
 
-    document.getElementById('sumTotalHours').textContent = `${r.summary.totalHours} h`;
-    document.getElementById('sumDaysWorked').textContent = String(r.summary.daysWorked);
-    document.getElementById('sumAbsences').textContent = String(r.summary.absentDays);
-    document.getElementById('sumOddPunches').textContent = String(r.summary.oddPunchDays);
+    // Actualizar encabezados de impresión y PDF
+    const printDate = document.getElementById('printDocDate');
+    const printRange = document.getElementById('printDocRange');
+    const printScope = document.getElementById('printDocScope');
+    const printSign = document.getElementById('printSignEmpName');
 
-    tbody.replaceChildren();
-    const dayNames = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
+    if (printDate) printDate.textContent = new Date().toLocaleDateString('es-AR');
+    if (printRange) printRange.textContent = `${start} al ${end}`;
 
-    r.days.forEach((d) => {
-      const tr = document.createElement('tr');
-      const dObj = new Date(d.date + 'T12:00:00Z');
-      const dName = dayNames[dObj.getUTCDay()];
+    if (lastReportMode === 'ALL') {
+      // 1. MODO CONSOLIDADO: TODA LA PLANTILLA DE EMPLEADOS
+      if (printScope) printScope.textContent = `Plantilla Completa de Personal (${r.companyTotals.totalEmployees} empleados)`;
+      if (printSign) printSign.textContent = 'Supervisor de Planta / Control';
 
-      let badge = '<span class="badge badge-success">OK</span>';
-      if (d.status === 'AUSENTE') badge = '<span class="badge badge-danger">Ausente</span>';
-      if (d.status === 'FRANCO') badge = '<span class="badge badge-info">Franco</span>';
-      if (d.status === 'FICHADA_INCOMPLETA') badge = '<span class="badge badge-warning">⚠️ Fichada Impar</span>';
-      if (d.status === 'LLEGADA_TARDE') badge = `<span class="badge badge-warning">Tarde (+${d.lateMinutes}m)</span>`;
+      // KPI cards de la empresa
+      const t1 = document.getElementById('kpiTitle1');
+      const t2 = document.getElementById('kpiTitle2');
+      const t3 = document.getElementById('kpiTitle3');
+      const t4 = document.getElementById('kpiTitle4');
+      if (t1) t1.textContent = 'Total Horas Plantilla';
+      if (t2) t2.textContent = 'Plantilla con Asistencia';
+      if (t3) t3.textContent = 'Ausencias Globales';
+      if (t4) t4.textContent = 'Horas Extras Totales';
 
-      let pairsHtml = '-';
-      if (d.pairs && d.pairs.length > 0) {
-        pairsHtml = d.pairs.map((p) => {
-          const inT = p.in ? p.in.localTime : '?';
-          const outT = p.out ? p.out.localTime : '<span style="color:var(--cc-danger); font-weight:600;">Sin Salida</span>';
-          return `<b>${inT}</b> ➔ <b>${outT}</b>`;
-        }).join('<br>');
+      document.getElementById('sumTotalHours').textContent = `${r.companyTotals.totalHours} h`;
+      document.getElementById('sumDaysWorked').textContent = `${r.companyTotals.employeesWithAttendance} / ${r.companyTotals.totalEmployees}`;
+      document.getElementById('sumAbsences').textContent = String(r.companyTotals.totalAbsentDays);
+      document.getElementById('sumOddPunches').textContent = `${r.companyTotals.totalOvertimeHours} h`;
+
+      // Header de tabla consolidada
+      if (thead) {
+        Sanitizer.safeSetInnerHTML(
+          thead,
+          `
+          <tr>
+            <th>Legajo</th>
+            <th>Empleado</th>
+            <th>Departamento</th>
+            <th>Días Trab.</th>
+            <th>Ausencias</th>
+            <th>Tardanzas</th>
+            <th>Hs Normales</th>
+            <th>Hs Extra</th>
+            <th>Total Horas</th>
+            <th class="no-print" style="text-align: center;">Acciones</th>
+          </tr>
+        `
+        );
       }
 
-      Sanitizer.safeSetInnerHTML(
-        tr,
+      tbody.replaceChildren();
+      r.summary.forEach((s) => {
+        const tr = document.createElement('tr');
+        Sanitizer.safeSetInnerHTML(
+          tr,
+          `
+          <td><code>${Sanitizer.escapeHTML(s.workno)}</code></td>
+          <td><strong>${Sanitizer.escapeHTML(s.name)}</strong></td>
+          <td>${Sanitizer.escapeHTML(s.department)}</td>
+          <td><b>${s.daysWorked}</b> d</td>
+          <td>${s.absentDays > 0 ? `<span class="badge badge-danger">${s.absentDays}</span>` : '-'}</td>
+          <td>${s.lateDays > 0 ? `<span class="badge badge-warning">${s.lateDays}</span>` : '-'}</td>
+          <td>${s.normalHours} h</td>
+          <td>${s.overtimeHours > 0 ? `<b style="color:var(--cc-purple)">+${s.overtimeHours} h</b>` : '-'}</td>
+          <td><strong style="color:var(--cc-primary); font-size: 0.95rem;">${s.totalHours} h</strong></td>
+          <td class="no-print" style="text-align: center; white-space: nowrap;">
+            <button class="btn btn-outline btn-sm" onclick="viewSingleEmployeeReport('${s.id}')" title="Ver desglose diario de este empleado">🔍 Detalle</button>
+            <button class="btn btn-outline btn-sm" onclick="exportSingleEmployeeCSV('${s.id}')" title="Descargar Excel individual">📥 Excel</button>
+            <button class="btn btn-outline btn-sm" onclick="printSingleEmployee('${s.id}')" title="Imprimir / PDF individual">🖨️ PDF</button>
+          </td>
         `
-        <td><b>${Sanitizer.escapeHTML(d.date)}</b></td>
-        <td>${dName}</td>
-        <td>${badge}</td>
-        <td>${pairsHtml}</td>
-        <td><small>${Sanitizer.escapeHTML(d.branchesVisited.join(', ') || '-')}</small></td>
-        <td>${d.lateMinutes > 0 ? `+${d.lateMinutes}m` : '-'}</td>
-        <td>${d.normalHours} h</td>
-        <td>${d.overtimeHours > 0 ? `<b style="color:var(--cc-purple)">+${d.overtimeHours} h</b>` : '-'}</td>
-        <td><b>${d.hoursWorked} h</b></td>
-      `
-      );
-      tbody.appendChild(tr);
-    });
+        );
+        tbody.appendChild(tr);
+      });
+    } else {
+      // 2. MODO INDIVIDUAL: UN SOLO EMPLEADO
+      if (printScope) printScope.textContent = `Planilla Individual: ${r.employee.name} (Legajo: ${r.employee.workno} - ${r.employee.department})`;
+      if (printSign) printSign.textContent = `Firma de ${r.employee.name}`;
+
+      // KPI cards de un solo empleado
+      const t1 = document.getElementById('kpiTitle1');
+      const t2 = document.getElementById('kpiTitle2');
+      const t3 = document.getElementById('kpiTitle3');
+      const t4 = document.getElementById('kpiTitle4');
+      if (t1) t1.textContent = 'Total Horas Trabajadas';
+      if (t2) t2.textContent = 'Días Trabajados';
+      if (t3) t3.textContent = 'Ausencias';
+      if (t4) t4.textContent = 'Fichadas Impares (Sin salida)';
+
+      document.getElementById('sumTotalHours').textContent = `${r.summary.totalHours} h`;
+      document.getElementById('sumDaysWorked').textContent = String(r.summary.daysWorked);
+      document.getElementById('sumAbsences').textContent = String(r.summary.absentDays);
+      document.getElementById('sumOddPunches').textContent = String(r.summary.oddPunchDays);
+
+      // Header de tabla individual
+      if (thead) {
+        Sanitizer.safeSetInnerHTML(
+          thead,
+          `
+          <tr>
+            <th>Fecha</th>
+            <th>Día</th>
+            <th>Estado</th>
+            <th>Pares Entrada ➔ Salida</th>
+            <th>Sucursales</th>
+            <th>Llegada Tarde</th>
+            <th>Hs Normales</th>
+            <th>Hs Extra</th>
+            <th>Total Horas</th>
+          </tr>
+        `
+        );
+      }
+
+      tbody.replaceChildren();
+      const dayNames = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
+
+      r.days.forEach((d) => {
+        const tr = document.createElement('tr');
+        const dObj = new Date(d.date + 'T12:00:00Z');
+        const dName = dayNames[dObj.getUTCDay()];
+
+        let badge = '<span class="badge badge-success">OK</span>';
+        if (d.status === 'AUSENTE') badge = '<span class="badge badge-danger">Ausente</span>';
+        if (d.status === 'FRANCO') badge = '<span class="badge badge-info">Franco</span>';
+        if (d.status === 'FICHADA_INCOMPLETA') badge = '<span class="badge badge-warning">⚠️ Fichada Impar</span>';
+        if (d.status === 'LLEGADA_TARDE') badge = `<span class="badge badge-warning">Tarde (+${d.lateMinutes}m)</span>`;
+
+        let pairsHtml = '-';
+        if (d.pairs && d.pairs.length > 0) {
+          pairsHtml = d.pairs
+            .map((p) => {
+              const inT = p.in ? p.in.localTime : '?';
+              const outT = p.out ? p.out.localTime : '<span style="color:var(--cc-danger); font-weight:600;">Sin Salida</span>';
+              return `<b>${inT}</b> ➔ <b>${outT}</b>`;
+            })
+            .join('<br>');
+        }
+
+        Sanitizer.safeSetInnerHTML(
+          tr,
+          `
+          <td><b>${Sanitizer.escapeHTML(d.date)}</b></td>
+          <td>${dName}</td>
+          <td>${badge}</td>
+          <td>${pairsHtml}</td>
+          <td><small>${Sanitizer.escapeHTML(d.branchesVisited.join(', ') || '-')}</small></td>
+          <td>${d.lateMinutes > 0 ? `+${d.lateMinutes}m` : '-'}</td>
+          <td>${d.normalHours} h</td>
+          <td>${d.overtimeHours > 0 ? `<b style="color:var(--cc-purple)">+${d.overtimeHours} h</b>` : '-'}</td>
+          <td><b>${d.hoursWorked} h</b></td>
+        `
+        );
+        tbody.appendChild(tr);
+      });
+    }
   } catch (err) {
-    Sanitizer.safeSetInnerHTML(tbody, `<tr><td colspan="9" style="color: var(--cc-danger);">Error: ${Sanitizer.escapeHTML(err.message)}</td></tr>`);
+    Sanitizer.safeSetInnerHTML(
+      tbody,
+      `<tr><td colspan="10" style="color: var(--cc-danger); padding: 18px;">Error: ${Sanitizer.escapeHTML(err.message)}</td></tr>`
+    );
   }
 }
+
+window.viewSingleEmployeeReport = function(empId) {
+  const select = document.getElementById('repEmployeeSelect');
+  if (select) {
+    select.value = empId;
+    runReport();
+  }
+};
 
 // 5. REGISTROS & FICHADAS (RECTIFICACIÓN)
 function renderLogsTable(logsToRender) {
@@ -921,17 +1051,184 @@ document.getElementById('btnSyncCloud')?.addEventListener('click', async () => {
   }
 });
 
-// Exportar CSV nativo con BOM UTF-8
-document.getElementById('btnExportCSV')?.addEventListener('click', () => {
+// ==========================================
+// EXPORTACIÓN A EXCEL (CSV UTF-8 BOM) Y PDF (PRINT)
+// ==========================================
+
+// Helper universal para descargar archivos CSV con BOM UTF-8 (Directiva 17)
+function downloadCSV(filename, rows) {
+  const csvContent =
+    '\uFEFF' +
+    rows
+      .map((row) =>
+        row
+          .map((cell) => {
+            const str = String(cell === null || cell === undefined ? '' : cell);
+            if (str.includes(';') || str.includes('\n') || str.includes('\r') || str.includes('"')) {
+              return `"${str.replace(/"/g, '""')}"`;
+            }
+            return str;
+          })
+          .join(';')
+      )
+      .join('\r\n');
+
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+// 1. Exportar reporte actual (Consolidado o Individual según modo activo)
+function exportCurrentCSV() {
   if (!lastReport) {
-    alert('Primero calcula un reporte');
+    alert('Primero genere o calcule un reporte de asistencia.');
     return;
   }
   const r = lastReport;
-  const headers = ['Fecha', 'Dia', 'Estado', 'Entrada', 'Salida', 'Hs Normales', 'Hs Extra', 'Total Hs', 'Sucursales'];
+
+  if (lastReportMode === 'ALL') {
+    const headers = [
+      'Legajo',
+      'Empleado',
+      'Departamento',
+      'Cargo',
+      'Dias Trabajados',
+      'Ausencias',
+      'Llegadas Tarde',
+      'Hs Normales',
+      'Hs Extra',
+      'Total Horas'
+    ];
+    const rows = [headers];
+    r.summary.forEach((s) => {
+      rows.push([
+        s.workno,
+        s.name,
+        s.department,
+        s.position || '',
+        s.daysWorked,
+        s.absentDays,
+        s.lateDays,
+        s.normalHours,
+        s.overtimeHours,
+        s.totalHours
+      ]);
+    });
+    // Fila resumen de totales
+    rows.push([
+      'TOTALES',
+      `${r.companyTotals.totalEmployees} Empleados`,
+      'Regondi srl',
+      '-',
+      r.companyTotals.employeesWithAttendance,
+      r.companyTotals.totalAbsentDays,
+      r.companyTotals.totalLateDays,
+      r.companyTotals.totalNormalHours,
+      r.companyTotals.totalOvertimeHours,
+      r.companyTotals.totalHours
+    ]);
+    downloadCSV(`Planilla_Consolidada_Regondi_${r.range.startDate}_${r.range.endDate}.csv`, rows);
+  } else {
+    const headers = ['Fecha', 'Dia', 'Estado', 'Entrada', 'Salida', 'Hs Normales', 'Hs Extra', 'Total Hs', 'Sucursales'];
+    const rows = [headers];
+    const dayNames = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
+    r.days.forEach((d) => {
+      const dObj = new Date(d.date + 'T12:00:00Z');
+      rows.push([
+        d.date,
+        dayNames[dObj.getUTCDay()],
+        d.status,
+        d.firstIn || '-',
+        d.lastOut || '-',
+        String(d.normalHours),
+        String(d.overtimeHours),
+        String(d.hoursWorked),
+        d.branchesVisited.join(' - ')
+      ]);
+    });
+    downloadCSV(`Planilla_${r.employee.name.replace(/\s+/g, '_')}_${r.range.startDate}_${r.range.endDate}.csv`, rows);
+  }
+}
+
+// 2. Exportar todas las jornadas detalladas de toda la plantilla en un único CSV de Excel
+async function exportAllDetailedCSV() {
+  const start = document.getElementById('repStartDate')?.value;
+  const end = document.getElementById('repEndDate')?.value;
+  if (!start || !end) return;
+
+  let allRep = lastReportMode === 'ALL' && lastReport?.reports ? lastReport : null;
+  if (!allRep) {
+    const res = await fetch(`/api/reports/attendance?employeeId=ALL&startDate=${start}&endDate=${end}`);
+    const data = await res.json();
+    if (!data.success) {
+      alert('Error al calcular planilla completa: ' + data.error);
+      return;
+    }
+    allRep = data.report;
+  }
+
+  const headers = [
+    'Legajo',
+    'Empleado',
+    'Departamento',
+    'Fecha',
+    'Dia',
+    'Estado',
+    'Entrada',
+    'Salida',
+    'Tardanza (min)',
+    'Hs Normales',
+    'Hs Extra',
+    'Total Horas',
+    'Sucursales'
+  ];
   const rows = [headers];
   const dayNames = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
 
+  allRep.reports.forEach((empRep) => {
+    empRep.days.forEach((d) => {
+      const dObj = new Date(d.date + 'T12:00:00Z');
+      rows.push([
+        empRep.employee.workno,
+        empRep.employee.name,
+        empRep.employee.department,
+        d.date,
+        dayNames[dObj.getUTCDay()],
+        d.status,
+        d.firstIn || '-',
+        d.lastOut || '-',
+        d.lateMinutes > 0 ? String(d.lateMinutes) : '0',
+        String(d.normalHours),
+        String(d.overtimeHours),
+        String(d.hoursWorked),
+        d.branchesVisited.join(' - ')
+      ]);
+    });
+  });
+
+  downloadCSV(`Planilla_Detallada_Todos_Regondi_${start}_${end}.csv`, rows);
+}
+
+// 3. Exportar CSV individual para un empleado específico desde la lista
+window.exportSingleEmployeeCSV = async function(empId) {
+  const start = document.getElementById('repStartDate')?.value;
+  const end = document.getElementById('repEndDate')?.value;
+  const res = await fetch(`/api/reports/attendance?employeeId=${empId}&startDate=${start}&endDate=${end}`);
+  const data = await res.json();
+  if (!data.success) {
+    alert('Error al obtener reporte: ' + data.error);
+    return;
+  }
+  const r = data.report;
+  const headers = ['Fecha', 'Dia', 'Estado', 'Entrada', 'Salida', 'Hs Normales', 'Hs Extra', 'Total Hs', 'Sucursales'];
+  const rows = [headers];
+  const dayNames = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
   r.days.forEach((d) => {
     const dObj = new Date(d.date + 'T12:00:00Z');
     rows.push([
@@ -943,19 +1240,179 @@ document.getElementById('btnExportCSV')?.addEventListener('click', () => {
       String(d.normalHours),
       String(d.overtimeHours),
       String(d.hoursWorked),
-      `"${d.branchesVisited.join(' - ')}"`
+      d.branchesVisited.join(' - ')
     ]);
   });
+  downloadCSV(`Planilla_${r.employee.name.replace(/\s+/g, '_')}_${start}_${end}.csv`, rows);
+};
 
-  const csvContent = '\uFEFF' + rows.map((e) => e.join(';')).join('\n');
-  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = `Reporte_${r.employee.name.replace(/\s+/g, '_')}_${r.range.startDate}_${r.range.endDate}.csv`;
-  a.click();
-  URL.revokeObjectURL(url);
-});
+// 4. Imprimir / PDF de un solo empleado
+window.printSingleEmployee = async function(empId) {
+  const select = document.getElementById('repEmployeeSelect');
+  if (select) {
+    select.value = empId;
+    await runReport();
+    setTimeout(() => {
+      window.print();
+    }, 150);
+  }
+};
+
+// 5. Imprimir / PDF en lote: Cada empleado en su propia hoja A4 (page-break-after: always)
+async function printBatchIndividual() {
+  const start = document.getElementById('repStartDate')?.value;
+  const end = document.getElementById('repEndDate')?.value;
+  if (!start || !end) return;
+
+  const batchContainer = document.getElementById('batchPrintContainer');
+  const mainTable = document.getElementById('reportMainTableContainer');
+  const summaryCards = document.getElementById('reportSummaryCards');
+  const docHeader = document.getElementById('printDocHeader');
+  const docSignatures = document.getElementById('printDocSignatures');
+
+  if (!batchContainer) return;
+
+  let allRep = lastReportMode === 'ALL' && lastReport?.reports ? lastReport : null;
+  if (!allRep) {
+    const res = await fetch(`/api/reports/attendance?employeeId=ALL&startDate=${start}&endDate=${end}`);
+    const data = await res.json();
+    if (!data.success) {
+      alert('Error al preparar planillas individuales: ' + data.error);
+      return;
+    }
+    allRep = data.report;
+  }
+
+  const dayNames = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
+  const todayStr = new Date().toLocaleDateString('es-AR');
+
+  const sheetsHtml = allRep.reports
+    .map((empRep) => {
+      const rowsHtml = empRep.days
+        .map((d) => {
+          const dObj = new Date(d.date + 'T12:00:00Z');
+          const dName = dayNames[dObj.getUTCDay()];
+          const inT = d.firstIn || '-';
+          const outT = d.lastOut || '-';
+          return `
+          <tr>
+            <td><b>${Sanitizer.escapeHTML(d.date)}</b></td>
+            <td>${dName}</td>
+            <td>${Sanitizer.escapeHTML(d.status)}</td>
+            <td><b>${inT}</b> ➔ <b>${outT}</b></td>
+            <td><small>${Sanitizer.escapeHTML(d.branchesVisited.join(', ') || '-')}</small></td>
+            <td>${d.lateMinutes > 0 ? `+${d.lateMinutes}m` : '-'}</td>
+            <td>${d.normalHours} h</td>
+            <td>${d.overtimeHours > 0 ? `+${d.overtimeHours} h` : '-'}</td>
+            <td><b>${d.hoursWorked} h</b></td>
+          </tr>
+        `;
+        })
+        .join('');
+
+      return `
+        <div class="employee-sheet">
+          <div style="border-bottom: 2px solid #000; padding-bottom: 6px; margin-bottom: 10px;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+              <div>
+                <h2 style="margin: 0; font-size: 14pt; color: #000; text-transform: uppercase;">REGONDI SRL</h2>
+                <div style="font-size: 9pt; color: #222; font-weight: 600;">Planilla Individual de Asistencia y Control Horario</div>
+                <div style="font-size: 8pt; color: #666;">CrossChex Control • Sistema Biométrico Anviz</div>
+              </div>
+              <div style="text-align: right; font-size: 8pt;">
+                <div><strong>Fecha de Emisión:</strong> ${todayStr}</div>
+                <div><strong>Período:</strong> ${start} al ${end}</div>
+              </div>
+            </div>
+            <div style="margin-top: 6px; padding: 6px 10px; background: #f8fafc; border: 1px solid #cbd5e1; font-size: 8.5pt; display: flex; gap: 20px;">
+              <div><strong>Empleado:</strong> ${Sanitizer.escapeHTML(empRep.employee.name)}</div>
+              <div><strong>Legajo:</strong> ${Sanitizer.escapeHTML(empRep.employee.workno)}</div>
+              <div><strong>DNI:</strong> ${Sanitizer.escapeHTML(empRep.employee.dni)}</div>
+              <div><strong>Departamento:</strong> ${Sanitizer.escapeHTML(empRep.employee.department)}</div>
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 10px;">
+            <div style="border: 1px solid #cbd5e1; padding: 4px 8px; font-size: 8pt;">
+              <span style="color:#555;">Total Horas:</span> <b>${empRep.summary.totalHours} h</b>
+            </div>
+            <div style="border: 1px solid #cbd5e1; padding: 4px 8px; font-size: 8pt;">
+              <span style="color:#555;">Días Trabajados:</span> <b>${empRep.summary.daysWorked}</b>
+            </div>
+            <div style="border: 1px solid #cbd5e1; padding: 4px 8px; font-size: 8pt;">
+              <span style="color:#555;">Ausencias:</span> <b>${empRep.summary.absentDays}</b>
+            </div>
+            <div style="border: 1px solid #cbd5e1; padding: 4px 8px; font-size: 8pt;">
+              <span style="color:#555;">Horas Extra:</span> <b>${empRep.summary.totalOvertimeHours} h</b>
+            </div>
+          </div>
+
+          <table style="width: 100%; border-collapse: collapse; font-size: 8pt;">
+            <thead>
+              <tr style="background: #f1f5f9;">
+                <th style="border: 1px solid #666; padding: 3px 5px;">Fecha</th>
+                <th style="border: 1px solid #666; padding: 3px 5px;">Día</th>
+                <th style="border: 1px solid #666; padding: 3px 5px;">Estado</th>
+                <th style="border: 1px solid #666; padding: 3px 5px;">Pares Entrada ➔ Salida</th>
+                <th style="border: 1px solid #666; padding: 3px 5px;">Sucursal</th>
+                <th style="border: 1px solid #666; padding: 3px 5px;">Tarde</th>
+                <th style="border: 1px solid #666; padding: 3px 5px;">Hs Norm.</th>
+                <th style="border: 1px solid #666; padding: 3px 5px;">Hs Ext.</th>
+                <th style="border: 1px solid #666; padding: 3px 5px;">Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${rowsHtml}
+            </tbody>
+          </table>
+
+          <div class="signature-block" style="margin-top: 25px; display: flex; justify-content: space-around; text-align: center;">
+            <div style="width: 200px; border-top: 1px solid #333; padding-top: 4px; font-size: 8pt;">
+              <strong>Firma de ${Sanitizer.escapeHTML(empRep.employee.name)}</strong><br>
+              <span style="font-size: 7pt; color: #555;">Conformidad del Empleado</span>
+            </div>
+            <div style="width: 200px; border-top: 1px solid #333; padding-top: 4px; font-size: 8pt;">
+              <strong>Recursos Humanos / Dirección</strong><br>
+              <span style="font-size: 7pt; color: #555;">Regondi srl</span>
+            </div>
+          </div>
+        </div>
+      `;
+    })
+    .join('');
+
+  Sanitizer.safeSetInnerHTML(batchContainer, sheetsHtml);
+
+  // Ocultar vista normal de pantalla durante impresión en lote
+  if (mainTable) mainTable.style.setProperty('display', 'none', 'important');
+  if (summaryCards) summaryCards.style.setProperty('display', 'none', 'important');
+  if (docHeader) docHeader.style.setProperty('display', 'none', 'important');
+  if (docSignatures) docSignatures.style.setProperty('display', 'none', 'important');
+  batchContainer.style.setProperty('display', 'block', 'important');
+
+  const cleanup = () => {
+    if (mainTable) mainTable.style.removeProperty('display');
+    if (summaryCards) summaryCards.style.removeProperty('display');
+    if (docHeader) docHeader.style.removeProperty('display');
+    if (docSignatures) docSignatures.style.removeProperty('display');
+    batchContainer.style.setProperty('display', 'none', 'important');
+    Sanitizer.safeSetInnerHTML(batchContainer, '');
+    window.removeEventListener('afterprint', cleanup);
+  };
+
+  window.addEventListener('afterprint', cleanup);
+  setTimeout(() => {
+    window.print();
+  }, 100);
+}
+
+// Event Listeners de Botones de Reporte
+document.getElementById('btnExportCSV')?.addEventListener('click', exportCurrentCSV);
+document.getElementById('btnExportDetailedAllCSV')?.addEventListener('click', exportAllDetailedCSV);
+document.getElementById('btnPrintReport')?.addEventListener('click', () => window.print());
+document.getElementById('btnPrintBatchIndividual')?.addEventListener('click', printBatchIndividual);
+document.getElementById('repEmployeeSelect')?.addEventListener('change', runReport);
+document.getElementById('btnRunReport')?.addEventListener('click', runReport);
 
 // Inicialización
 (async function init() {

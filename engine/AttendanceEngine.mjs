@@ -685,6 +685,56 @@ export class AttendanceEngine {
   }
 
   /**
+   * Procesa el reporte de asistencia consolidado para toda la plantilla de empleados activos
+   * @param {string} startDateStr - YYYY-MM-DD
+   * @param {string} endDateStr - YYYY-MM-DD
+   */
+  static calculateAllAttendance(startDateStr, endDateStr) {
+    const employees = this.getEmployees().filter((e) => e.status !== 'INACTIVE');
+    const reports = [];
+    const summary = [];
+
+    for (const emp of employees) {
+      const rep = this.calculateAttendance(emp.id, startDateStr, endDateStr);
+      if (rep) {
+        reports.push(rep);
+        summary.push({
+          id: emp.id,
+          workno: emp.workno || emp.dni,
+          name: emp.name,
+          department: emp.department || 'Regondi srl',
+          position: emp.position || '',
+          daysWorked: rep.summary.daysWorked,
+          absentDays: rep.summary.absentDays,
+          lateDays: rep.summary.lateDays,
+          oddPunchDays: rep.summary.oddPunchDays,
+          normalHours: rep.summary.totalNormalHours,
+          overtimeHours: rep.summary.totalOvertimeHours,
+          totalHours: rep.summary.totalHours
+        });
+      }
+    }
+
+    const companyTotals = {
+      totalEmployees: employees.length,
+      employeesWithAttendance: summary.filter((s) => s.daysWorked > 0).length,
+      totalHours: +summary.reduce((acc, s) => acc + s.totalHours, 0).toFixed(2),
+      totalNormalHours: +summary.reduce((acc, s) => acc + s.normalHours, 0).toFixed(2),
+      totalOvertimeHours: +summary.reduce((acc, s) => acc + s.overtimeHours, 0).toFixed(2),
+      totalAbsentDays: summary.reduce((acc, s) => acc + s.absentDays, 0),
+      totalLateDays: summary.reduce((acc, s) => acc + s.lateDays, 0),
+      totalOddPunches: summary.reduce((acc, s) => acc + s.oddPunchDays, 0)
+    };
+
+    return {
+      range: { startDate: startDateStr, endDate: endDateStr },
+      companyTotals,
+      summary,
+      reports
+    };
+  }
+
+  /**
    * Monitor en vivo y Estadísticas de Dashboard (estilo CrossChex Cloud)
    */
   static getLiveStatus(referenceDateStr) {

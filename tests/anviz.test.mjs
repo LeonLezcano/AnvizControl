@@ -217,6 +217,15 @@ describe('2. Capa 2: Motor de Asistencia & Horarios de Regondi srl', () => {
     assert(typeof report.summary.totalWorkedHours === 'number');
   });
 
+  it('Debe calcular el reporte consolidado de toda la plantilla (calculateAllAttendance)', () => {
+    const allRep = AttendanceEngine.calculateAllAttendance('2026-10-01', '2026-10-31');
+    assert(allRep.summary.length >= 20, 'Debe incluir a todos los empleados activos');
+    assert(allRep.companyTotals.totalHours > 0, 'Debe totalizar horas globales de la empresa');
+    assert(allRep.companyTotals.totalEmployees >= 20, 'Debe reflejar el padrón total');
+    assert(Array.isArray(allRep.reports), 'Debe incluir desglose individual por empleado');
+    assert.strictEqual(allRep.reports.length, allRep.summary.length);
+  });
+
   it('Debe identificar ausentismo cuando no hay fichadas en día hábil', () => {
     const logs = []; // Sin fichadas
     const shift = { startTime: '08:00', endTime: '17:00', toleranceMinutes: 10, days: [1, 2, 3, 4, 5] };
