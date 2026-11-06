@@ -42,23 +42,31 @@ export function toArgentinaLocal(isoStr) {
   if (!isoStr) {
     return { localDate: '-', localTime: '-', localTimeFull: '-', localDateTime: '-', epochMs: 0 };
   }
-  const d = new Date(isoStr);
+  let cleanStr = String(isoStr).trim();
+  // Si viene en formato local 'YYYY-MM-DD HH:mm:ss' sin zona horaria, fijar explícitamente el huso argentino -03:00
+  if (/^\d{4}-\d{2}-\d{2}[ T]\d{2}:\d{2}(:\d{2})?$/.test(cleanStr)) {
+    cleanStr = cleanStr.replace(' ', 'T') + '-03:00';
+  }
+  const d = new Date(cleanStr);
   if (isNaN(d.getTime())) {
     return { localDate: '-', localTime: '-', localTimeFull: '-', localDateTime: '-', epochMs: 0 };
   }
-  // Restar 3 horas (UTC-3) al tiempo UTC para obtener componentes locales exactos de Argentina
-  const arMs = d.getTime() - 3 * 3600 * 1000;
-  const arDate = new Date(arMs);
-  const yyyy = arDate.getUTCFullYear();
-  const mm = String(arDate.getUTCMonth() + 1).padStart(2, '0');
-  const dd = String(arDate.getUTCDate()).padStart(2, '0');
-  const hh = String(arDate.getUTCHours()).padStart(2, '0');
-  const min = String(arDate.getUTCMinutes()).padStart(2, '0');
-  const ss = String(arDate.getUTCSeconds()).padStart(2, '0');
+  // Conversión canónica al huso horario oficial de Argentina (America/Argentina/Buenos_Aires / UTC-3)
+  const parts = new Intl.DateTimeFormat('en-US', {
+    timeZone: 'America/Argentina/Buenos_Aires',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hourCycle: 'h23'
+  }).formatToParts(d);
+  const map = Object.fromEntries(parts.map((p) => [p.type, p.value]));
+  const localDate = `${map.year}-${map.month}-${map.day}`;
+  const localTime = `${map.hour}:${map.minute}`;
+  const localTimeFull = `${map.hour}:${map.minute}:${map.second}`;
 
-  const localDate = `${yyyy}-${mm}-${dd}`;
-  const localTime = `${hh}:${min}`;
-  const localTimeFull = `${hh}:${min}:${ss}`;
   return {
     localDate,
     localTime,
@@ -204,6 +212,49 @@ export class AttendanceEngine {
     employees = employees.filter((e) => e.id !== cleanId);
     writeJson(EMPLOYEES_FILE, employees);
     return true;
+  }
+
+  /**
+   * Registra el enrolamiento biométrico de un empleado
+   * @param {object} params
+   * @param {string} [params.employeeId]
+   * @param {string|number} params.workno
+   * @param {string} [params.branch='Neuquen 959']
+   * @param {string} [params.deviceId='1930']
+   * @param {number} [params.backupId=0]
+   */
+  static enrollEmployeeFingerprint({ employeeId, workno, branch = 'Neuquen 959', deviceId = '1930', backupId = 0 }) {
+    const employees = this.getEmployees();
+    const cleanWorkno = String(workno || '').trim();
+    const cleanEmpId = String(employeeId || '').trim();
+
+    const idx = employees.findIndex(
+      (e) => (cleanEmpId && e.id === cleanEmpId) || (cleanWorkno && String(e.workno) === cleanWorkno)
+    );
+
+    if (idx < 0) {
+      // Si no existe, crear el registro base para este legajo
+      const newEmp = this.saveEmployee({
+        id: cleanEmpId || (cleanWorkno ? `EMP-${cleanWorkno}` : undefined),
+        workno: cleanWorkno,
+        name: `Empleado ${cleanWorkno}`,
+        hasFinger: true
+      });
+      return newEmp;
+    }
+
+    employees[idx] = {
+      ...employees[idx],
+      hasFinger: true,
+      lastEnrollBranch: branch,
+      lastEnrollDeviceId: deviceId,
+      lastFingerSlot: Number(backupId) || 0,
+      enrolledAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    };
+
+    writeJson(EMPLOYEES_FILE, employees);
+    return employees[idx];
   }
 
   /**

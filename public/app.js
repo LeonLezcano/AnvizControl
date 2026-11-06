@@ -643,6 +643,7 @@ async function loadEmployees() {
         <td>${emp.hasPassd ? '✅' : '❌'}</td>
         <td><span class="badge badge-success">Activo</span></td>
         <td>
+          <button class="btn btn-outline btn-sm" data-action="enroll-employee" data-id="${Sanitizer.escapeHTML(emp.id)}" data-workno="${Sanitizer.escapeHTML(emp.workno)}" title="Tomar Huella en Reloj">☝️ Huella</button>
           <button class="btn btn-outline btn-sm" data-action="edit-employee" data-id="${Sanitizer.escapeHTML(emp.id)}" title="Editar Empleado">✏️</button>
           <button class="btn btn-danger-outline btn-sm" data-action="delete-employee" data-id="${Sanitizer.escapeHTML(emp.id)}" title="Eliminar Empleado">🗑️</button>
         </td>
@@ -666,7 +667,35 @@ window.editEmployee = function(id) {
   document.getElementById('empFieldDept').value = emp.department || 'Regondi srl';
   document.getElementById('empFieldPosition').value = emp.position || '';
 
+  const statusBadge = document.getElementById('enrollCurrentStatus');
+  if (statusBadge) {
+    if (emp.hasFinger) {
+      statusBadge.className = 'badge badge-success';
+      statusBadge.textContent = '✅ Huella Registrada';
+    } else {
+      statusBadge.className = 'badge badge-warning';
+      statusBadge.textContent = '❌ Sin Huella';
+    }
+  }
+
+  const feedbackText = document.getElementById('enrollFeedbackText');
+  if (feedbackText) {
+    Sanitizer.safeSetInnerHTML(
+      feedbackText,
+      `Empleado: <strong>${Sanitizer.escapeHTML(emp.name)}</strong> (Legajo <strong>${Sanitizer.escapeHTML(emp.workno)}</strong>). Seleccione la sucursal y presione <strong>"Iniciar Toma de Huella"</strong>. El aparato dirá en voz alta <em>"Coloque su dedo"</em>.`
+    );
+  }
+
   openModal('modalEmployee');
+};
+
+window.enrollEmployee = function(id) {
+  window.editEmployee(id);
+  const btnEnroll = document.getElementById('btnTriggerModalEnroll');
+  if (btnEnroll) {
+    btnEnroll.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    btnEnroll.focus();
+  }
 };
 
 window.deleteEmployee = async function(id) {
@@ -706,12 +735,13 @@ document.getElementById('formEmployee')?.addEventListener('submit', async (e) =>
   }
 });
 
-// Delegación de eventos para acciones en tabla de empleados (✏️ y 🗑️)
+// Delegación de eventos para acciones en tabla de empleados (☝️, ✏️ y 🗑️)
 document.getElementById('tblEmployees')?.addEventListener('click', (e) => {
   const btn = e.target.closest('button[data-action]');
   if (!btn) return;
   const action = btn.getAttribute('data-action');
   const id = btn.getAttribute('data-id');
+  if (action === 'enroll-employee' && id) window.enrollEmployee(id);
   if (action === 'edit-employee' && id) window.editEmployee(id);
   if (action === 'delete-employee' && id) window.deleteEmployee(id);
 });
@@ -722,7 +752,123 @@ document.getElementById('btnOpenNewEmpModal')?.addEventListener('click', () => {
   document.getElementById('empFieldId').value = '';
   document.getElementById('modalEmpTitle').textContent = 'Nuevo Empleado';
   document.getElementById('empFieldDept').value = 'Regondi srl';
+
+  const statusBadge = document.getElementById('enrollCurrentStatus');
+  if (statusBadge) {
+    statusBadge.className = 'badge badge-outline';
+    statusBadge.textContent = 'Sin registrar';
+  }
+
+  const feedbackText = document.getElementById('enrollFeedbackText');
+  if (feedbackText) {
+    feedbackText.innerHTML = `
+      Al presionar <strong>"Iniciar Toma de Huella"</strong>, el aparato físico dirá en voz alta <em>"Coloque su dedo"</em> y encenderá la luz verde. El operario debe apoyar el dedo 2 a 3 veces hasta escuchar el pitido.
+    `;
+  }
+
   openModal('modalEmployee');
+});
+
+// Botón de Enrolamiento de Huella Remoto en Reloj Físico (Comando 0x5C)
+document.getElementById('btnTriggerModalEnroll')?.addEventListener('click', async () => {
+  const workno = document.getElementById('empFieldWorkno')?.value?.trim();
+  const name = document.getElementById('empFieldName')?.value?.trim();
+  const empId = document.getElementById('empFieldId')?.value || undefined;
+  const branchSelect = document.getElementById('empEnrollBranch');
+  const slotSelect = document.getElementById('empEnrollFingerSlot');
+
+  if (!workno) {
+    alert('Por favor ingrese primero el número de Legajo / ID Reloj del empleado.');
+    document.getElementById('empFieldWorkno')?.focus();
+    return;
+  }
+
+  const branchName = branchSelect?.options[branchSelect.selectedIndex]?.text || 'Neuquén 959';
+  const deviceId = branchSelect?.value || '1930';
+  const backupId = Number(slotSelect?.value) || 0;
+
+  const btn = document.getElementById('btnTriggerModalEnroll');
+  const feedbackText = document.getElementById('enrollFeedbackText');
+  const statusBadge = document.getElementById('enrollCurrentStatus');
+
+  const origBtnContent = btn.innerHTML;
+  btn.disabled = true;
+  Sanitizer.safeSetInnerHTML(btn, '<span>⏳</span> Enviando comando al reloj...');
+
+  if (feedbackText) {
+    Sanitizer.safeSetInnerHTML(
+      feedbackText,
+      `
+      <div style="color: var(--cc-primary); font-weight: 600; margin-bottom: 4px;">
+        ⏳ Conectando con el reloj VF30 Pro en ${Sanitizer.escapeHTML(branchName)}...
+      </div>
+      <div>Preparando sensor óptico y activando altavoz del equipo...</div>
+    `
+    );
+  }
+
+  try {
+    const res = await fetch('/api/devices/enroll-fingerprint', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        employeeId: empId,
+        workno,
+        name,
+        branch: branchName,
+        deviceId,
+        backupId
+      })
+    });
+    const data = await res.json();
+    if (!data.success) throw new Error(data.error || 'Error al conectar con el reloj');
+
+    if (statusBadge) {
+      statusBadge.className = 'badge badge-success';
+      statusBadge.textContent = '✅ Huella Registrada';
+    }
+
+    if (feedbackText) {
+      Sanitizer.safeSetInnerHTML(
+        feedbackText,
+        `
+        <div style="display: flex; align-items: center; gap: 8px; font-weight: 700; color: #047863; font-size: 0.9rem; margin-bottom: 6px;">
+          <span style="font-size: 1.2rem;">🔊</span> Reloj emitiendo voz: "Coloque su dedo"
+        </div>
+        <div style="font-size: 0.82rem; color: var(--cc-text-primary); margin-bottom: 8px;">
+          <strong>Paso a paso en el reloj (${Sanitizer.escapeHTML(data.device)}):</strong>
+        </div>
+        <ol style="margin: 0; padding-left: 20px; font-size: 0.8rem; color: var(--cc-text-regular); display: flex; flex-direction: column; gap: 4px;">
+          <li>El empleado apoya el dedo sobre el lector óptico con luz verde.</li>
+          <li>Al escuchar el pitido del reloj, levanta y vuelve a apoyar el dedo (2 o 3 veces).</li>
+          <li>El reloj confirmará con la voz <em>"Éxito"</em> o <em>"Verificado"</em> y quedará grabado.</li>
+        </ol>
+        <div style="margin-top: 8px; font-size: 0.76rem; color: var(--cc-text-secondary); border-top: 1px solid #e2e8f0; padding-top: 6px;">
+          Estado: <strong>${Sanitizer.escapeHTML(data.triggerResult?.message || 'Comando recibido')}</strong> • Legajo: <strong>${Sanitizer.escapeHTML(workno)}</strong>
+        </div>
+      `
+      );
+    }
+
+    loadEmployees();
+  } catch (err) {
+    if (feedbackText) {
+      Sanitizer.safeSetInnerHTML(
+        feedbackText,
+        `
+        <div style="color: var(--cc-danger); font-weight: 600;">
+          ❌ No se pudo conectar al reloj: ${Sanitizer.escapeHTML(err.message)}
+        </div>
+        <div style="margin-top: 4px; font-size: 0.78rem;">
+          Verifique que el reloj esté encendido y conectado en la red local. También puede ingresar el legajo <strong>${Sanitizer.escapeHTML(workno)}</strong> manualmente en el teclado del equipo.
+        </div>
+      `
+      );
+    }
+  } finally {
+    btn.disabled = false;
+    Sanitizer.safeSetInnerHTML(btn, origBtnContent);
+  }
 });
 
 // Cierre táctil o por click en backdrop de modales

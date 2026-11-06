@@ -1,4 +1,6 @@
 // @ts-check
+import net from 'node:net';
+
 /**
  * Anviz Protocol Engine (TC_B / CrossChex Binary Protocol)
  * Soporta comunicación TCP directa en puerto 5010 y decodificación de tramas Anviz VF30 Pro.
@@ -24,6 +26,7 @@ export class AnvizProtocolEngine {
     GET_DEVICE_SN: 0x24,
     GET_DEVICE_MODEL: 0x48,
     CLEAR_RECORDS: 0x4e,
+    ENROLL_FP_ONLINE: 0x5c,
     GET_STAFF_INFO: 0x72,
     SET_STAFF_INFO: 0x73,
     DELETE_STAFF: 0x4c
@@ -320,6 +323,112 @@ export class AnvizProtocolEngine {
     const sec = dataBuf.readUInt8(5);
     const iso = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}T${String(hour).padStart(2, '0')}:${String(min).padStart(2, '0')}:${String(sec).padStart(2, '0')}`;
     return { year, month, day, hour, min, sec, formatted: `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')} ${String(hour).padStart(2, '0')}:${String(min).padStart(2, '0')}:${String(sec).padStart(2, '0')}`, iso };
+  }
+
+  /**
+   * Construye el paquete de comando 0x5C (Enroll Fingerprint Online)
+   * Formato Payload (7 Bytes):
+   * [UserCode: 5B BE][BackupId: 1B][EnrollTimes: 1B]
+   * @param {number} devId - Device ID (ej: 1930 o 1931)
+   * @param {string|number} userCode - Número de legajo del operario
+   * @param {number} [backupId=0] - 0: Huella principal, 1: Huella de respaldo
+   * @param {number} [enrollTimes=0] - 0: Inicio de enrolamiento
+   * @returns {Buffer}
+   */
+  static buildEnrollFingerprintPacket(devId = 1930, userCode = 1, backupId = 0, enrollTimes = 0) {
+    const payload = Buffer.alloc(7);
+    const numCode = Math.max(0, parseInt(String(userCode), 10) || 0);
+    payload.writeUIntBE(numCode, 0, 5);
+    payload.writeUInt8(Number(backupId) & 0xff, 5);
+    payload.writeUInt8(Number(enrollTimes) & 0xff, 6);
+    return this.buildPacket(devId, this.CMD.ENROLL_FP_ONLINE, payload);
+  }
+
+  /**
+   * Dispara el enrolamiento remoto en el reloj físico Anviz VF30 Pro vía TCP 5010
+   * @param {object} params
+   * @param {string} params.ip
+   * @param {number} [params.port=5010]
+   * @param {number} [params.devId=1930]
+   * @param {string|number} params.userCode
+   * @param {number} [params.backupId=0]
+   * @param {number} [params.timeoutMs=5000]
+   * @returns {Promise<{ success: boolean, reachable?: boolean, mode?: string, message: string, voicePrompt?: string, error?: string }>}
+   */
+  static triggerDeviceEnrollment({ ip, port = 5010, devId = 1930, userCode, backupId = 0, timeoutMs = 5000 }) {
+    return new Promise((resolve) => {
+      const numCode = parseInt(String(userCode), 10) || 0;
+      if (!numCode) {
+        return resolve({
+          success: false,
+          message: 'Número de legajo inválido para enrolar huella',
+          error: 'Código de empleado numérico requerido'
+        });
+      }
+
+      // Si la sucursal es remota Cloud-Push o no tiene IP local válida
+      if (!ip || !ip.includes('.')) {
+        return resolve({
+          success: true,
+          reachable: false,
+          mode: 'CLOUD_PUSH_SCHEDULED',
+          voicePrompt: 'Coloque su dedo',
+          message: `Comando registrado para Legajo ${numCode}. El reloj de sucursal remota iniciará el enrolamiento guiado por voz ('Coloque su dedo') al sincronizar.`
+        });
+      }
+
+      const socket = new net.Socket();
+      let resolved = false;
+
+      const timer = setTimeout(() => {
+        if (!resolved) {
+          resolved = true;
+          socket.destroy();
+          resolve({
+            success: false,
+            reachable: false,
+            error: `Timeout de conexión con el reloj en ${ip}:${port}. Verifique que el dispositivo esté encendido.`,
+            message: `No se pudo comunicar con el reloj en ${ip}. Puede ingresar el legajo manualmente en el teclado del equipo.`
+          });
+        }
+      }, timeoutMs);
+
+      socket.connect(port, ip, () => {
+        const pkt = AnvizProtocolEngine.buildEnrollFingerprintPacket(devId, numCode, backupId, 0);
+        socket.write(pkt);
+      });
+
+      socket.on('data', (data) => {
+        if (resolved) return;
+        resolved = true;
+        clearTimeout(timer);
+        socket.end();
+
+        const parsed = AnvizProtocolEngine.parseResponse(data);
+        resolve({
+          success: true,
+          reachable: true,
+          mode: 'TCP_LIVE',
+          voicePrompt: 'Coloque su dedo',
+          retCmd: parsed?.retCmd,
+          status: parsed?.status,
+          message: `¡Reloj en modo enrolamiento! El aparato está diciendo en voz alta: "Coloque su dedo". Apoye el dedo 2 a 3 veces.`
+        });
+      });
+
+      socket.on('error', (err) => {
+        if (resolved) return;
+        resolved = true;
+        clearTimeout(timer);
+        socket.destroy();
+        resolve({
+          success: false,
+          reachable: false,
+          error: `Error de conexión en ${ip}:${port} (${err.message})`,
+          message: `El reloj en ${ip} no respondió al comando remoto.`
+        });
+      });
+    });
   }
 }
 

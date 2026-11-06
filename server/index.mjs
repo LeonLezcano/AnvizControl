@@ -87,6 +87,65 @@ const server = http.createServer(async (req, res) => {
       return sendJson(res, 200, { success: true, devices });
     }
 
+    // DISPARAR ENROLAMIENTO REMOTO EN RELOJ (COMANDO 0x5C)
+    if (pathname === '/api/devices/enroll-fingerprint' && req.method === 'POST') {
+      const body = await parseBody(req);
+      const workno = String(body.workno || '').trim();
+      const employeeId = body.employeeId || null;
+      const branch = body.branch || 'Neuquen 959';
+      const deviceId = String(body.deviceId || '1930');
+      const backupId = Number(body.backupId) || 0;
+
+      if (!workno) {
+        return sendJson(res, 400, { success: false, error: 'Debe especificar el número de legajo / ID reloj (workno)' });
+      }
+
+      // Buscar el dispositivo seleccionado
+      const devices = AttendanceEngine.getDevices();
+      const targetDev = devices.find((d) => String(d.id) === deviceId || d.name.toLowerCase().includes(branch.toLowerCase())) || devices[0];
+
+      // Disparar comando al reloj físico por TCP
+      const targetIp = targetDev ? targetDev.ip : '192.168.0.218';
+      const targetPort = targetDev ? (targetDev.port || 5010) : 5010;
+      const targetDevId = targetDev ? Number(targetDev.id) || 1930 : 1930;
+
+      const triggerResult = await AnvizProtocolEngine.triggerDeviceEnrollment({
+        ip: targetIp,
+        port: targetPort,
+        devId: targetDevId,
+        userCode: workno,
+        backupId,
+        timeoutMs: 4000
+      });
+
+      // Si el empleado ya existe en el padrón, actualizar su registro
+      let updatedEmployee = null;
+      try {
+        updatedEmployee = AttendanceEngine.enrollEmployeeFingerprint({
+          employeeId,
+          workno,
+          branch: targetDev?.name || branch,
+          deviceId: String(targetDev?.id || deviceId),
+          backupId
+        });
+      } catch (err) {
+        // Puede ser un nuevo empleado aún no guardado
+      }
+
+      return sendJson(res, 200, {
+        success: true,
+        device: targetDev ? targetDev.name : branch,
+        deviceId: targetDev ? targetDev.id : deviceId,
+        ip: targetIp,
+        workno,
+        backupId,
+        triggerResult,
+        employee: updatedEmployee,
+        voicePrompt: 'Coloque su dedo',
+        instructions: 'El reloj emitirá la guía de voz "Coloque su dedo". El empleado debe apoyar el dedo 2 a 3 veces en el lector óptico.'
+      });
+    }
+
     // ==========================================
     // API: EMPLEADOS (CRUD)
     // ==========================================

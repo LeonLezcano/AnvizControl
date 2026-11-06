@@ -1,6 +1,6 @@
 {
   "name": "anviz-control",
-  "version": "1.0.06",
+  "version": "1.0.12",
   "description": "Sistema Multi-Sucursal de Asistencia e Ingenieria Inversa de Relojes Anviz VF30 Pro",
   "type": "module",
   "main": "server/index.mjs",

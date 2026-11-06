@@ -8,21 +8,21 @@
   <style>
     :root {
       /* Paleta oficial de CrossChex Cloud */
-      --cc-primary: #05aa8c;
-      --cc-primary-hover: #0ea58a;
+      --cc-primary: #047863;
+      --cc-primary-hover: #035a4a;
       --cc-primary-light: #e6f7f4;
       --cc-accent-blue: #409eff;
-      --cc-warning: #f7b500;
+      --cc-warning: #b45309;
       --cc-danger: #e02020;
-      --cc-orange: #fa6400;
+      --cc-orange: #c2410c;
       --cc-purple: #6236ff;
-      --cc-green: #75bc27;
+      --cc-green: #15803d;
       --cc-bg: #f0f2f5;
       --cc-card-bg: #ffffff;
       --cc-border: #ebeef5;
       --cc-text-primary: #303133;
       --cc-text-regular: #606266;
-      --cc-text-secondary: #909399;
+      --cc-text-secondary: #4b5563;
       --cc-header-bg: #05aa8c;
       --cc-font: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", Arial, sans-serif;
     }
@@ -37,30 +37,30 @@
       width: 100%;
     }
 
-    /* BARRA LATERAL (SIDEBAR) */
+    /* BARRA LATERAL (SIDEBAR) - DISEÑO COHESIVO CLARO */
     .sidebar {
       width: 260px;
       min-width: 260px;
-      background: #0f172a;
-      color: #e2e8f0;
+      background: #ffffff;
+      color: var(--cc-text-primary);
       display: flex;
       flex-direction: column;
       height: 100vh;
       position: sticky;
       top: 0;
       z-index: 100;
-      border-right: 1px solid rgba(255, 255, 255, 0.08);
-      box-shadow: 2px 0 12px rgba(0, 0, 0, 0.15);
+      border-right: 1px solid var(--cc-border);
+      box-shadow: 1px 0 6px rgba(0, 0, 0, 0.03);
       transition: transform 0.3s ease;
     }
 
     .sidebar-header {
-      padding: 18px 16px;
+      padding: 16px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-      background: rgba(255, 255, 255, 0.02);
+      border-bottom: 1px solid var(--cc-border);
+      background: #ffffff;
     }
 
     .brand {
@@ -70,30 +70,30 @@
     }
 
     .brand-logo {
-      width: 32px;
-      height: 32px;
-      background: linear-gradient(135deg, var(--cc-primary), #0ea5e9);
+      width: 34px;
+      height: 34px;
+      background: #e6f7f4;
+      border: 1px solid rgba(4, 120, 99, 0.3);
       border-radius: 8px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 16px;
-      box-shadow: 0 2px 6px rgba(5, 170, 140, 0.4);
+      font-size: 18px;
     }
 
     .brand-title {
-      font-size: 1rem;
+      font-size: 0.95rem;
       font-weight: 700;
-      color: #ffffff;
-      letter-spacing: -0.3px;
+      color: var(--cc-text-primary);
+      letter-spacing: -0.2px;
       line-height: 1.2;
     }
 
     .brand-company {
-      font-size: 0.72rem;
-      background: rgba(5, 170, 140, 0.2);
-      color: #38bdf8;
-      border: 1px solid rgba(56, 189, 248, 0.3);
+      font-size: 0.75rem;
+      background: #e6f7f4;
+      color: var(--cc-primary);
+      border: 1px solid rgba(4, 120, 99, 0.25);
       padding: 1px 7px;
       border-radius: 999px;
       display: inline-block;
@@ -105,19 +105,19 @@
       display: none;
       background: transparent;
       border: none;
-      color: #94a3b8;
+      color: var(--cc-text-secondary);
       font-size: 1.3rem;
       cursor: pointer;
       padding: 4px;
     }
 
     .sidebar-section-title {
-      padding: 18px 18px 8px 18px;
-      font-size: 0.72rem;
+      padding: 16px 16px 8px 16px;
+      font-size: 0.75rem;
       font-weight: 700;
       letter-spacing: 0.8px;
       text-transform: uppercase;
-      color: #64748b;
+      color: var(--cc-text-secondary);
     }
 
     /* Navegación Vertical */
@@ -134,9 +134,9 @@
       width: 100%;
       background: transparent;
       border: 1px solid transparent;
-      color: #94a3b8;
-      padding: 10px 14px;
-      border-radius: 8px;
+      color: var(--cc-text-regular);
+      padding: 9px 12px;
+      border-radius: 6px;
       cursor: pointer;
       font-size: 0.88rem;
       font-weight: 500;
@@ -144,22 +144,22 @@
       align-items: center;
       gap: 12px;
       text-align: left;
-      transition: all 0.2s ease;
+      transition: all 0.15s ease;
       position: relative;
     }
 
     .nav-btn:hover {
-      color: #ffffff;
-      background: rgba(255, 255, 255, 0.05);
-      border-color: rgba(255, 255, 255, 0.08);
+      color: var(--cc-primary);
+      background: #f0fdf9;
+      border-color: #ccfbf1;
       transform: translateX(2px);
     }
 
     .nav-btn.active {
-      color: #ffffff;
+      color: var(--cc-primary);
       font-weight: 600;
-      background: linear-gradient(90deg, rgba(5, 170, 140, 0.25), rgba(5, 170, 140, 0.08));
-      border-color: rgba(5, 170, 140, 0.4);
+      background: #e6f7f4;
+      border-color: rgba(4, 120, 99, 0.25);
       box-shadow: inset 3px 0 0 var(--cc-primary);
     }
 
@@ -176,30 +176,31 @@
     }
 
     .nav-badge {
-      font-size: 0.68rem;
+      font-size: 0.75rem;
       font-weight: 600;
-      background: rgba(224, 32, 32, 0.2);
-      color: #f87171;
-      padding: 2px 6px;
+      background: #fef2f2;
+      color: #b91c1c;
+      padding: 1px 7px;
       border-radius: 999px;
-      border: 1px solid rgba(224, 32, 32, 0.4);
+      border: 1px solid #fecaca;
     }
 
     .nav-count {
-      font-size: 0.72rem;
+      font-size: 0.75rem;
       font-weight: 700;
-      background: rgba(255, 255, 255, 0.1);
-      color: #cbd5e1;
+      background: #f1f5f9;
+      color: #475569;
       padding: 1px 7px;
       border-radius: 999px;
+      border: 1px solid #e2e8f0;
     }
 
     /* Caja de Enlace de Hardware en Sidebar */
     .sidebar-hardware-box {
-      margin: 10px 12px;
-      padding: 10px 12px;
-      background: rgba(5, 170, 140, 0.08);
-      border: 1px solid rgba(5, 170, 140, 0.25);
+      margin: 12px 10px;
+      padding: 12px;
+      background: #fafafa;
+      border: 1px solid var(--cc-border);
       border-radius: 8px;
       font-size: 0.78rem;
     }
@@ -208,9 +209,9 @@
       display: flex;
       align-items: center;
       gap: 6px;
-      color: #34d399;
+      color: var(--cc-primary);
       font-weight: 600;
-      margin-bottom: 3px;
+      margin-bottom: 4px;
     }
 
     .hw-indicator {
@@ -218,18 +219,22 @@
       height: 8px;
       border-radius: 50%;
       background: #10b981;
-      box-shadow: 0 0 8px #10b981;
+      border: 1px solid #059669;
       display: inline-block;
     }
 
     .hardware-box-detail {
-      color: #94a3b8;
-      font-size: 0.72rem;
-      line-height: 1.35;
+      color: var(--cc-text-secondary);
+      font-size: 0.78rem;
+      line-height: 1.4;
     }
 
     .hardware-box-detail code {
-      color: #38bdf8;
+      color: #0369a1;
+      background: #f0f9ff;
+      border: 1px solid #e0f2fe;
+      padding: 1px 5px;
+      border-radius: 4px;
       font-family: monospace;
       font-size: 0.76rem;
     }
@@ -237,8 +242,8 @@
     /* Footer del Sidebar */
     .sidebar-footer {
       padding: 14px 12px;
-      border-top: 1px solid rgba(255, 255, 255, 0.08);
-      background: rgba(0, 0, 0, 0.2);
+      border-top: 1px solid var(--cc-border);
+      background: #ffffff;
       display: flex;
       flex-direction: column;
       gap: 10px;
@@ -254,7 +259,7 @@
       width: 32px;
       height: 32px;
       border-radius: 50%;
-      background: linear-gradient(135deg, #3b82f6, #05aa8c);
+      background: var(--cc-primary);
       color: #ffffff;
       display: flex;
       align-items: center;
@@ -271,15 +276,15 @@
     .user-name {
       font-size: 0.82rem;
       font-weight: 600;
-      color: #f1f5f9;
+      color: var(--cc-text-primary);
       white-space: nowrap;
       text-overflow: ellipsis;
       overflow: hidden;
     }
 
     .user-role {
-      font-size: 0.7rem;
-      color: #64748b;
+      font-size: 0.78rem;
+      color: var(--cc-text-secondary);
     }
 
     .sidebar-sync-btn {
@@ -295,16 +300,17 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      font-size: 0.68rem;
-      color: #475569;
+      font-size: 0.78rem;
+      color: var(--cc-text-secondary);
     }
 
     .badge-mini {
-      background: rgba(5, 170, 140, 0.15);
-      color: #05aa8c;
-      padding: 1px 5px;
+      background: #e6f7f4;
+      color: var(--cc-primary);
+      padding: 2px 6px;
       border-radius: 4px;
       font-weight: 600;
+      border: 1px solid rgba(4, 120, 99, 0.2);
     }
 
     /* CONTENEDOR DE CONTENIDO PRINCIPAL */
@@ -313,7 +319,11 @@
       display: flex;
       flex-direction: column;
       min-width: 0;
+      width: 100%;
+      max-width: 100%;
       background: var(--cc-bg);
+      padding: 0;
+      overflow-x: hidden;
     }
 
     /* Topbar en contenido */
@@ -321,14 +331,14 @@
       height: 56px;
       background: #ffffff;
       border-bottom: 1px solid var(--cc-border);
-      padding: 0 24px;
+      padding: 0 28px;
       display: flex;
       align-items: center;
       justify-content: space-between;
       position: sticky;
       top: 0;
       z-index: 50;
-      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.03);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
     }
 
     .topbar-left {
@@ -401,7 +411,7 @@
       height: 8px;
       border-radius: 50%;
       background: var(--cc-primary);
-      animation: pulseAnim 2s infinite;
+      
     }
 
     @keyframes pulseAnim {
@@ -412,10 +422,11 @@
 
     main {
       flex: 1;
-      max-width: 1360px;
       width: 100%;
-      margin: 20px auto;
-      padding: 0 24px;
+      max-width: 100%;
+      margin: 0;
+      padding: 24px 28px 36px 28px;
+      box-sizing: border-box;
     }
 
     .sidebar-overlay {
@@ -431,7 +442,7 @@
     }
 
     /* RESPONSIVE: Tablet y Móvil */
-    @media (max-width: 900px) {
+    @media (max-width: 1024px) {
       .sidebar {
         position: fixed;
         left: 0;
@@ -458,8 +469,36 @@
       }
 
       main {
+        padding: 16px 18px 28px 18px;
+        margin: 0;
+      }
+    }
+
+    @media (max-width: 640px) {
+      main {
+        padding: 12px 12px 24px 12px;
+      }
+      .topbar {
         padding: 0 14px;
-        margin: 14px auto;
+      }
+      .card {
+        padding: 14px;
+      }
+      .card-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+      }
+      .kpi-row {
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+      }
+      .yesterday-stats {
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+      }
+      .device-cards-grid {
+        grid-template-columns: 1fr;
       }
     }
 
@@ -474,6 +513,10 @@
       padding: 20px;
       box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
       margin-bottom: 20px;
+      min-width: 0;
+      max-width: 100%;
+      box-sizing: border-box;
+      overflow: hidden;
     }
 
     .card-header {
@@ -481,7 +524,7 @@
       justify-content: space-between;
       align-items: center;
       margin-bottom: 16px;
-      padding-bottom: 12px;
+      padding: 4px 4px 12px 4px;
       border-bottom: 1px solid var(--cc-border);
     }
     .card-title {
@@ -500,24 +543,25 @@
       gap: 20px;
       margin-bottom: 20px;
     }
-    @media (max-width: 992px) {
+    @media (max-width: 1180px) {
       .dashboard-grid { grid-template-columns: 1fr; }
     }
 
     .kpi-row {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 16px;
+      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+      gap: 14px;
       margin-bottom: 20px;
     }
     .kpi-card {
       background: #ffffff;
       border: 1px solid var(--cc-border);
       border-radius: 8px;
-      padding: 18px;
+      padding: 16px 18px;
       display: flex;
       align-items: center;
-      gap: 16px;
+      gap: 14px;
+      min-width: 0;
     }
     .kpi-icon {
       width: 48px;
@@ -564,28 +608,26 @@
     /* Mini tarjetas de estadísticas de ayer */
     .yesterday-stats {
       display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      gap: 12px;
+      grid-template-columns: repeat(auto-fit, minmax(115px, 1fr));
+      gap: 10px;
       margin-top: 12px;
-    }
-    @media (max-width: 768px) {
-      .yesterday-stats { grid-template-columns: repeat(2, 1fr); }
     }
     .y-stat-item {
       background: #fafafa;
       border: 1px solid #ebeef5;
       border-radius: 6px;
-      padding: 12px 8px;
+      padding: 10px 8px;
       text-align: center;
+      min-width: 0;
     }
-    .y-stat-num { font-size: 1.3rem; font-weight: 700; margin: 4px 0; }
+    .y-stat-num { font-size: 1.25rem; font-weight: 700; margin: 4px 0; }
     .y-stat-label { font-size: 0.75rem; color: var(--cc-text-secondary); }
 
     /* Tarjetas de Relojes */
     .device-cards-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-      gap: 16px;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 14px;
       margin-bottom: 20px;
     }
     .device-box {
@@ -595,6 +637,7 @@
       background: #ffffff;
       position: relative;
       transition: transform 0.2s, box-shadow 0.2s;
+      min-width: 0;
     }
     .device-box:hover {
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
@@ -609,35 +652,63 @@
     .device-model { font-size: 0.8rem; color: var(--cc-text-secondary); }
     .device-metrics {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: repeat(auto-fit, minmax(65px, 1fr));
       gap: 8px;
       background: #f8fafc;
       padding: 10px;
       border-radius: 6px;
       margin-top: 14px;
       text-align: center;
-      font-size: 0.75rem;
+      font-size: 0.78rem;
     }
-    .device-metrics b { display: block; font-size: 1rem; color: var(--cc-primary); margin-top: 2px; }
+    .device-metrics b { display: block; font-size: 0.95rem; color: var(--cc-primary); margin-top: 2px; }
 
-    /* Tablas estilo CrossChex */
+    /* Tablas estilo CrossChex con scrollbar refinado y ajuste de viewport */
     .table-container {
       background: #ffffff;
       border: 1px solid var(--cc-border);
       border-radius: 8px;
       overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      width: 100%;
+      max-width: 100%;
+      min-width: 0;
+      box-sizing: border-box;
+      padding: 0;
+      margin-top: 12px;
     }
-    table { width: 100%; border-collapse: collapse; text-align: left; font-size: 0.88rem; }
+    .table-container::-webkit-scrollbar {
+      height: 6px;
+    }
+    .table-container::-webkit-scrollbar-track {
+      background: #f1f5f9;
+      border-radius: 4px;
+    }
+    .table-container::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 4px;
+    }
+    .table-container::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+    table { width: 100%; border-collapse: collapse; text-align: left; font-size: 0.83rem; }
     th {
       background: #fafafa;
-      padding: 12px 14px;
+      padding: 10px 12px;
       color: var(--cc-text-secondary);
       font-weight: 600;
       border-bottom: 1px solid var(--cc-border);
+      font-size: 0.76rem;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
       white-space: nowrap;
     }
     td {
-      padding: 12px 14px;
+      padding: 10px 12px;
+      border-bottom: 1px solid #f2f4f8;
+      color: var(--cc-text-regular);
+      font-size: 0.83rem;
+    }
       border-bottom: 1px solid #f2f4f8;
       color: var(--cc-text-regular);
     }
@@ -648,7 +719,7 @@
       display: inline-block;
       padding: 3px 9px;
       border-radius: 4px;
-      font-size: 0.75rem;
+      font-size: 0.8rem;
       font-weight: 600;
       white-space: nowrap;
     }
@@ -821,7 +892,7 @@
         </button>
 
         <div class="sidebar-version">
-          <span>AnvizControl v1.0.04</span>
+          <span>AnvizControl v1.0.08</span>
           <span class="badge-mini">AiAppFactory</span>
         </div>
       </div>
@@ -1039,25 +1110,25 @@
 
         <!-- Resumen del Empleado -->
         <div class="kpi-row" id="reportSummaryCards">
-          <div class="kpi-card" style="border-left: 4px solid var(--cc-primary);">
+          <div class="kpi-card" >
             <div>
               <div class="kpi-title">Total Horas Trabajadas</div>
               <div class="kpi-value" id="sumTotalHours" style="color: var(--cc-primary);">0 h</div>
             </div>
           </div>
-          <div class="kpi-card" style="border-left: 4px solid var(--cc-green);">
+          <div class="kpi-card" >
             <div>
               <div class="kpi-title">Días Trabajados</div>
               <div class="kpi-value" id="sumDaysWorked" style="color: var(--cc-green);">0</div>
             </div>
           </div>
-          <div class="kpi-card" style="border-left: 4px solid var(--cc-danger);">
+          <div class="kpi-card" >
             <div>
               <div class="kpi-title">Ausencias</div>
               <div class="kpi-value" id="sumAbsences" style="color: var(--cc-danger);">0</div>
             </div>
           </div>
-          <div class="kpi-card" style="border-left: 4px solid var(--cc-warning);">
+          <div class="kpi-card" >
             <div>
               <div class="kpi-title">Fichadas Impares (Sin salida)</div>
               <div class="kpi-value" id="sumOddPunches" style="color: var(--cc-warning);">0</div>
@@ -1225,6 +1296,48 @@
           <label>Puesto / Cargo:</label>
           <input type="text" id="empFieldPosition" class="form-control" placeholder="Ej: Control de Calidad">
         </div>
+
+        <!-- SECCIÓN TOMA DE HUELLA BIOMÉTRICA EN RELOJ FÍSICO -->
+        <div class="enroll-box" style="margin-top: 14px; margin-bottom: 14px; padding: 14px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px;">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
+            <div style="font-weight: 700; font-size: 0.88rem; color: var(--cc-text-primary); display: flex; align-items: center; gap: 6px;">
+              <span>☝️</span> Toma de Huella Dactilar en Reloj
+            </div>
+            <span class="badge badge-outline" id="enrollCurrentStatus" style="font-size: 0.72rem;">Sin registrar</span>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
+            <div class="form-group">
+              <label style="font-size: 0.75rem;">Sucursal / Reloj:</label>
+              <select id="empEnrollBranch" class="form-control" style="font-size: 0.82rem; padding: 6px 8px;">
+                <option value="1930">Neuquén 959 (IP 192.168.0.218)</option>
+                <option value="1931">Ballarini 1111 (Cloud Push)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label style="font-size: 0.75rem;">Dedo a Registrar:</label>
+              <select id="empEnrollFingerSlot" class="form-control" style="font-size: 0.82rem; padding: 6px 8px;">
+                <option value="0">Principal (Índice Der - Ranura 0)</option>
+                <option value="1">Respaldo (Pulgar/Otro - Ranura 1)</option>
+              </select>
+            </div>
+          </div>
+
+          <button type="button" class="btn btn-primary" id="btnTriggerModalEnroll" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 8px 12px; font-weight: 600;">
+            <span>☝️</span> Iniciar Toma de Huella en Reloj
+          </button>
+
+          <!-- Guía en vivo y feedback auditivo -->
+          <div id="enrollFeedbackBox" style="margin-top: 10px; font-size: 0.8rem; line-height: 1.4; color: var(--cc-text-secondary); background: #ffffff; border: 1px dashed #cbd5e1; border-radius: 4px; padding: 10px;">
+            <div style="display: flex; align-items: center; gap: 6px; font-weight: 600; color: var(--cc-text-primary); margin-bottom: 4px;">
+              <span style="font-size: 1rem;">🔊</span> Guía de voz del equipo:
+            </div>
+            <div id="enrollFeedbackText">
+              Al presionar <strong>"Iniciar Toma de Huella"</strong>, el aparato físico dirá en voz alta <em>"Coloque su dedo"</em> y encenderá la luz verde. El operario debe apoyar el dedo 2 a 3 veces hasta escuchar el pitido.
+            </div>
+          </div>
+        </div>
+
         <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 16px;">
           <button type="button" class="btn btn-outline" onclick="closeModal('modalEmployee')">Cancelar</button>
           <button type="submit" class="btn btn-primary">Guardar</button>

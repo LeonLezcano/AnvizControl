@@ -156,6 +156,21 @@ describe('1. Capa 1: Protocolo Binario Anviz VF30 Pro & CRC16', () => {
     assert.strictEqual(records[0].verifyDesc, 'Huella Dactilar');
     assert.strictEqual(records[0].branch, 'Neuquen 959');
   });
+
+  it('Debe construir tramas correctas para comando 0x5C (ENROLL_FP_ONLINE) de 7 bytes', () => {
+    const pkt = AnvizProtocolEngine.buildEnrollFingerprintPacket(1930, 3012, 0, 0);
+    assert.strictEqual(pkt[0], 0xa5);
+    assert.strictEqual(pkt.readUInt32BE(1), 1930);
+    assert.strictEqual(pkt[5], 0x5c); // CMD ENROLL_FP_ONLINE
+    assert.strictEqual(pkt.readUInt16BE(6), 7); // Payload length 7
+    assert.strictEqual(pkt.readUIntBE(8, 5), 3012); // UserCode
+    assert.strictEqual(pkt[13], 0); // BackupId 0
+    assert.strictEqual(pkt[14], 0); // EnrollTimes 0
+    assert.strictEqual(pkt.length, 17); // 1 + 4 + 1 + 2 + 7 + 2 = 17 bytes
+    const parsed = AnvizProtocolEngine.parseResponse(AnvizProtocolEngine.buildResponsePacket(1930, 0xdc, 0x00, Buffer.alloc(0)));
+    assert.strictEqual(parsed.valid, true);
+    assert.strictEqual(parsed.retCmd, 0xdc);
+  });
 });
 
 // ======================================================================
@@ -246,16 +261,20 @@ describe('2. Capa 2: Motor de Asistencia & Horarios de Regondi srl', () => {
   });
 
   it('Debe permitir rectificación manual de fichadas omitidas', () => {
-    const uniqueTs = new Date(Date.now() + Math.floor(Math.random() * 1000000000)).toISOString();
+    const testLogId = `TEST-RECTIFY-${Date.now()}`;
     const manualLog = {
+      id: testLogId,
       userCode: '3004',
-      timestamp: uniqueTs,
+      timestamp: '2026-10-28T15:00:00.000Z',
       branch: 'Neuquen 959',
       isManual: true,
       reason: 'Olvido de tarjeta/huella'
     };
     const result = AttendanceEngine.appendLogs([manualLog]);
     assert(result.added >= 1, 'Debe haber agregado el registro manual');
+
+    // Limpieza inmediata para no polucionar attendance_logs.json en producción
+    AttendanceEngine.deleteLog(testLogId);
   });
 
   it('Debe registrar tombstones al eliminar una fichada para evitar re-sincronizaciones no deseadas', () => {
@@ -263,6 +282,20 @@ describe('2. Capa 2: Motor de Asistencia & Horarios de Regondi srl', () => {
     AttendanceEngine.deleteLog(tempId);
     const tombstones = AttendanceEngine.getTombstones();
     assert(tombstones.includes(tempId), 'Debe contener el tombstone del ID eliminado');
+  });
+
+  it('Debe registrar el enrolamiento biométrico de un empleado con enrollEmployeeFingerprint', () => {
+    const enrolled = AttendanceEngine.enrollEmployeeFingerprint({
+      employeeId: 'EMP-3004',
+      workno: '3004',
+      branch: 'Neuquen 959',
+      deviceId: '1930',
+      backupId: 0
+    });
+    assert.strictEqual(enrolled.hasFinger, true);
+    assert.strictEqual(enrolled.lastEnrollBranch, 'Neuquen 959');
+    assert.strictEqual(enrolled.lastEnrollDeviceId, '1930');
+    assert.ok(enrolled.enrolledAt);
   });
 });
 
@@ -500,5 +533,21 @@ describe('6. Fuzzing & Chaotic Property Tests', () => {
     const res = AttendanceEngine.calculateAttendance('EMP-3004', '2026-12-01', '2026-12-02');
     assert(res, 'Debe devolver reporte estructurado');
     assert.strictEqual(res.summary.daysWorked, 0);
+  });
+
+  it('AnvizProtocolEngine.triggerDeviceEnrollment valida legajos y gestiona fallback', async () => {
+    const invalidResult = await AnvizProtocolEngine.triggerDeviceEnrollment({
+      ip: '192.168.0.218',
+      userCode: ''
+    });
+    assert.strictEqual(invalidResult.success, false);
+
+    const cloudResult = await AnvizProtocolEngine.triggerDeviceEnrollment({
+      ip: 'Sucursal Remota Cloud',
+      userCode: 3004
+    });
+    assert.strictEqual(cloudResult.success, true);
+    assert.strictEqual(cloudResult.mode, 'CLOUD_PUSH_SCHEDULED');
+    assert.strictEqual(cloudResult.voicePrompt, 'Coloque su dedo');
   });
 });
